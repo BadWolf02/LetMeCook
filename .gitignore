@@ -13,3 +13,6 @@
 .externalNativeBuild
 .cxx
 local.properties
+
+# added this one my self, some sources say it should be included in gitignore, others say it doesent need to be
+/gradle*
