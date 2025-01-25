@@ -1,5 +1,6 @@
 plugins {
     alias(libs.plugins.android.application)
+    id("com.google.gms.google-services")
 }
 
 android {
@@ -39,7 +40,14 @@ dependencies {
     implementation libs.navigation.runtime
     implementation libs.navigation.ui
     implementation libs.navigation.fragment
+
+    implementation(platform(libs.firebase.bom))
+    implementation(libs.firebase.firestore) // Add the dependencies for any other desired Firebase products
+    // https://firebase.google.com/docs/android/setup#available-libraries
+
+
     testImplementation libs.junit
     androidTestImplementation libs.ext.junit
     androidTestImplementation libs.espresso.core
+
 }
