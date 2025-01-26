@@ -7,11 +7,7 @@ import android.content.Intent;
 import android.util.Log;
 import android.widget.Toast;
 
-import androidx.annotation.NonNull;
-
 import com.example.letmecook.MainActivity;
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.firestore.*;
 
 import java.util.*;
@@ -35,20 +31,12 @@ public class Firebase {
         // Password strength check
         // TODO implement check for existing users & improve password check
         if (password.length() >= 8) {
+            // Log information on successful sign up
+            // Log information on failed sign up
             db.collection("users")
                     .add(user)
-                    .addOnSuccessListener(new OnSuccessListener<DocumentReference>() { // Log information on successful sign up
-                        @Override
-                        public void onSuccess(DocumentReference documentReference) {
-                            Log.d(TAG, "DocumentSnapshot added with ID: " + documentReference.getId());
-                        }
-                    })
-                    .addOnFailureListener(new OnFailureListener() { // Log information on failed sign up
-                        @Override
-                        public void onFailure(@NonNull Exception e) {
-                            Log.w(TAG, "Error adding document", e);
-                        }
-                    });
+                    .addOnSuccessListener(documentReference -> Log.d(TAG, "DocumentSnapshot added with ID: " + documentReference.getId()))
+                    .addOnFailureListener(e -> Log.w(TAG, "Error adding document", e));
 
             Toast.makeText(context, "Sign Up successful!", Toast.LENGTH_SHORT).show();
             return true;

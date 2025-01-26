@@ -23,13 +23,10 @@ public class LoginActivity extends AppCompatActivity {
         username = findViewById(R.id.loginUsername);
         password = findViewById(R.id.loginPassword);
         loginButton = findViewById(R.id.loginButton);
-        loginButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
+        loginButton.setOnClickListener(view -> {
 
-                Firebase db = new Firebase(LoginActivity.this);
-                db.loginUser(username.getText().toString(), password.getText().toString()); // log user in
-            }
+            Firebase db = new Firebase(LoginActivity.this);
+            db.loginUser(username.getText().toString(), password.getText().toString()); // log user in
         });
     }
 }

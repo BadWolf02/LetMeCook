@@ -22,16 +22,13 @@ public class SignUpActivity extends AppCompatActivity {
         username = findViewById(R.id.signupUsername);
         password = findViewById(R.id.signupPassword);
         signupButton = findViewById(R.id.signUpButton);
-        signupButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
+        signupButton.setOnClickListener(view -> {
 
-                Firebase db = new Firebase(SignUpActivity.this);
-                boolean signedUp = db.createUser(username.getText().toString(), password.getText().toString()); // add user to database
-                if (signedUp) {
-                    Intent intent = new Intent(SignUpActivity.this, LoginActivity.class);
-                    startActivity(intent);
-                }
+            Firebase db = new Firebase(SignUpActivity.this);
+            boolean signedUp = db.createUser(username.getText().toString(), password.getText().toString()); // add user to database
+            if (signedUp) {
+                Intent intent = new Intent(SignUpActivity.this, LoginActivity.class);
+                startActivity(intent);
             }
         });
     }
