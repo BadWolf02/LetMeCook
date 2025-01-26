@@ -13,7 +13,7 @@
         android:theme="@style/Theme.LetMeCook"
         tools:targetApi="31" >
         <activity
-            android:name=".SignUpActivity"
+            android:name=".LoginActivity"
             android:exported="true"
             >
             <intent-filter>
@@ -22,7 +22,7 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".LoginActivity"
+            android:name=".SignUpActivity"
             android:exported="true" />
         <activity
             android:name=".MainActivity"

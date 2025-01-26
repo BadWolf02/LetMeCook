@@ -2,8 +2,8 @@ package com.example.letmecook;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.Intent;
 import android.os.Bundle;
-import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 
@@ -14,6 +14,7 @@ public class LoginActivity extends AppCompatActivity {
     EditText username;
     EditText password;
     Button loginButton;
+    Button toSignUpButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -23,10 +24,16 @@ public class LoginActivity extends AppCompatActivity {
         username = findViewById(R.id.loginUsername);
         password = findViewById(R.id.loginPassword);
         loginButton = findViewById(R.id.loginButton);
+        toSignUpButton = findViewById(R.id.to_signup);
         loginButton.setOnClickListener(view -> {
 
             Firebase db = new Firebase(LoginActivity.this);
             db.loginUser(username.getText().toString(), password.getText().toString()); // log user in
+        });
+        toSignUpButton.setOnClickListener(view -> {
+            // Navigate to SignUpActivity
+            Intent intent = new Intent(LoginActivity.this, SignUpActivity.class);
+            startActivity(intent);
         });
     }
 }
