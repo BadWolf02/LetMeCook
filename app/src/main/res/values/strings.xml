@@ -1,0 +1,10 @@
+<resources>
+    <string name="app_name">LetMeCook</string>
+    <string name="title_home" />
+    <string name="title_dashboard" />
+    <string name="title_notifications" />
+    <string name="password">Password</string>
+    <string name="login">Login</string>
+    <string name="username">Username</string>
+    <string name="signup">Sign Up</string>
+</resources>

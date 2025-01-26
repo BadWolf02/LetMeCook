@@ -13,3 +13,15 @@
 .externalNativeBuild
 .cxx
 local.properties
+<<<<<<< HEAD
+=======
+
+/.idea*
+gradle.properties
+gradlew
+gradlew.bat
+local.properties
+build.gradle
+settings.gradle
+
+>>>>>>> 3c31734 (actuall reset)
