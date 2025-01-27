@@ -29,11 +29,13 @@ public class LoginActivity extends AppCompatActivity {
 
             Firebase db = new Firebase(LoginActivity.this);
             db.loginUser(username.getText().toString(), password.getText().toString()); // log user in
+            LoginActivity.this.finish(); // close activity
         });
         toSignUpButton.setOnClickListener(view -> {
             // Navigate to SignUpActivity
             Intent intent = new Intent(LoginActivity.this, SignUpActivity.class);
             startActivity(intent);
+            LoginActivity.this.finish();
         });
     }
 }

@@ -27,14 +27,18 @@ public class SignUpActivity extends AppCompatActivity {
 
             Firebase db = new Firebase(SignUpActivity.this);
             boolean signedUp = db.createUser(username.getText().toString(), password.getText().toString()); // add user to database
+            // Proceed to Login after successful sign up
             if (signedUp) {
                 Intent intent = new Intent(SignUpActivity.this, LoginActivity.class);
                 startActivity(intent);
+                SignUpActivity.this.finish();
             }
         });
+        // Switch to Login Activity
         toLoginButton.setOnClickListener(view -> {
             Intent intent = new Intent(SignUpActivity.this, LoginActivity.class);
             startActivity(intent);
+            SignUpActivity.this.finish();
         });
     }
 }
