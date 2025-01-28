@@ -9,12 +9,9 @@ import android.util.Log;
 import android.widget.Toast;
 
 
-import androidx.annotation.NonNull;
-
 import com.example.letmecook.LoginActivity;
 import com.example.letmecook.MainActivity;
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
+import com.example.letmecook.SignUpActivity;
 import com.google.firebase.firestore.*;
 import com.google.firebase.auth.*;
 
@@ -123,6 +120,13 @@ public class Firebase {
                                 Toast.LENGTH_SHORT).show();
                     }
                 });
+    }
+
+    public void signOut() {
+        mAuth.signOut();
+        Intent intent = new Intent(context, LoginActivity.class);
+        context.startActivity(intent);
+        ((Activity) context).finish();
     }
 
     public void sendEmailVerification() {
