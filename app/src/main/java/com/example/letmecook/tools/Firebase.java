@@ -17,6 +17,7 @@ import com.google.firebase.firestore.*;
 import com.google.firebase.auth.*;
 
 import java.util.*;
+import java.util.concurrent.Executor;
 
 public class Firebase {
     FirebaseFirestore db = FirebaseFirestore.getInstance(); // initialise database
@@ -98,9 +99,29 @@ public class Firebase {
                     });
             // [END create_user_with_email]
         }
-    public void loginUserAuth(String username, String password) {
 
+    public void loginUserAuth(String email, String password) {
+        mAuth.signInWithEmailAndPassword(email, password)
+                .addOnCompleteListener((Activity) context, new OnCompleteListener<AuthResult>() {
+                    @Override
+                    public void onComplete(@NonNull Task<AuthResult> task) {
+                        if (task.isSuccessful()) {
+                            // Sign in success, update UI with the signed-in user's information
+                            Log.d(TAG, "signInWithEmail:success");
+                            FirebaseUser user = mAuth.getCurrentUser();
+                            Toast.makeText(context, "Authentication successful.", Toast.LENGTH_SHORT).show();
+                            Intent intent = new Intent(context, MainActivity.class);
+                            context.startActivity(intent);
+                        } else {
+                            // If sign in fails, display a message to the user.
+                            Log.w(TAG, "signInWithEmail:failure", task.getException());
+                            Toast.makeText(context, "Authentication failed.",
+                                    Toast.LENGTH_SHORT).show();
+                        }
+                    }
+                });
     }
+
     public void isLoggedIn() {
         FirebaseUser currentUser = mAuth.getCurrentUser();
         if (currentUser != null) {
