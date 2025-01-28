@@ -9,8 +9,12 @@ import android.util.Log;
 import android.widget.Toast;
 
 
+import androidx.annotation.NonNull;
+
 import com.example.letmecook.LoginActivity;
 import com.example.letmecook.MainActivity;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.*;
 import com.google.firebase.auth.*;
 
@@ -85,8 +89,9 @@ public class Firebase {
                             Log.d(TAG, "createUserWithEmail:success");
                             // FirebaseUser user = mAuth.getCurrentUser();
                             //assert user != null;
-                            Toast.makeText(context, "Account created.", Toast.LENGTH_SHORT).show();
+                            // Toast.makeText(context, "Account created.", Toast.LENGTH_SHORT).show();
                             // Proceed to Login after successful sign up
+                            sendEmailVerification();
                             Intent intent = new Intent(context, LoginActivity.class);
                             context.startActivity(intent);
                             ((Activity) context).finish();
@@ -119,6 +124,19 @@ public class Firebase {
                     }
                 });
     }
+
+    public void sendEmailVerification() {
+        // Send verification email
+        // [START send_email_verification]
+        final FirebaseUser user = mAuth.getCurrentUser();
+        assert user != null;
+        user.sendEmailVerification()
+                .addOnCompleteListener((Activity) context, task -> {
+                    Toast.makeText(context, "Verification email sent to " + user.getEmail(), Toast.LENGTH_SHORT).show();
+                });
+        // [END send_email_verification]
+    }
+
     /*
     public void isLoggedIn() {
         FirebaseUser currentUser = mAuth.getCurrentUser();
