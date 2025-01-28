@@ -11,7 +11,6 @@ import android.widget.Toast;
 
 import com.example.letmecook.LoginActivity;
 import com.example.letmecook.MainActivity;
-import com.example.letmecook.SignUpActivity;
 import com.google.firebase.firestore.*;
 import com.google.firebase.auth.*;
 
@@ -135,9 +134,10 @@ public class Firebase {
         final FirebaseUser user = mAuth.getCurrentUser();
         assert user != null;
         user.sendEmailVerification()
-                .addOnCompleteListener((Activity) context, task -> {
-                    Toast.makeText(context, "Verification email sent to " + user.getEmail(), Toast.LENGTH_SHORT).show();
-                });
+                .addOnCompleteListener((Activity) context, task ->
+                        Toast.makeText(context,
+                        "Verification email sent to " + user.getEmail(),
+                        Toast.LENGTH_SHORT).show());
         // [END send_email_verification]
     }
 
