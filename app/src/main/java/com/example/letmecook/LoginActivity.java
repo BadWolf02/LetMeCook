@@ -2,7 +2,6 @@ package com.example.letmecook;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.os.Bundle;
 import android.widget.Button;
@@ -17,9 +16,15 @@ public class LoginActivity extends AppCompatActivity {
     Button loginButton;
     Button toSignUpButton;
 
-    @SuppressLint("MissingInflatedId")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        Firebase db = new Firebase(LoginActivity.this);
+        // Skips login page if user is already logged in
+        if (db.isLoggedIn()) {
+            Intent intent = new Intent(LoginActivity.this, MainActivity.class);
+            startActivity(intent);
+            LoginActivity.this.finish();
+        }
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
         // Find the fields
@@ -28,10 +33,7 @@ public class LoginActivity extends AppCompatActivity {
         loginButton = findViewById(R.id.loginButton);
         toSignUpButton = findViewById(R.id.to_signup);
         loginButton.setOnClickListener(view -> {
-
-            Firebase db = new Firebase(LoginActivity.this);
             db.loginUserAuth(email.getText().toString(), password.getText().toString()); // log user in
-            //LoginActivity.this.finish(); // close activity
         });
 
         toSignUpButton.setOnClickListener(view -> {

@@ -137,12 +137,10 @@ public class Firebase {
         // [END send_email_verification]
     }
 
-    /*
-    public void isLoggedIn() {
+
+    public boolean isLoggedIn() {
         FirebaseUser currentUser = mAuth.getCurrentUser();
-        if (currentUser != null) {
-            currentUser.reload();
-        }
+        return currentUser != null;
     }
-    */
+
 }
