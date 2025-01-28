@@ -59,8 +59,6 @@ public class Firebase {
                         Intent intent = new Intent(context, MainActivity.class);
                         context.startActivity(intent);
 
-                        // TODO close login?
-
                     } else {
                         // Login failed message
                         Toast.makeText(context, "Invalid username or password", Toast.LENGTH_SHORT).show();
