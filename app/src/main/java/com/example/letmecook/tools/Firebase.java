@@ -2,18 +2,25 @@ package com.example.letmecook.tools;
 
 import static android.content.ContentValues.TAG;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.util.Log;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
+
 import com.example.letmecook.MainActivity;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.*;
+import com.google.firebase.auth.*;
 
 import java.util.*;
 
 public class Firebase {
     FirebaseFirestore db = FirebaseFirestore.getInstance(); // initialise database
+    FirebaseAuth mAuth = FirebaseAuth.getInstance(); // initialise authentication
     private final Context context;
 
     // Constructor to pass activity context
@@ -68,5 +75,36 @@ public class Firebase {
                     // Display errors
                     Toast.makeText(context, "An error occurred: " + e.getMessage(), Toast.LENGTH_SHORT).show();
                 });
+    }
+    public void addUserAuth(String email, String password) {
+            // [START create_user_with_email]
+            mAuth.createUserWithEmailAndPassword(email, password)
+                    .addOnCompleteListener((Activity) context, new OnCompleteListener<AuthResult>() {
+                        @Override
+                        public void onComplete(@NonNull Task<AuthResult> task) {
+                            if (task.isSuccessful()) {
+                                // Sign in success, update UI with the signed-in user's information
+                                Log.d(TAG, "createUserWithEmail:success");
+                                FirebaseUser user = mAuth.getCurrentUser();
+                                //assert user != null;
+                                Toast.makeText(context, "Account created.", Toast.LENGTH_SHORT).show();
+                            } else {
+                                // If sign in fails, display a message to the user.
+                                Log.w(TAG, "createUserWithEmail:failure", task.getException());
+                                Toast.makeText(context, "Account creation failed.",
+                                        Toast.LENGTH_SHORT).show();
+                            }
+                        }
+                    });
+            // [END create_user_with_email]
+        }
+    public void loginUserAuth(String username, String password) {
+
+    }
+    public void isLoggedIn() {
+        FirebaseUser currentUser = mAuth.getCurrentUser();
+        if (currentUser != null) {
+            currentUser.reload();
+        }
     }
 }
