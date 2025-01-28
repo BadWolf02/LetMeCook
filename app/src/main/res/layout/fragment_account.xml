@@ -5,7 +5,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".ui.account.AccountFragment" >
+    android:background="?attr/colorPrimary"
+    tools:context=".ui.account.AccountFragment">
 
     <TextView
         android:id="@+id/text_account"
@@ -16,6 +17,7 @@
         android:layout_marginEnd="8dp"
         android:textAlignment="center"
         android:textSize="20sp"
+        android:textColor="?attr/colorOnPrimary"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
@@ -27,8 +29,8 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="20dp"
         android:layout_marginHorizontal="50dp"
-        android:textColor="@color/black"
-        android:backgroundTint="?android:attr/windowBackground"
+        android:textColor="?attr/colorOnSecondary"
+        android:backgroundTint="?attr/colorSecondaryVariant"
         android:text="@string/sign_out"
         app:layout_constraintTop_toBottomOf="@id/text_account"
         app:layout_constraintStart_toStartOf="parent"
