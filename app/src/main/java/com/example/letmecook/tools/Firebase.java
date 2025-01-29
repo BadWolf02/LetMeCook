@@ -15,6 +15,8 @@ import com.google.firebase.auth.*;
 
 import java.util.Map;
 import java.util.HashMap;
+import java.util.ArrayList;
+import java.util.UUID;
 
 public class Firebase {
     FirebaseFirestore db = FirebaseFirestore.getInstance(); // initialise database
@@ -78,27 +80,39 @@ public class Firebase {
     // Create user using email and password
     public void addUserAuth(String username, String email, String password) {
         Map<String, Object> user = new HashMap<>();
-        // TODO email, username & password restrictions
-        // TODO automatically logs user in when account created. Must fix
+        Map<String, Object> household = new HashMap<>();
         mAuth.createUserWithEmailAndPassword(email, password)
                 .addOnCompleteListener((Activity) context, task -> {
+                    // Sign in success, update UI with the signed-in user's information
                     if (task.isSuccessful()) {
-                        // Sign in success, update UI with the signed-in user's information
                         Log.d(TAG, "createUserWithEmail:success");
-                        // Proceed to Login after successful sign up
-                        sendEmailVerification();
-                        Intent intent = new Intent(context, LoginActivity.class);
-                        context.startActivity(intent);
-                        ((Activity) context).finish();
+                        // TODO put verification back after testing
+                        // sendEmailVerification();
+                        String householdID = UUID.randomUUID().toString();
                         // Create custom user details in Firestore
+                        user.put("uid", mAuth.getCurrentUser().getUid());
                         user.put("username", username);
                         user.put("email", email);
-                        user.put("password", password); // TODO remove
+                        user.put("householdID", householdID);
                         // TODO add more fields as they become necessary
                         db.collection("users")
                                 .add(user)
                                 .addOnSuccessListener(documentReference -> Log.d(TAG, "DocumentSnapshot added with ID: " + documentReference.getId()))
                                 .addOnFailureListener(e -> Log.w(TAG, "Error adding document", e));
+                        // Create new Household
+                        ArrayList<String> members = new ArrayList<>();
+                        members.add(mAuth.getCurrentUser().getUid());
+                        household.put("householdID", householdID);
+                        household.put("members", members);
+                        // TODO add more fields as they become necessary
+                        db.collection("households")
+                                .add(household)
+                                .addOnSuccessListener(documentReference -> Log.d(TAG, "DocumentSnapshot added with ID: " + documentReference.getId()))
+                                .addOnFailureListener(e -> Log.w(TAG, "Error adding document", e));
+                        // Proceed to Login after successful sign up
+                        Intent intent = new Intent(context, LoginActivity.class);
+                        context.startActivity(intent);
+                        ((Activity) context).finish();
                     } else {
                         // If sign in fails, display a message to the user.
                         Log.w(TAG, "createUserWithEmail:failure", task.getException());
@@ -151,6 +165,8 @@ public class Firebase {
                         Toast.LENGTH_SHORT).show());
         // [END send_email_verification]
     }
+
+
 
     public boolean isLoggedIn() {
         FirebaseUser currentUser = mAuth.getCurrentUser();
