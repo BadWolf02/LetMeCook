@@ -20,7 +20,7 @@ public class LoginActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         Firebase db = new Firebase(LoginActivity.this);
         // Skips login page if user is already logged in
-        if (db.isLoggedIn()) {
+        if (db.isLoggedIn() && db.isEmailVerified()) {
             Intent intent = new Intent(LoginActivity.this, MainActivity.class);
             startActivity(intent);
             LoginActivity.this.finish();
