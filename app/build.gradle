@@ -13,6 +13,7 @@ android {
         targetSdk 35
         versionCode 1
         versionName "1.0"
+        resConfigs "en" // English
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
@@ -41,9 +42,10 @@ dependencies {
     implementation libs.navigation.ui
     implementation libs.navigation.fragment
 
-    implementation(platform(libs.firebase.bom))
-    implementation(libs.firebase.firestore) // Add the dependencies for any other desired Firebase products
     // https://firebase.google.com/docs/android/setup#available-libraries
+    implementation(platform(libs.firebase.bom))
+    implementation(libs.firebase.firestore)
+    implementation(libs.firebase.ui.auth)
 
 
     testImplementation libs.junit

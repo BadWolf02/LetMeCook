@@ -11,26 +11,31 @@ import com.example.letmecook.tools.Firebase;
 
 public class LoginActivity extends AppCompatActivity {
     // Declaring variables for each interactable field
-    EditText username;
+    EditText email;
     EditText password;
     Button loginButton;
     Button toSignUpButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        Firebase db = new Firebase(LoginActivity.this);
+        // Skips login page if user is already logged in
+        if (db.isLoggedIn() && db.isEmailVerified()) {
+            Intent intent = new Intent(LoginActivity.this, MainActivity.class);
+            startActivity(intent);
+            LoginActivity.this.finish();
+        }
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
         // Find the fields
-        username = findViewById(R.id.loginUsername);
+        email = findViewById(R.id.loginEmail);
         password = findViewById(R.id.loginPassword);
         loginButton = findViewById(R.id.loginButton);
         toSignUpButton = findViewById(R.id.to_signup);
         loginButton.setOnClickListener(view -> {
-
-            Firebase db = new Firebase(LoginActivity.this);
-            db.loginUser(username.getText().toString(), password.getText().toString()); // log user in
-            LoginActivity.this.finish(); // close activity
+            db.loginUserAuth(email.getText().toString(), password.getText().toString()); // log user in
         });
+
         toSignUpButton.setOnClickListener(view -> {
             // Navigate to SignUpActivity
             Intent intent = new Intent(LoginActivity.this, SignUpActivity.class);
