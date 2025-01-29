@@ -31,11 +31,9 @@ public class Firebase {
     public boolean createUser(String username, String password) {
         Map<String, Object> user = new HashMap<>();
         user.put("username", username);
-        // TODO hash password
         user.put("password", password);
 
         // Password strength check
-        // TODO implement check for existing users & improve password check
         if (password.length() >= 8) {
             // Log information on successful sign up
             // Log information on failed sign up
@@ -80,6 +78,7 @@ public class Firebase {
     // Create user using email and password
     public void addUserAuth(String username, String email, String password) {
         Map<String, Object> user = new HashMap<>();
+        // TODO email, username & password restrictions
         // TODO automatically logs user in when account created. Must fix
         mAuth.createUserWithEmailAndPassword(email, password)
                 .addOnCompleteListener((Activity) context, task -> {
@@ -94,7 +93,8 @@ public class Firebase {
                         // Create custom user details in Firestore
                         user.put("username", username);
                         user.put("email", email);
-                        user.put("password", password);
+                        user.put("password", password); // TODO remove
+                        // TODO add more fields as they become necessary
                         db.collection("users")
                                 .add(user)
                                 .addOnSuccessListener(documentReference -> Log.d(TAG, "DocumentSnapshot added with ID: " + documentReference.getId()))
@@ -111,7 +111,7 @@ public class Firebase {
     public void loginUserAuth(String email, String password) {
         mAuth.signInWithEmailAndPassword(email, password)
                 .addOnCompleteListener((Activity) context, task -> {
-                    if (task.isSuccessful()) {
+                    if (task.isSuccessful() && isEmailVerified()) {
                         // Sign in success, update UI with the signed-in user's information
                         Log.d(TAG, "signInWithEmail:success");
                         // FirebaseUser user = mAuth.getCurrentUser();
@@ -119,10 +119,14 @@ public class Firebase {
                         Intent intent = new Intent(context, MainActivity.class);
                         context.startActivity(intent);
                         ((Activity) context).finish();
+                    } else if (task.isSuccessful() && !isEmailVerified()) {
+                        Log.w(TAG, "signInWithEmail:failure", task.getException());
+                        Toast.makeText(context, "Email not verified.",
+                                Toast.LENGTH_SHORT).show();
                     } else {
                         // If sign in fails, display a message to the user.
                         Log.w(TAG, "signInWithEmail:failure", task.getException());
-                        Toast.makeText(context, "Authentication failed.",
+                        Toast.makeText(context, "Login details incorrect.",
                                 Toast.LENGTH_SHORT).show();
                     }
                 });
@@ -148,10 +152,14 @@ public class Firebase {
         // [END send_email_verification]
     }
 
-
     public boolean isLoggedIn() {
         FirebaseUser currentUser = mAuth.getCurrentUser();
         return currentUser != null;
+    }
+
+    public boolean isEmailVerified() {
+        FirebaseUser currentUser = mAuth.getCurrentUser();
+        return currentUser != null && currentUser.isEmailVerified();
     }
 
 }
