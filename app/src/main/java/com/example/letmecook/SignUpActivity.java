@@ -10,6 +10,7 @@ import com.example.letmecook.tools.Firebase;
 
 public class SignUpActivity extends AppCompatActivity {
     // Declaring variables for each interactable field
+    EditText username;
     EditText email;
     EditText password;
     Button signupButton;
@@ -19,14 +20,19 @@ public class SignUpActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_signup);
         // Find the fields
+        username = findViewById(R.id.signupUsername);
         email = findViewById(R.id.signupEmail);
         password = findViewById(R.id.signupPassword);
         signupButton = findViewById(R.id.signUpButton);
         toLoginButton = findViewById(R.id.to_login);
         signupButton.setOnClickListener(view -> {
-
             Firebase db = new Firebase(SignUpActivity.this);
-            db.addUserAuth(email.getText().toString(), password.getText().toString()); // add user to database
+            // add user to database
+            db.addUserAuth(
+                    username.getText().toString(),
+                    email.getText().toString(),
+                    password.getText().toString()
+            );
         });
         // Switch to Login Activity
         toLoginButton.setOnClickListener(view -> {

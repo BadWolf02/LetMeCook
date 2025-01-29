@@ -37,10 +37,24 @@
                 android:textColor="?attr/colorOnPrimary" />
 
             <EditText
-                android:id="@+id/signupEmail"
+                android:id="@+id/signupUsername"
                 android:layout_width="match_parent"
                 android:layout_height="50dp"
                 android:layout_marginTop="40dp"
+                android:autofillHints=""
+                android:background="@drawable/custom_edittext"
+                android:drawablePadding="8dp"
+                android:hint="@string/username"
+                android:inputType="textPersonName"
+                android:padding="8dp"
+                android:textColor="?attr/colorOnPrimary"
+                android:textColorHighlight="@color/cardview_dark_background" />
+
+            <EditText
+                android:id="@+id/signupEmail"
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:layout_marginTop="20dp"
                 android:autofillHints=""
                 android:background="@drawable/custom_edittext"
                 android:drawablePadding="8dp"

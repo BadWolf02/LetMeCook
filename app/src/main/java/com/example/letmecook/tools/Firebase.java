@@ -8,11 +8,13 @@ import android.content.Intent;
 import android.util.Log;
 import android.widget.Toast;
 
-
 import com.example.letmecook.LoginActivity;
 import com.example.letmecook.MainActivity;
 import com.google.firebase.firestore.*;
 import com.google.firebase.auth.*;
+
+import java.util.Map;
+import java.util.HashMap;
 
 public class Firebase {
     FirebaseFirestore db = FirebaseFirestore.getInstance(); // initialise database
@@ -75,31 +77,36 @@ public class Firebase {
                 });
     }
     */
-
-    public void addUserAuth(String email, String password) {
-            // [START create_user_with_email]
-            mAuth.createUserWithEmailAndPassword(email, password)
-                    .addOnCompleteListener((Activity) context, task -> {
-                        if (task.isSuccessful()) {
-                            // Sign in success, update UI with the signed-in user's information
-                            Log.d(TAG, "createUserWithEmail:success");
-                            // FirebaseUser user = mAuth.getCurrentUser();
-                            //assert user != null;
-                            // Toast.makeText(context, "Account created.", Toast.LENGTH_SHORT).show();
-                            // Proceed to Login after successful sign up
-                            sendEmailVerification();
-                            Intent intent = new Intent(context, LoginActivity.class);
-                            context.startActivity(intent);
-                            ((Activity) context).finish();
-                        } else {
-                            // If sign in fails, display a message to the user.
-                            Log.w(TAG, "createUserWithEmail:failure", task.getException());
-                            Toast.makeText(context, "Account creation failed.",
-                                    Toast.LENGTH_SHORT).show();
-                        }
-                    });
-            // [END create_user_with_email]
-        }
+    // Create user using email and password
+    public void addUserAuth(String username, String email, String password) {
+        Map<String, Object> user = new HashMap<>();
+        // TODO automatically logs user in when account created. Must fix
+        mAuth.createUserWithEmailAndPassword(email, password)
+                .addOnCompleteListener((Activity) context, task -> {
+                    if (task.isSuccessful()) {
+                        // Sign in success, update UI with the signed-in user's information
+                        Log.d(TAG, "createUserWithEmail:success");
+                        // Proceed to Login after successful sign up
+                        sendEmailVerification();
+                        Intent intent = new Intent(context, LoginActivity.class);
+                        context.startActivity(intent);
+                        ((Activity) context).finish();
+                        // Create custom user details in Firestore
+                        user.put("username", username);
+                        user.put("email", email);
+                        user.put("password", password);
+                        db.collection("users")
+                                .add(user)
+                                .addOnSuccessListener(documentReference -> Log.d(TAG, "DocumentSnapshot added with ID: " + documentReference.getId()))
+                                .addOnFailureListener(e -> Log.w(TAG, "Error adding document", e));
+                    } else {
+                        // If sign in fails, display a message to the user.
+                        Log.w(TAG, "createUserWithEmail:failure", task.getException());
+                        Toast.makeText(context, "Account creation failed.",
+                                Toast.LENGTH_SHORT).show();
+                    }
+                });
+    }
 
     public void loginUserAuth(String email, String password) {
         mAuth.signInWithEmailAndPassword(email, password)
