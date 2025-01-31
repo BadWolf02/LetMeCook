@@ -150,8 +150,8 @@ public class Recipe {
             if (this.cusine!=null){
                 recipe.put("cusine", this.cusine);
             }
-            recipesRef.add(recipe).addOnSuccessListener(documentReference -> {
-                Toast.makeText(context , "recipe sucessfully saved", Toast.LENGTH_LONG) ;}).addOnFailureListener(e->{System.err.println("adding recipe failed");});
+            //recipesRef.add(recipe).addOnSuccessListener(documentReference -> {
+                //Toast.makeText(context , "recipe sucessfully saved", Toast.LENGTH_LONG) ;}).addOnFailureListener(e->{System.err.println("adding recipe failed");});
             //TODO figure out how to get this to work, can't really have the context here
         }
 
