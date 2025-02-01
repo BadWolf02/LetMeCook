@@ -6,10 +6,10 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="?attr/colorPrimary"
-    tools:context=".ui.account.AccountFragment">
+    tools:context=".ui.user.UserFragment">
 
     <TextView
-        android:id="@+id/text_account"
+        android:id="@+id/text_user"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
@@ -32,7 +32,7 @@
         android:textColor="?attr/colorOnSecondary"
         android:backgroundTint="?attr/colorSecondaryVariant"
         android:text="@string/sign_out"
-        app:layout_constraintTop_toBottomOf="@id/text_account"
+        app:layout_constraintTop_toBottomOf="@id/text_user"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
 </androidx.constraintlayout.widget.ConstraintLayout>
