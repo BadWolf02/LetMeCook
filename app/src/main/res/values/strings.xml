@@ -1,8 +1,10 @@
 <resources>
     <string name="app_name">LetMeCook</string>
-    <string name="title_home" />
-    <string name="title_dashboard" />
-    <string name="title_account" />
+    <string name="title_home">Home</string>
+    <string name="title_recipes">Recipes</string>
+    <string name="title_calendar">Calendar</string>
+    <string name="title_shopping">Shopping</string>
+    <string name="title_user">User</string>
     <string name="password">Password</string>
     <string name="login">Login</string>
     <string name="username">Username</string>
