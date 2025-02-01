@@ -1,18 +1,16 @@
-package com.example.letmecook.ui.account;
-
-import android.widget.Button;
+package com.example.letmecook.ui.recipes;
 
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
-public class AccountViewModel extends ViewModel {
+public class RecipesViewModel extends ViewModel {
 
     private final MutableLiveData<String> mText;
 
-    public AccountViewModel() {
+    public RecipesViewModel() {
         mText = new MutableLiveData<>();
-        mText.setValue("This is account fragment");
+        mText.setValue("This is recipes fragment");
     }
 
     public LiveData<String> getText() {
