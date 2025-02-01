@@ -122,6 +122,29 @@ public class Firebase {
         // [END send_email_verification]
     }
 
+    public void inviteUser(String userID) {
+        if (userID.length() != 28) {
+            Toast.makeText(context, "Please enter a valid household ID", Toast.LENGTH_SHORT).show();
+        } else {
+            // Toast.makeText(context, "Searching for household...", Toast.LENGTH_SHORT).show();
+            db.collection("users")
+                    .whereEqualTo("uid", userID)
+                    .get().addOnSuccessListener(queryDocumentSnapshots -> {
+                        // TODO implement Logs
+                        if (queryDocumentSnapshots != null && !queryDocumentSnapshots.isEmpty()) {
+                            // User found, retrieve the first matching document
+                            DocumentSnapshot document = queryDocumentSnapshots.getDocuments().get(0);
+                            String foundUser = document.getString("username");
+                            // TODO implement actual invitation logic
+                            Toast.makeText(context, "Invited " + foundUser, Toast.LENGTH_SHORT).show();
+                        } else {
+                            // No user found
+                            Toast.makeText(context, "User not found", Toast.LENGTH_SHORT).show();
+                        }
+                    });
+        }
+    }
+
     public boolean isLoggedIn() {
         FirebaseUser currentUser = mAuth.getCurrentUser();
         return currentUser != null;
