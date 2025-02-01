@@ -5,6 +5,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
@@ -29,11 +30,16 @@ public class UserFragment extends Fragment {
         binding = FragmentUserBinding.inflate(inflater, container, false);
         View root = binding.getRoot();
 
-        final TextView textView = binding.textUser;
+        final TextView textView = binding.textSearchMember;
         userViewModel.getText().observe(getViewLifecycleOwner(), textView::setText);
+
+        EditText searchBar = binding.getRoot().findViewById(R.id.searchBar);
+        Button searchButton = binding.getRoot().findViewById(R.id.searchButton);
+        searchButton.setOnClickListener(view -> db.inviteUser(searchBar.getText().toString()));
 
         Button signOutButton = binding.getRoot().findViewById(R.id.sign_out);
         signOutButton.setOnClickListener(view -> db.signOut());
+
 
         return root;
     }
