@@ -46,6 +46,7 @@ public class Firebase {
                             user.put("uid", mAuth.getCurrentUser().getUid());user.put("username", username);
                             user.put("email", email);
                             user.put("householdID", householdID);
+                            user.put("invites", new ArrayList<>());
                             // TODO add more fields as they become necessary
                             db.collection("users")
                                     .add(user)
@@ -55,6 +56,7 @@ public class Firebase {
                             members.add(mAuth.getCurrentUser().getUid());
                             household.put("householdID", householdID);
                             household.put("members", members);
+                            household.put("invited", new ArrayList<>());
                             // TODO add more fields as they become necessary
                             db.collection("households")
                                     .add(household)
