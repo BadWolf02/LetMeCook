@@ -30,44 +30,22 @@ public class Firebase {
 
     // Create user using email and password
     public void addUserAuth(String username, String email, String password) {
-        Map<String, Object> user = new HashMap<>();
-        Map<String, Object> household = new HashMap<>();
         if (email.isEmpty() || password.isEmpty() || username.isEmpty()) {
             Toast.makeText(context, "Please enter all fields", Toast.LENGTH_SHORT).show();
         } else {
             mAuth.createUserWithEmailAndPassword(email, password)
                     .addOnCompleteListener((Activity) context, task -> {
                         if (task.isSuccessful()) {
-                            // Sign in success, update UI with the signed-in user's informationif (task.isSuccessful()) {
+                            // Sign up success
                             Log.d(TAG, "createUserWithEmail:success");
                             sendEmailVerification();
-                            String householdID = UUID.randomUUID().toString();
-                            // Create custom user details in Firestore
-                            user.put("uid", mAuth.getCurrentUser().getUid());user.put("username", username);
-                            user.put("email", email);
-                            user.put("householdID", householdID);
-                            user.put("invites", new ArrayList<>());
-                            // TODO add more fields as they become necessary
-                            db.collection("users")
-                                    .add(user)
-                                    .addOnSuccessListener(documentReference -> Log.d(TAG, "DocumentSnapshot added with ID: " + documentReference.getId()))
-                                    .addOnFailureListener(e -> Log.w(TAG, "Error adding document", e));// Create new Household
-                            ArrayList<String> members = new ArrayList<>();
-                            members.add(mAuth.getCurrentUser().getUid());
-                            household.put("householdID", householdID);
-                            household.put("members", members);
-                            household.put("invited", new ArrayList<>());
-                            // TODO add more fields as they become necessary
-                            db.collection("households")
-                                    .add(household)
-                                    .addOnSuccessListener(documentReference -> Log.d(TAG, "DocumentSnapshot added with ID: " + documentReference.getId()))
-                                    .addOnFailureListener(e -> Log.w(TAG, "Error adding document", e));
+                            createUserInFirestore(mAuth.getCurrentUser().getUid(), username, email);
                             // Proceed to Login after successful sign up
                             Intent intent = new Intent(context, LoginActivity.class);
                             context.startActivity(intent);
                             ((Activity) context).finish();
                         } else {
-                            // If sign in fails, display a message to the user.
+                            // If sign up fails
                             Log.w(TAG, "createUserWithEmail:failure", task.getException());
                             Toast.makeText(context, "Account creation failed.",
                                     Toast.LENGTH_SHORT).show();
@@ -85,8 +63,8 @@ public class Firebase {
                         if (task.isSuccessful() && isEmailVerified()) {
                             // Sign in success, update UI with the signed-in user's information
                             Log.d(TAG, "signInWithEmail:success");
-                            // FirebaseUser user = mAuth.getCurrentUser();
                             Toast.makeText(context, "Authentication successful.", Toast.LENGTH_SHORT).show();
+                            // Go to Main
                             Intent intent = new Intent(context, MainActivity.class);
                             context.startActivity(intent);
                             ((Activity) context).finish();
@@ -109,6 +87,34 @@ public class Firebase {
         Intent intent = new Intent(context, LoginActivity.class);
         context.startActivity(intent);
         ((Activity) context).finish();
+    }
+
+    public void createUserInFirestore(String uid, String username, String email) {
+        Map<String, Object> user = new HashMap<>();
+        Map<String, Object> household = new HashMap<>();
+
+        String householdID = UUID.randomUUID().toString();
+        // Create custom user details in Firestore
+        user.put("uid", uid);
+        user.put("username", username);
+        user.put("email", email);
+        user.put("householdID", householdID);
+        user.put("invites", new ArrayList<>());
+        // TODO add more fields as they become necessary
+        db.collection("users")
+                .add(user)
+                .addOnSuccessListener(documentReference -> Log.d(TAG, "DocumentSnapshot added with ID: " + documentReference.getId()))
+                .addOnFailureListener(e -> Log.w(TAG, "Error adding document", e));// Create new Household
+        ArrayList<String> members = new ArrayList<>();
+        members.add(mAuth.getCurrentUser().getUid());
+        household.put("householdID", householdID);
+        household.put("members", members);
+        household.put("invited", new ArrayList<>());
+        // TODO add more fields as they become necessary
+        db.collection("households")
+                .add(household)
+                .addOnSuccessListener(documentReference -> Log.d(TAG, "DocumentSnapshot added with ID: " + documentReference.getId()))
+                .addOnFailureListener(e -> Log.w(TAG, "Error adding document", e));
     }
 
     public void sendEmailVerification() {
