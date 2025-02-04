@@ -27,25 +27,68 @@ public class Household {
     }
 
     public void inviteUser(String householdID, String userID) {
-        Query householdQuery = db.collection("users").whereEqualTo("householdID", householdID);
         if (userID.length() != 28) {
             Toast.makeText(context, "Please enter a valid user ID", Toast.LENGTH_SHORT).show();
         } else {
-            Query userQuery = db.collection("users").whereEqualTo("uid", userID);
-            userQuery.get().addOnSuccessListener(queryDocumentSnapshots -> {
-                // TODO implement Logs
-                if (queryDocumentSnapshots != null && !queryDocumentSnapshots.isEmpty()) {
-                    // User found, retrieve the first matching document
-                    DocumentSnapshot userDoc = queryDocumentSnapshots.getDocuments().get(0);
-                    String foundUser = userDoc.getString("username");
-                    // TODO implement invitation logic for household ID rather than userID
-                    userDoc.getReference().update("invites", FieldValue.arrayUnion(mAuth.getCurrentUser().getUid()));
-                    Toast.makeText(context, "Invited " + foundUser, Toast.LENGTH_SHORT).show();
+            getUserByID(userID, userDocument -> {
+                if (userDocument != null) {
+                    String foundUser = userDocument.getString("username");
+                    userDocument.getReference().update(
+                        "invites", FieldValue.arrayUnion(mAuth.getCurrentUser().getUid()))
+                        .addOnSuccessListener(result -> {
+                            Log.d(TAG, "User invited");
+                            Toast.makeText(context, "Invited " + foundUser, Toast.LENGTH_SHORT).show();
+                        });
                 } else {
-                    // No user found
                     Toast.makeText(context, "User not found", Toast.LENGTH_SHORT).show();
                 }
             });
         }
     }
+
+    // Callback to handle asynchronously retrieving a user
+    public interface OnUserRetrievedListener {
+        void onUserRetrieved(DocumentSnapshot userDocument);
+    }
+
+    // Get snapshot for user by uid
+    public void getUserByID(String uid, OnUserRetrievedListener listener) {
+        db.collection("users").
+                whereEqualTo("uid", uid)
+                .get().
+                addOnSuccessListener(queryDocumentSnapshots -> {
+            if (queryDocumentSnapshots != null && !queryDocumentSnapshots.isEmpty()) {
+                // User found, retrieve the first matching document
+                Log.d(TAG, "User found");
+                listener.onUserRetrieved(queryDocumentSnapshots.getDocuments().get(0));
+            } else {
+                Log.e(TAG, "User not found");
+                listener.onUserRetrieved(null);
+            }
+        });
+    }
+
+    // Callback to handle asynchronously retrieving a household
+    public interface OnHouseholdRetrievedListener {
+        void onHouseholdRetrieved(DocumentSnapshot householdDocument);
+    }
+
+    // Get snapshot for household by householdID
+    public void getHouseholdByID(String hid, OnHouseholdRetrievedListener listener) {
+        db.collection("households").
+                whereEqualTo("householdID", hid)
+                .get()
+                .addOnSuccessListener(queryDocumentSnapshots -> {
+            if (queryDocumentSnapshots != null && !queryDocumentSnapshots.isEmpty()) {
+                // Household found, retrieve the first matching document
+                Log.d(TAG, "Household found");
+                listener.onHouseholdRetrieved(queryDocumentSnapshots.getDocuments().get(0));
+            }
+        });
+        Log.e(TAG, "Household not found");
+        listener.onHouseholdRetrieved(null);
+
+    }
+
+
 }
