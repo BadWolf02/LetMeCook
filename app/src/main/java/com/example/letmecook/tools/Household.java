@@ -27,6 +27,8 @@ public class Household {
           Toast.makeText(context, "Please fill both fields", Toast.LENGTH_SHORT).show();
         } else if (userID.length() != 28) { // Standard userID length
             Toast.makeText(context, "Please enter a valid user ID", Toast.LENGTH_SHORT).show();
+        } else if (userID.equals(mAuth.getCurrentUser().getUid())) {
+            Toast.makeText(context, "You cannot invite yourself", Toast.LENGTH_SHORT).show();
         } else {
             getUserByID(userID, userDocument -> {
                 if (userDocument != null) {
