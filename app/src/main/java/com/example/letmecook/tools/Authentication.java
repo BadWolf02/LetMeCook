@@ -18,13 +18,13 @@ import java.util.HashMap;
 import java.util.ArrayList;
 import java.util.UUID;
 
-public class Firebase {
+public class Authentication {
     FirebaseFirestore db = FirebaseFirestore.getInstance(); // initialise database
     FirebaseAuth mAuth = FirebaseAuth.getInstance(); // initialise authentication
     private final Context context;
 
     // Constructor to pass activity context
-    public Firebase(Context context) {
+    public Authentication(Context context) {
         this.context = context;
     }
 
@@ -95,6 +95,7 @@ public class Firebase {
 
         String householdID = UUID.randomUUID().toString();
         // Create custom user details in Firestore
+        // TODO decide on how best to structure Households
         user.put("uid", uid);
         user.put("username", username);
         user.put("email", email);
@@ -131,28 +132,6 @@ public class Firebase {
         // [END send_email_verification]
     }
 
-    public void inviteUser(String userID) {
-        if (userID.length() != 28) {
-            Toast.makeText(context, "Please enter a valid user ID", Toast.LENGTH_SHORT).show();
-        } else {
-            Query userQuery = db.collection("users").whereEqualTo("uid", userID);
-            Query myQuery = db.collection("users").whereEqualTo("uid", mAuth.getCurrentUser().getUid());
-            userQuery.get().addOnSuccessListener(queryDocumentSnapshots -> {
-                    // TODO implement Logs
-                    if (queryDocumentSnapshots != null && !queryDocumentSnapshots.isEmpty()) {
-                        // User found, retrieve the first matching document
-                        DocumentSnapshot userDoc = queryDocumentSnapshots.getDocuments().get(0);
-                        String foundUser = userDoc.getString("username");
-                        // TODO implement invitation logic for household ID rather than userID
-                        userDoc.getReference().update("invites", FieldValue.arrayUnion(mAuth.getCurrentUser().getUid()));
-                        Toast.makeText(context, "Invited " + foundUser, Toast.LENGTH_SHORT).show();
-                    } else {
-                        // No user found
-                        Toast.makeText(context, "User not found", Toast.LENGTH_SHORT).show();
-                    }
-                });
-        }
-    }
 
     public boolean isLoggedIn() {
         FirebaseUser currentUser = mAuth.getCurrentUser();

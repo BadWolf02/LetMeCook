@@ -11,10 +11,11 @@ import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 
-import com.example.letmecook.tools.Firebase;
+import com.example.letmecook.tools.Authentication;
 
 import com.example.letmecook.R;
 import com.example.letmecook.databinding.FragmentUserBinding;
+import com.example.letmecook.tools.Household;
 
 public class UserFragment extends Fragment {
 
@@ -25,7 +26,8 @@ public class UserFragment extends Fragment {
         UserViewModel userViewModel =
                 new ViewModelProvider(this).get(UserViewModel.class);
 
-        Firebase db = new Firebase(requireContext());
+        Authentication auth = new Authentication(requireContext());
+        Household household = new Household(requireContext());
 
         binding = FragmentUserBinding.inflate(inflater, container, false);
         View root = binding.getRoot();
@@ -37,10 +39,10 @@ public class UserFragment extends Fragment {
         EditText householdInput = binding.getRoot().findViewById(R.id.householdInput);
         EditText searchBar = binding.getRoot().findViewById(R.id.searchBar);
         Button searchButton = binding.getRoot().findViewById(R.id.searchButton);
-        searchButton.setOnClickListener(view -> db.inviteUser(householdInput.getText().toString(), searchBar.getText().toString()));
+        searchButton.setOnClickListener(view -> household.inviteUser(householdInput.getText().toString(), searchBar.getText().toString()));
 
         Button signOutButton = binding.getRoot().findViewById(R.id.sign_out);
-        signOutButton.setOnClickListener(view -> db.signOut());
+        signOutButton.setOnClickListener(view -> auth.signOut());
 
 
         return root;
