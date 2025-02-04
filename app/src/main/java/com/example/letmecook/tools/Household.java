@@ -33,10 +33,11 @@ public class Household {
             getUserByID(userID, userDocument -> {
                 if (userDocument != null) {
                     String foundUser = userDocument.getString("username");
+                    // TODO check that user isn't already invited
+                    // TODO check that user is apart of household so they can invite (permissions)
                     // Add current user to invites of target user
-                    // TODO change to add household ID with selected household
                     userDocument.getReference().update(
-                        "invites", FieldValue.arrayUnion(mAuth.getCurrentUser().getUid())
+                        "invites", FieldValue.arrayUnion(householdID)
                             ).addOnSuccessListener(result -> {
                                 Log.d(TAG, "User invited");
                                 Toast.makeText(context, "Invited " + foundUser, Toast.LENGTH_SHORT).show();
