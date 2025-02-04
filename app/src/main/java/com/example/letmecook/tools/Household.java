@@ -12,6 +12,8 @@ import com.google.firebase.auth.*;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FieldValue;
 
+import java.util.Objects;
+
 public class Household {
     FirebaseFirestore db = FirebaseFirestore.getInstance(); // initialise database
     FirebaseAuth mAuth = FirebaseAuth.getInstance(); // initialise authentication
@@ -27,28 +29,21 @@ public class Household {
           Toast.makeText(context, "Please fill both fields", Toast.LENGTH_SHORT).show();
         } else if (userID.length() != 28) { // Standard userID length
             Toast.makeText(context, "Please enter a valid user ID", Toast.LENGTH_SHORT).show();
+        } else if (userID.equals(mAuth.getUid())) {
+            Toast.makeText(context, "You cannot invite yourself", Toast.LENGTH_SHORT).show();
         } else {
             getUserByID(userID, userDocument -> {
                 if (userDocument != null) {
                     String foundUser = userDocument.getString("username");
-                    // Add current user to invites of target user
-                    // TODO change to add household ID with selected household
+                    // TODO check that user is not already invited
+                    // TODO check inviting user is apart of the household
+                    // TODO add name of inviter?
+                    // Add household to invites of target user
                     userDocument.getReference().update(
-                        "invites", FieldValue.arrayUnion(mAuth.getCurrentUser().getUid())
+                        "invites", FieldValue.arrayUnion(householdID)
                             ).addOnSuccessListener(result -> {
                                 Log.d(TAG, "User invited");
                                 Toast.makeText(context, "Invited " + foundUser, Toast.LENGTH_SHORT).show();
-                    });
-                    // Add target user to invited of current user's household
-                    // TODO change to select a household
-                    getHouseholdByID(householdID, householdDocument -> {
-                        if (householdDocument != null) {
-                            householdDocument.getReference().update(
-                                    "invited", FieldValue.arrayUnion(foundUser)
-                            ).addOnSuccessListener(result -> {
-                                        Log.d(TAG, "Household updated");
-                            });
-                        }
                     });
                 } else {
                     Toast.makeText(context, "User not found", Toast.LENGTH_SHORT).show();
