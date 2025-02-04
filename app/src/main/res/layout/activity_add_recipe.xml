@@ -41,13 +41,25 @@
             android:id="@+id/recipe_name_text_a"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="TextView" />
+            android:text="Enter Recipe Name" />
 
         <Button
             android:id="@+id/set_recipe_name_btn_a"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Button" />
+            android:text="Confirm Recipe name" />
+
+        <TextView
+            android:id="@+id/add_step_text"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="add step" />
+
+        <Button
+            android:id="@+id/add_step_btn"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="add step" />
     </LinearLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
