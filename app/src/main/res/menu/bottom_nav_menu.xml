@@ -4,16 +4,26 @@
     <item
         android:id="@+id/navigation_home"
         android:icon="@drawable/ic_home_black_24dp"
-        android:title="@string/title_home"/>
+        android:title="@string/title_home"/> <!-- home page -->
 
     <item
-        android:id="@+id/navigation_dashboard"
-        android:icon="@drawable/ic_dashboard_black_24dp"
-        android:title="@string/title_dashboard"/>
+        android:id="@+id/navigation_recipes"
+        android:icon="@drawable/ic_recipes_black_24dp"
+        android:title="@string/title_recipes"/> <!-- recipes -->
 
     <item
-        android:id="@+id/navigation_notifications"
+        android:id="@+id/navigation_calendar"
+        android:icon="@drawable/ic_calendar_black_24dp"
+        android:title="@string/title_calendar"/> <!-- calendar -->
+
+    <item
+        android:id="@+id/navigation_shopping"
+        android:icon="@drawable/ic_shopping_black_24dp"
+        android:title="@string/title_shopping"/> <!-- shopping -->
+
+    <item
+        android:id="@+id/navigation_user"
         android:icon="@drawable/ic_person_black_24dp"
-        android:title="@string/title_account"/>
+        android:title="@string/title_user"/> <!-- user -->
 
 </menu>

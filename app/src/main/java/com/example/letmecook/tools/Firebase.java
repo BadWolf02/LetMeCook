@@ -15,6 +15,8 @@ import com.google.firebase.auth.*;
 
 import java.util.Map;
 import java.util.HashMap;
+import java.util.ArrayList;
+import java.util.UUID;
 
 public class Firebase {
     FirebaseFirestore db = FirebaseFirestore.getInstance(); // initialise database
@@ -26,110 +28,78 @@ public class Firebase {
         this.context = context;
     }
 
-    /*
-    // Method adds a user to the database
-    public boolean createUser(String username, String password) {
-        Map<String, Object> user = new HashMap<>();
-        user.put("username", username);
-        user.put("password", password);
-
-        // Password strength check
-        if (password.length() >= 8) {
-            // Log information on successful sign up
-            // Log information on failed sign up
-            db.collection("users")
-                    .add(user)
-                    .addOnSuccessListener(documentReference -> Log.d(TAG, "DocumentSnapshot added with ID: " + documentReference.getId()))
-                    .addOnFailureListener(e -> Log.w(TAG, "Error adding document", e));
-
-            Toast.makeText(context, "Sign Up successful!", Toast.LENGTH_SHORT).show();
-            return true;
-        }
-        Toast.makeText(context, "Sign Up failed. Password must be at least 8 characters long", Toast.LENGTH_SHORT).show();
-        return false;
-    }
-    */
-    /*
-    public void loginUser(String username, String password) {
-        db.collection("users")
-                .whereEqualTo("username", username)
-                .whereEqualTo("password", password)
-                .get()
-                .addOnCompleteListener(task -> {
-                    if (task.isSuccessful() && !task.getResult().isEmpty()) { // if success and not empty
-                        // Login successful message
-                        Toast.makeText(context, "Login successful!", Toast.LENGTH_SHORT).show();
-
-                        // Navigate to MainActivity after successful login
-                        Intent intent = new Intent(context, MainActivity.class);
-                        context.startActivity(intent);
-
-                    } else {
-                        // Login failed message
-                        Toast.makeText(context, "Invalid username or password", Toast.LENGTH_SHORT).show();
-                    }
-                })
-                .addOnFailureListener(e -> {
-                    // Display errors
-                    Toast.makeText(context, "An error occurred: " + e.getMessage(), Toast.LENGTH_SHORT).show();
-                });
-    }
-    */
     // Create user using email and password
     public void addUserAuth(String username, String email, String password) {
         Map<String, Object> user = new HashMap<>();
-        // TODO email, username & password restrictions
-        // TODO automatically logs user in when account created. Must fix
-        mAuth.createUserWithEmailAndPassword(email, password)
-                .addOnCompleteListener((Activity) context, task -> {
-                    if (task.isSuccessful()) {
-                        // Sign in success, update UI with the signed-in user's information
-                        Log.d(TAG, "createUserWithEmail:success");
-                        // Proceed to Login after successful sign up
-                        sendEmailVerification();
-                        Intent intent = new Intent(context, LoginActivity.class);
-                        context.startActivity(intent);
-                        ((Activity) context).finish();
-                        // Create custom user details in Firestore
-                        user.put("username", username);
-                        user.put("email", email);
-                        user.put("password", password); // TODO remove
-                        // TODO add more fields as they become necessary
-                        db.collection("users")
-                                .add(user)
-                                .addOnSuccessListener(documentReference -> Log.d(TAG, "DocumentSnapshot added with ID: " + documentReference.getId()))
-                                .addOnFailureListener(e -> Log.w(TAG, "Error adding document", e));
-                    } else {
-                        // If sign in fails, display a message to the user.
-                        Log.w(TAG, "createUserWithEmail:failure", task.getException());
-                        Toast.makeText(context, "Account creation failed.",
-                                Toast.LENGTH_SHORT).show();
-                    }
-                });
+        Map<String, Object> household = new HashMap<>();
+        if (email.isEmpty() || password.isEmpty() || username.isEmpty()) {
+            Toast.makeText(context, "Please enter all fields", Toast.LENGTH_SHORT).show();
+        } else {
+            mAuth.createUserWithEmailAndPassword(email, password)
+                    .addOnCompleteListener((Activity) context, task -> {
+                        if (task.isSuccessful()) {
+                            // Sign in success, update UI with the signed-in user's informationif (task.isSuccessful()) {
+                            Log.d(TAG, "createUserWithEmail:success");
+                            sendEmailVerification();
+                            String householdID = UUID.randomUUID().toString();
+                            // Create custom user details in Firestore
+                            user.put("uid", mAuth.getCurrentUser().getUid());user.put("username", username);
+                            user.put("email", email);
+                            user.put("householdID", householdID);
+                            // TODO add more fields as they become necessary
+                            db.collection("users")
+                                    .add(user)
+                                    .addOnSuccessListener(documentReference -> Log.d(TAG, "DocumentSnapshot added with ID: " + documentReference.getId()))
+                                    .addOnFailureListener(e -> Log.w(TAG, "Error adding document", e));// Create new Household
+                            ArrayList<String> members = new ArrayList<>();
+                            members.add(mAuth.getCurrentUser().getUid());
+                            household.put("householdID", householdID);
+                            household.put("members", members);
+                            // TODO add more fields as they become necessary
+                            db.collection("households")
+                                    .add(household)
+                                    .addOnSuccessListener(documentReference -> Log.d(TAG, "DocumentSnapshot added with ID: " + documentReference.getId()))
+                                    .addOnFailureListener(e -> Log.w(TAG, "Error adding document", e));
+                            // Proceed to Login after successful sign up
+                            Intent intent = new Intent(context, LoginActivity.class);
+                            context.startActivity(intent);
+                            ((Activity) context).finish();
+                        } else {
+                            // If sign in fails, display a message to the user.
+                            Log.w(TAG, "createUserWithEmail:failure", task.getException());
+                            Toast.makeText(context, "Account creation failed.",
+                                    Toast.LENGTH_SHORT).show();
+                        }
+                    });
+        }
     }
 
     public void loginUserAuth(String email, String password) {
-        mAuth.signInWithEmailAndPassword(email, password)
-                .addOnCompleteListener((Activity) context, task -> {
-                    if (task.isSuccessful() && isEmailVerified()) {
-                        // Sign in success, update UI with the signed-in user's information
-                        Log.d(TAG, "signInWithEmail:success");
-                        // FirebaseUser user = mAuth.getCurrentUser();
-                        Toast.makeText(context, "Authentication successful.", Toast.LENGTH_SHORT).show();
-                        Intent intent = new Intent(context, MainActivity.class);
-                        context.startActivity(intent);
-                        ((Activity) context).finish();
-                    } else if (task.isSuccessful() && !isEmailVerified()) {
-                        Log.w(TAG, "signInWithEmail:failure", task.getException());
-                        Toast.makeText(context, "Email not verified.",
-                                Toast.LENGTH_SHORT).show();
-                    } else {
-                        // If sign in fails, display a message to the user.
-                        Log.w(TAG, "signInWithEmail:failure", task.getException());
-                        Toast.makeText(context, "Login details incorrect.",
-                                Toast.LENGTH_SHORT).show();
-                    }
-                });
+        if (email.isEmpty() || password.isEmpty()) {
+            Toast.makeText(context, "Please enter email and password", Toast.LENGTH_SHORT).show();
+        } else {
+            mAuth.signInWithEmailAndPassword(email, password)
+                    .addOnCompleteListener((Activity) context, task -> {
+                        if (task.isSuccessful() && isEmailVerified()) {
+                            // Sign in success, update UI with the signed-in user's information
+                            Log.d(TAG, "signInWithEmail:success");
+                            // FirebaseUser user = mAuth.getCurrentUser();
+                            Toast.makeText(context, "Authentication successful.", Toast.LENGTH_SHORT).show();
+                            Intent intent = new Intent(context, MainActivity.class);
+                            context.startActivity(intent);
+                            ((Activity) context).finish();
+                        } else if (task.isSuccessful() && !isEmailVerified()) {
+                            Log.w(TAG, "signInWithEmail:failure", task.getException());
+                            Toast.makeText(context, "Email not verified.",
+                                    Toast.LENGTH_SHORT).show();
+                        } else {
+                            // If sign in fails, display a message to the user.
+                            Log.w(TAG, "signInWithEmail:failure", task.getException());
+                            Toast.makeText(context, "Login details incorrect.",
+                                    Toast.LENGTH_SHORT).show();
+                        }
+                    });
+        }
     }
 
     public void signOut() {

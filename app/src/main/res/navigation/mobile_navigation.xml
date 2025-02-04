@@ -12,14 +12,26 @@
         tools:layout="@layout/fragment_home" />
 
     <fragment
-        android:id="@+id/navigation_dashboard"
-        android:name="com.example.letmecook.ui.dashboard.DashboardFragment"
-        android:label="@string/title_dashboard"
-        tools:layout="@layout/fragment_dashboard" />
+        android:id="@+id/navigation_recipes"
+        android:name="com.example.letmecook.ui.recipes.RecipesFragment"
+        android:label="@string/title_recipes"
+        tools:layout="@layout/fragment_recipes" />
 
     <fragment
-        android:id="@+id/navigation_notifications"
-        android:name="com.example.letmecook.ui.account.AccountFragment"
-        android:label="@string/title_account"
-        tools:layout="@layout/fragment_account" />
+        android:id="@+id/navigation_calendar"
+        android:name="com.example.letmecook.ui.calendar.CalendarFragment"
+        android:label="@string/title_calendar"
+        tools:layout="@layout/fragment_user" />
+
+    <fragment
+        android:id="@+id/navigation_shopping"
+        android:name="com.example.letmecook.ui.shopping.ShoppingFragment"
+        android:label="@string/title_shopping"
+        tools:layout="@layout/fragment_shopping" />
+
+    <fragment
+        android:id="@+id/navigation_user"
+        android:name="com.example.letmecook.ui.user.UserFragment"
+        android:label="@string/title_user"
+        tools:layout="@layout/fragment_user" />
 </navigation>

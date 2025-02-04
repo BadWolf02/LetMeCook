@@ -1,14 +1,16 @@
 <resources>
     <string name="app_name">LetMeCook</string>
-    <string name="title_home" />
-    <string name="title_dashboard" />
-    <string name="title_account" />
+    <string name="title_home">Home</string>
+    <string name="title_recipes">Recipes</string>
+    <string name="title_calendar">Calendar</string>
+    <string name="title_shopping">Shopping</string>
+    <string name="title_user">User</string>
     <string name="password">Password</string>
     <string name="login">Login</string>
     <string name="username">Username</string>
     <string name="signup">Sign Up</string>
     <string name="sign_out">Sign Out</string>
+    <string name="Scan">Scan</string>
     <string name="email">Email</string>
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="passwordRestriction">Password must be at least 8 characters and contain a number, a lowercase letter and an uppercase character</string>
 </resources>

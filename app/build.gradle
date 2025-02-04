@@ -57,4 +57,8 @@ dependencies {
     androidTestImplementation libs.ext.junit
     androidTestImplementation libs.espresso.core
 
+    // dependency for barcode scanner
+//    implementation libs.play.services.code.scanner
+    implementation libs.barcode.scanning  // for model in app
+
 }

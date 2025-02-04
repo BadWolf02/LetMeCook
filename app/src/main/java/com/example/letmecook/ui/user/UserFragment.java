@@ -1,4 +1,4 @@
-package com.example.letmecook.ui.account;
+package com.example.letmecook.ui.user;
 
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -13,24 +13,24 @@ import androidx.lifecycle.ViewModelProvider;
 import com.example.letmecook.tools.Firebase;
 
 import com.example.letmecook.R;
-import com.example.letmecook.databinding.FragmentAccountBinding;
+import com.example.letmecook.databinding.FragmentUserBinding;
 
-public class AccountFragment extends Fragment {
+public class UserFragment extends Fragment {
 
-    private FragmentAccountBinding binding;
+    private FragmentUserBinding binding;
 
     public View onCreateView(@NonNull LayoutInflater inflater,
             ViewGroup container, Bundle savedInstanceState) {
-        AccountViewModel accountViewModel =
-                new ViewModelProvider(this).get(AccountViewModel.class);
+        UserViewModel userViewModel =
+                new ViewModelProvider(this).get(UserViewModel.class);
 
         Firebase db = new Firebase(requireContext());
 
-        binding = FragmentAccountBinding.inflate(inflater, container, false);
+        binding = FragmentUserBinding.inflate(inflater, container, false);
         View root = binding.getRoot();
 
-        final TextView textView = binding.textAccount;
-        accountViewModel.getText().observe(getViewLifecycleOwner(), textView::setText);
+        final TextView textView = binding.textUser;
+        userViewModel.getText().observe(getViewLifecycleOwner(), textView::setText);
 
         Button signOutButton = binding.getRoot().findViewById(R.id.sign_out);
         signOutButton.setOnClickListener(view -> db.signOut());
