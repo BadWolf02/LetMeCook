@@ -9,12 +9,8 @@ import android.widget.Toast;
 import com.google.firebase.firestore.*;
 import com.google.firebase.auth.*;
 
-import android.util.Log;
-import android.widget.Toast;
-
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FieldValue;
-import com.google.firebase.firestore.Query;
 
 public class Household {
     FirebaseFirestore db = FirebaseFirestore.getInstance(); // initialise database
@@ -27,22 +23,38 @@ public class Household {
     }
 
     public void inviteUser(String householdID, String userID) {
-        if (userID.length() != 28) {
+        if (householdID.isEmpty() || userID.isEmpty()) {
+          Toast.makeText(context, "Please fill both fields", Toast.LENGTH_SHORT).show();
+        } else if (userID.length() != 28) { // Standard userID length
             Toast.makeText(context, "Please enter a valid user ID", Toast.LENGTH_SHORT).show();
         } else {
             getUserByID(userID, userDocument -> {
                 if (userDocument != null) {
                     String foundUser = userDocument.getString("username");
+                    // Add current user to invites of target user
+                    // TODO change to add household ID with selected household
                     userDocument.getReference().update(
-                        "invites", FieldValue.arrayUnion(mAuth.getCurrentUser().getUid()))
-                        .addOnSuccessListener(result -> {
-                            Log.d(TAG, "User invited");
-                            Toast.makeText(context, "Invited " + foundUser, Toast.LENGTH_SHORT).show();
-                        });
+                        "invites", FieldValue.arrayUnion(mAuth.getCurrentUser().getUid())
+                            ).addOnSuccessListener(result -> {
+                                Log.d(TAG, "User invited");
+                                Toast.makeText(context, "Invited " + foundUser, Toast.LENGTH_SHORT).show();
+                    });
+                    // Add target user to invited of current user's household
+                    // TODO change to select a household
+                    getHouseholdByID(householdID, householdDocument -> {
+                        if (householdDocument != null) {
+                            householdDocument.getReference().update(
+                                    "invited", FieldValue.arrayUnion(foundUser)
+                            ).addOnSuccessListener(result -> {
+                                        Log.d(TAG, "Household updated");
+                            });
+                        }
+                    });
                 } else {
                     Toast.makeText(context, "User not found", Toast.LENGTH_SHORT).show();
                 }
             });
+
         }
     }
 
@@ -83,11 +95,11 @@ public class Household {
                 // Household found, retrieve the first matching document
                 Log.d(TAG, "Household found");
                 listener.onHouseholdRetrieved(queryDocumentSnapshots.getDocuments().get(0));
+            } else {
+                Log.e(TAG, "Household not found");
+                listener.onHouseholdRetrieved(null);
             }
         });
-        Log.e(TAG, "Household not found");
-        listener.onHouseholdRetrieved(null);
-
     }
 
 
