@@ -4,6 +4,12 @@
 
     <uses-permission android:name="android.permission.INTERNET" />
 
+<!--    cameraX Permissions-->
+    <uses-feature android:name="android.hardware.camera.any" />
+    <uses-permission android:name="android.permission.CAMERA" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"
+        android:maxSdkVersion="28" />
+
     <application
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
@@ -15,8 +21,19 @@
         android:theme="@style/Theme.LetMeCook"
         tools:targetApi="31">
         <activity
+            android:name=".CameraActivity"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+
+        </activity>
+
+        <activity
             android:name=".ScanActivity"
             android:exported="true" >
+
 
         </activity>
         <!-- auto download barcode scanning to device -->
@@ -28,10 +45,7 @@
         <activity
             android:name=".LoginActivity"
             android:exported="true">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
+
 
         </activity>
         <activity
@@ -39,7 +53,9 @@
             android:exported="true" />
         <activity
             android:name=".MainActivity"
-            android:exported="true" />
+            android:exported="true">
+
+        </activity>
     </application>
 
 </manifest>
