@@ -50,7 +50,7 @@ public class AddRecipe extends AppCompatActivity {
         });
 
         // adding steps
-        EditText add_step = findViewById(R.id.add_step_text);
+        TextView add_step = findViewById(R.id.add_step_text);
 
 
 
