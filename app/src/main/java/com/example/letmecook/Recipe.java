@@ -3,6 +3,7 @@ package com.example.letmecook;
 import static com.firebase.ui.auth.AuthUI.getApplicationContext;
 
 import android.content.Context;
+import android.util.Log;
 import android.widget.Toast;
 
 import java.util.ArrayList;
@@ -28,7 +29,7 @@ public class Recipe {
 
     public Integer allergens;
 
-    public ArrayList<String> steps;
+    public ArrayList<String> steps = new ArrayList<>(); //TODO make sure to initialize all the other variables too in order to be able to use them in the methods without causing null pointer exceptions
     private int stepsAmount;
 
     FirebaseFirestore db = FirebaseFirestore.getInstance();
@@ -42,6 +43,14 @@ public class Recipe {
 
     public void create_recepie(){
 
+    }
+
+    public Integer getStepsAmount (){
+        return this.stepsAmount;
+    }
+
+    public void incrementStepsAmount(){
+        this.stepsAmount += 1;
     }
 
     public void setR_name(String name){
@@ -102,7 +111,11 @@ public class Recipe {
     public void addStep(String text){
         this.stepsAmount += 1;
         StringBuilder step = new StringBuilder();
-        step.append(stepsAmount).append(text);
+        step.append(text).append(String.valueOf(stepsAmount)).toString();
+        if ( step.toString() == ""){
+            Log.d("no string", "no step to add");
+        }
+
         this.steps.add(step.toString());
     }
 
