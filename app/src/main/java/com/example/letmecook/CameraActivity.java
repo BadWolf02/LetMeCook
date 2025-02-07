@@ -2,6 +2,7 @@ package com.example.letmecook;
 
 import android.app.Activity;
 import android.content.ContentValues;
+import android.media.Image;
 import android.os.Build;
 import android.os.Bundle;
 import android.provider.MediaStore;
@@ -10,10 +11,14 @@ import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
 import androidx.annotation.NonNull;
+import androidx.annotation.OptIn;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.camera.core.CameraSelector;
+import androidx.camera.core.ExperimentalGetImage;
+import androidx.camera.core.ImageAnalysis;
 import androidx.camera.core.ImageCapture;
 import androidx.camera.core.ImageCaptureException;
+import androidx.camera.core.ImageProxy;
 import androidx.camera.core.Preview;
 import androidx.camera.lifecycle.ProcessCameraProvider;
 import androidx.camera.view.PreviewView;
@@ -23,12 +28,17 @@ import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
 import com.google.common.util.concurrent.ListenableFuture;
+import com.google.mlkit.vision.barcode.BarcodeScanner;
+import com.google.mlkit.vision.barcode.BarcodeScanning;
+import com.google.mlkit.vision.barcode.common.Barcode;
+import com.google.mlkit.vision.common.InputImage;
 
 import java.util.concurrent.ExecutionException;
 
 public class CameraActivity extends AppCompatActivity {
     ProcessCameraProvider cameraProvider;
     private ImageCapture imageCapture;
+    private ImageAnalysis imageAnalysis;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -40,6 +50,7 @@ public class CameraActivity extends AppCompatActivity {
             return insets;
         });
 
+        // listener to start takePhoto method
         findViewById(R.id.TakePhoto).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -95,6 +106,21 @@ public class CameraActivity extends AppCompatActivity {
 
     }
 
+    private void processBarcodeImage(InputImage inputImage, ImageProxy imageProxy){
+        BarcodeScanner scanner = BarcodeScanning.getClient();       // instance of barcode scanner
+        scanner.process(inputImage).addOnSuccessListener(barcodes -> {
+            for(Barcode barcode : barcodes){
+                String rawValue = barcode.getRawValue();
+                Toast.makeText(this, "Barcode Detected: "+ rawValue, Toast.LENGTH_SHORT).show();
+            }
+            // Close image after processing it
+            imageProxy.close();
+        }).addOnFailureListener(e -> {
+            e.printStackTrace();
+            imageProxy.close();     // double check image is closed
+        });
+    }
+
     private void startCameraX(ProcessCameraProvider cameraProvider){
         CameraSelector cameraSelector = CameraSelector.DEFAULT_BACK_CAMERA;
 
@@ -104,10 +130,28 @@ public class CameraActivity extends AppCompatActivity {
 
         imageCapture = new ImageCapture.Builder().build();
 
+        imageAnalysis = new ImageAnalysis.Builder().
+                setBackpressureStrategy(ImageAnalysis.STRATEGY_KEEP_ONLY_LATEST).build();
+
+        imageAnalysis.setAnalyzer(ContextCompat.getMainExecutor(this), new ImageAnalysis.Analyzer() {
+            @OptIn(markerClass = ExperimentalGetImage.class)
+            @Override
+            public void analyze(@NonNull ImageProxy image) {
+                @SuppressWarnings("UnsafeOptInUsageError")
+                Image mediaImage = image.getImage();
+                if (mediaImage != null){
+                    InputImage inputImage = InputImage.fromMediaImage(
+                            mediaImage, image.getImageInfo().getRotationDegrees()
+                    );
+                    processBarcodeImage(inputImage, image);
+                }
+            }
+        });
+
         try {
             cameraProvider.unbindAll();
 
-            cameraProvider.bindToLifecycle(this, cameraSelector, preview, imageCapture);
+            cameraProvider.bindToLifecycle(this, cameraSelector, preview, imageCapture, imageAnalysis);
         }catch (Exception e){
             e.printStackTrace();
         }
