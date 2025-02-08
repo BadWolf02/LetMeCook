@@ -44,6 +44,8 @@
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string-array name="cusine_dropdown">
+        <item>select cusine type</item>
+        <item>- None -</item>
         <item>Mediteranian</item>
         <item>Greek</item>
         <item>Italian</item>

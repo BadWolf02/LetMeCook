@@ -118,15 +118,37 @@ public class RecipesFragment extends Fragment {
 
         // }
 
-        setOnItemClickListener(new AdapterView.OnItemSelectedListener()) {
-
-            ArrayAdapter<CharSequence> cusine_adapter = ArrayAdapter.createFromResource(this.getContext(), R.array.cusine_dropdown, android.R.layout.simple_spinner_dropdown_item);
-            cusine_adapter.setDropDownViewResource(androidx.appcompat.R.layout.support_simple_spinner_dropdown_item);
-            Spinner cusine_spinner = getView().findViewById(R.id.cusine_dropdown);
-            cusine_spinner.setAdapter(cusine_adapter);
 
 
-        }
+        // get cusine from selection and set it as cusine of the recipe
+        Spinner cusine_spinner = binding.cusineDropdown;
+        cusine_spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener(){
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int pos, long id){
+                String cusine = parent.getItemAtPosition(pos).toString();
+                recipe.setCusine(cusine);
+            }
+            @Override
+            public void onNothingSelected(AdapterView<?> parent){
+
+            }
+        });
+        //set Spinner for cusine
+        ArrayAdapter<CharSequence> cusine_adapter = ArrayAdapter.createFromResource(this.getContext(), R.array.cusine_dropdown, android.R.layout.simple_spinner_dropdown_item);
+        cusine_adapter.setDropDownViewResource(androidx.appcompat.R.layout.support_simple_spinner_dropdown_item);
+        Log.d("spinner", "set dropdown view");
+        // Spinner cusine_spinner = getView().findViewById(R.id.cusine_dropdown); //TODO causing error, null pointer exception, try binding instead of get view by id
+        Log.d("spinner", "got spinner view by id");
+        cusine_spinner.setAdapter(cusine_adapter);
+        Log.d("spinner", "set up adapter");
+
+
+
+
+
+
+
+
 
         return root;
 
