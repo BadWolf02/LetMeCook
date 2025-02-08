@@ -5,6 +5,7 @@ import static android.content.ContentValues.TAG;
 import android.nfc.Tag;
 import android.os.Bundle; //Passes data to the fragment and restores its state after config changes
 import android.text.Editable;
+import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.util.Log;
 import android.view.LayoutInflater; // handles the XML layout file into a View object
@@ -15,15 +16,19 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
+import android.widget.ScrollView;
 import android.widget.Spinner;
 import android.widget.TextView;
 import androidx.annotation.NonNull; //Arguments or return values that cannot be null
+import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.Fragment; //base class for the fragment
 import androidx.lifecycle.ViewModelProvider; //managing ViewModelProvide
 
 import com.example.letmecook.R;
 import com.example.letmecook.Recipe;
 import com.example.letmecook.databinding.FragmentRecipesBinding;
+
+import java.util.ArrayList;
 
 public class RecipesFragment extends Fragment {
 
@@ -97,7 +102,8 @@ public class RecipesFragment extends Fragment {
                     add_step_box.setId(step_no); //TODO
                     add_step_box.setHint("add Step");
                     Log.d("reached", "1");
-                    LinearLayout layout = getView().findViewById(R.id.scrollView); // .layout //TODO figure out what needs to be here instead of dynamic layout? linear maybe
+                    ScrollView scrollView = getView().findViewById(R.id.scrollView);
+                    LinearLayout layout = scrollView.findViewById(R.id.layout); // .layout //TODO figure out what needs to be here instead of dynamic layout? linear maybe
                     Log.d("reached", "2");
                     LinearLayout.LayoutParams editbox_params = new LinearLayout.LayoutParams(
                             ViewGroup.LayoutParams.MATCH_PARENT,
@@ -143,6 +149,47 @@ public class RecipesFragment extends Fragment {
         Log.d("spinner", "set up adapter");
 
 
+
+
+        // dropdown for meal Type
+        Spinner meal_type_dropdown_trigger = binding.mealTypeDropdownTrigger;
+
+        //TODO add list and selectiontracker
+        String[] meal_types = {"breackfast", "lunch", "dinner", "warm meal", "snack", "cold meal", "starter", "desert", "salad", "soup"}; //list of meal types
+        boolean[] selected_meal_type_tracker = new boolean[meal_types.length]; //track which items are selected
+        ArrayList<String> selected_meal_types = new ArrayList<>();
+        //add onClickListener and handle event
+
+//        ArrayAdapter meal_type_adapter = new ArrayAdapter(requireContext(), android.R.layout.simple_spinner_dropdown_item, selected_meal_types);
+//        meal_type_adapter.
+
+        meal_type_dropdown_trigger.setOnTouchListener((v, event) ->{
+            AlertDialog.Builder meal_type_dropdown_builder = new AlertDialog.Builder(requireContext());
+            meal_type_dropdown_builder.setTitle("Meal type");
+
+            meal_type_dropdown_builder.setMultiChoiceItems(meal_types, selected_meal_type_tracker, ((dialog, which, isChecked) -> {
+                if (isChecked) {
+                    selected_meal_types.add(meal_types[which]);
+                }
+                else {
+                    selected_meal_types.remove(meal_types[which]);
+                }
+            }));
+            meal_type_dropdown_builder.setPositiveButton("select", ((dialog, which) -> {
+                ArrayAdapter meal_type_adapter = new ArrayAdapter(requireContext(), android.R.layout.simple_spinner_item, selected_meal_types);
+                meal_type_adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+                meal_type_dropdown_trigger.setAdapter(meal_type_adapter);//meal_type_adapter((TextUtils.join(", ", selected_meal_types)));
+        })); //TODO figure this out
+            meal_type_dropdown_builder.setNegativeButton("unselect", null);
+            AlertDialog meal_type_dropdown = meal_type_dropdown_builder.create();
+            meal_type_dropdown.show();
+
+
+
+
+
+            return true;
+        });
 
 
 
