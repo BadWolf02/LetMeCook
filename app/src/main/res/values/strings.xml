@@ -14,6 +14,8 @@
     <string name="email">Email</string>
     <string name="passwordRestriction">Password must be at least 8 characters and contain a number, a lowercase letter and an uppercase character</string>
     <string-array name="cusine_dropdown">
+        <item>select cusine type</item>
+        <item>- None -</item>
         <item>Mediteranian</item>
         <item>Greek</item>
         <item>Italian</item>
