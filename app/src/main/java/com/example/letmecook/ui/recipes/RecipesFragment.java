@@ -10,9 +10,12 @@ import android.util.Log;
 import android.view.LayoutInflater; // handles the XML layout file into a View object
 import android.view.View;
 import android.view.ViewGroup; // View object that gets displayed by the fragment
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
+import android.widget.Spinner;
 import android.widget.TextView;
 import androidx.annotation.NonNull; //Arguments or return values that cannot be null
 import androidx.fragment.app.Fragment; //base class for the fragment
@@ -27,7 +30,7 @@ public class RecipesFragment extends Fragment {
     private FragmentRecipesBinding binding; // binding object allows interaction with views
     public Recipe recipe = new Recipe();
 
-    private int next_step_index = 1;
+    private int next_step_index = 2; // TODO change this to be fetched dynamically
 
 
     public View onCreateView(@NonNull LayoutInflater inflater,
@@ -94,7 +97,7 @@ public class RecipesFragment extends Fragment {
                     add_step_box.setId(step_no); //TODO
                     add_step_box.setHint("add Step");
                     Log.d("reached", "1");
-                    LinearLayout layout = getView().findViewById(R.id.layout); //TODO figure out what needs to be here instead of dynamic layout? linear maybe
+                    LinearLayout layout = getView().findViewById(R.id.scrollView); // .layout //TODO figure out what needs to be here instead of dynamic layout? linear maybe
                     Log.d("reached", "2");
                     LinearLayout.LayoutParams editbox_params = new LinearLayout.LayoutParams(
                             ViewGroup.LayoutParams.MATCH_PARENT,
@@ -103,6 +106,7 @@ public class RecipesFragment extends Fragment {
                     Log.d("reached", "3");
                     // TODO add the index (starting at 0 of where we want to add the new edit view -> see if I can update this dynamically too depending on what is above
                     layout.addView(add_step_box, next_step_index);
+                    next_step_index ++;
                     Log.e(TAG, "trying to add field");
 
                     // increment step_no when saved
@@ -110,12 +114,19 @@ public class RecipesFragment extends Fragment {
 
 
                     // TODO get it to autoscroll
-                    // todo get the text that was entered to appear in the textbox after adding text
                 });
 
         // }
 
+        setOnItemClickListener(new AdapterView.OnItemSelectedListener()) {
 
+            ArrayAdapter<CharSequence> cusine_adapter = ArrayAdapter.createFromResource(this.getContext(), R.array.cusine_dropdown, android.R.layout.simple_spinner_dropdown_item);
+            cusine_adapter.setDropDownViewResource(androidx.appcompat.R.layout.support_simple_spinner_dropdown_item);
+            Spinner cusine_spinner = getView().findViewById(R.id.cusine_dropdown);
+            cusine_spinner.setAdapter(cusine_adapter);
+
+
+        }
 
         return root;
 

@@ -9,6 +9,7 @@
      >
 
     <ScrollView
+        android:id="@+id/scrollView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         tools:layout_editor_absoluteX="1dp"
@@ -48,6 +49,34 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="add recipe" />
+
+        <EditText
+            android:id="@+id/total_time_text"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:ems="10"
+            android:hint="total time this dish takes to make"
+            android:inputType="time" />
+
+        <EditText
+            android:id="@+id/editTextTime2"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:ems="10"
+            android:hint="active time spent on this recipe"
+            android:inputType="time" />
+
+        <Spinner
+            android:id="@+id/cusine_dropdown"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:spinnerMode="dropdown"
+            tools:listitem="meditaranian" />
+
+        <TextClock
+            android:id="@+id/textClock"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
 
         <EditText
             android:id="@+id/textRecipes"

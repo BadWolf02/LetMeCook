@@ -41,4 +41,12 @@
     <string name="leave_a_review">Leave a Review!</string>
     <string name="ingredient">Ingredient</string>
     <string name="remove_item">Remove Item</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string-array name="cusine_dropdown">
+        <item>Mediteranian</item>
+        <item>Greek</item>
+        <item>Italian</item>
+        <item>Indian</item>
+    </string-array>
 </resources>
