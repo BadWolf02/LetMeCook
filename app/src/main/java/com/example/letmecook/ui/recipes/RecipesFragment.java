@@ -9,6 +9,7 @@ import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.util.Log;
 import android.view.LayoutInflater; // handles the XML layout file into a View object
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup; // View object that gets displayed by the fragment
 import android.widget.AdapterView;
@@ -16,6 +17,7 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
+import android.widget.ListView;
 import android.widget.ScrollView;
 import android.widget.Spinner;
 import android.widget.TextView;
@@ -54,25 +56,7 @@ public class RecipesFragment extends Fragment {
 
         recipesViewModel = new ViewModelProvider(this).get(RecipesViewModel.class);
         EditText edit_r_name = binding.textViewRecipeName;
-        /*
-        recipesViewModel.getText(); // .observe(getViewLifecycleOwner(), edit_r_name::setText);
-        edit_r_name.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
 
-            }
-
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-              //  edit_r_name.setText(s.toString());
-            }
-
-            @Override
-            public void afterTextChanged(Editable s) {
-
-            }
-        });
-        */
 
 
 
@@ -87,7 +71,7 @@ public class RecipesFragment extends Fragment {
                     // allow the user to somehow still eddit the submitted step
                     EditText add_step_text_field = getView().findViewById(R.id.EditText_add_step1); // may have to bind this since it is called from inside oncreate
                     String add_step_text = add_step_text_field.getText().toString();
-                    if ( add_step_text.trim().toString() != "") {
+                    if ( add_step_text.trim() != "") {
                         Log.d("empty string",  add_step_text.toString());
                         recipe.addStep(add_step_text.toString());
             }
@@ -140,7 +124,7 @@ public class RecipesFragment extends Fragment {
             }
         });
         //set Spinner for cusine
-        ArrayAdapter<CharSequence> cusine_adapter = ArrayAdapter.createFromResource(this.getContext(), R.array.cusine_dropdown, android.R.layout.simple_spinner_dropdown_item);
+        ArrayAdapter<CharSequence> cusine_adapter = ArrayAdapter.createFromResource(this.requireContext(), R.array.cusine_dropdown, android.R.layout.simple_spinner_dropdown_item);
         cusine_adapter.setDropDownViewResource(androidx.appcompat.R.layout.support_simple_spinner_dropdown_item);
         Log.d("spinner", "set dropdown view");
         // Spinner cusine_spinner = getView().findViewById(R.id.cusine_dropdown); //TODO causing error, null pointer exception, try binding instead of get view by id
@@ -152,18 +136,20 @@ public class RecipesFragment extends Fragment {
 
 
         // dropdown for meal Type
-        Spinner meal_type_dropdown_trigger = binding.mealTypeDropdownTrigger;
-
+        ListView meal_type_dropdown_trigger = binding.mealTypeDropdownTrigger;
         //TODO add list and selectiontracker
         String[] meal_types = {"breackfast", "lunch", "dinner", "warm meal", "snack", "cold meal", "starter", "desert", "salad", "soup"}; //list of meal types
         boolean[] selected_meal_type_tracker = new boolean[meal_types.length]; //track which items are selected
         ArrayList<String> selected_meal_types = new ArrayList<>();
+        selected_meal_types.add("none");
         //add onClickListener and handle event
-
+        ArrayAdapter meal_type_adapter = new ArrayAdapter(requireContext(), android.R.layout.simple_spinner_item, selected_meal_types);
+        meal_type_dropdown_trigger.setAdapter(meal_type_adapter);
 //        ArrayAdapter meal_type_adapter = new ArrayAdapter(requireContext(), android.R.layout.simple_spinner_dropdown_item, selected_meal_types);
 //        meal_type_adapter.
 
         meal_type_dropdown_trigger.setOnTouchListener((v, event) ->{
+
             AlertDialog.Builder meal_type_dropdown_builder = new AlertDialog.Builder(requireContext());
             meal_type_dropdown_builder.setTitle("Meal type");
 
@@ -176,11 +162,13 @@ public class RecipesFragment extends Fragment {
                 }
             }));
             meal_type_dropdown_builder.setPositiveButton("select", ((dialog, which) -> {
-                ArrayAdapter meal_type_adapter = new ArrayAdapter(requireContext(), android.R.layout.simple_spinner_item, selected_meal_types);
+
                 meal_type_adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
                 meal_type_dropdown_trigger.setAdapter(meal_type_adapter);//meal_type_adapter((TextUtils.join(", ", selected_meal_types)));
         })); //TODO figure this out
-            meal_type_dropdown_builder.setNegativeButton("unselect", null);
+            meal_type_dropdown_builder.setNegativeButton("Cancel", (dialog, whick) -> {
+                dialog.dismiss();
+            });
             AlertDialog meal_type_dropdown = meal_type_dropdown_builder.create();
             meal_type_dropdown.show();
 
