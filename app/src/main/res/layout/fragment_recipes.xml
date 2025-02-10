@@ -8,12 +8,14 @@
     android:visibility="visible"
     tools:context=".ui.recipes.RecipesFragment">
 
+    <!-- androidx.appcompat.widget.AppCompatSpinner -->
+
     <ScrollView
         android:id="@+id/scrollView"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        tools:layout_editor_absoluteX="1dp"
-        tools:layout_editor_absoluteY="189dp">
+        android:layout_width="411dp"
+        android:layout_height="659dp"
+        tools:layout_editor_absoluteX="0dp"
+        tools:layout_editor_absoluteY="72dp">
 
 
         <LinearLayout
@@ -24,6 +26,16 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             tools:layout_editor_absoluteX="1dp">
+
+            <ListView
+                android:id="@+id/meal_type_dropdown_trigger"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@color/white"
+                android:minHeight="48dp"
+                android:text="meal type"
+                android:textColor="@color/black"
+                tools:listitem="choose meal type" />
 
             <EditText
                 android:id="@+id/text_view_recipe_name"
@@ -38,10 +50,10 @@
                 android:hint="add recipe step" />
 
             <Button
-                android:id="@+id/add_recipe_btn"
+                android:id="@+id/add_step_btn"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="add recipe" />
+                android:text="add Step" />
 
             <Spinner
                 android:id="@+id/cusine_dropdown"
@@ -66,15 +78,6 @@
                 android:hint="active time spent on this recipe"
                 android:inputType="time" />
 
-
-            <androidx.appcompat.widget.AppCompatSpinner
-                android:id="@+id/meal_type_dropdown_trigger"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:background="@color/white"
-                android:text="meal type"
-                android:textColor="@color/black"
-                tools:listitem="choose meal type" />
 
             <com.google.android.material.chip.ChipGroup
                 android:layout_width="match_parent"
@@ -105,10 +108,10 @@
                 android:text="TextView" />
 
             <Button
-                android:id="@+id/add_step_btn"
+                android:id="@+id/add_recipe_btn"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="add Step" />
+                android:text="add recipe" />
 
         </LinearLayout>
 
