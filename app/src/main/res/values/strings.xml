@@ -13,6 +13,14 @@
     <string name="Scan">Scan</string>
     <string name="email">Email</string>
     <string name="passwordRestriction">Password must be at least 8 characters and contain a number, a lowercase letter and an uppercase character</string>
+    <string name="take_photo">Take Photo</string>
+    <string name="scan_Barcode">Scan Barcode</string>
+    <string name="start_capture">Start Capture</string>
+    <string name="stop_capture">Stop Capture</string>
+    <string name="search">Search</string>
+    <string name="household_search">Add to your household!</string>
+    <string name="invite">Invite</string>
+    <string name="household">Household</string>
     <string-array name="cusine_dropdown">
         <item>select cusine type</item>
         <item>- None -</item>

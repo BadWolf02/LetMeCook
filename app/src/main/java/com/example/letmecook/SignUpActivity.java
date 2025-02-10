@@ -6,7 +6,7 @@ import android.os.Bundle;
 import android.widget.Button;
 import android.widget.EditText;
 
-import com.example.letmecook.tools.Firebase;
+import com.example.letmecook.tools.Authentication;
 
 public class SignUpActivity extends AppCompatActivity {
     // Declaring variables for each interactable field
@@ -26,7 +26,7 @@ public class SignUpActivity extends AppCompatActivity {
         signupButton = findViewById(R.id.signUpButton);
         toLoginButton = findViewById(R.id.to_login);
         signupButton.setOnClickListener(view -> {
-            Firebase db = new Firebase(SignUpActivity.this);
+            Authentication db = new Authentication(SignUpActivity.this);
             // add user to database
             db.addUserAuth(
                     username.getText().toString(),
