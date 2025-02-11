@@ -36,6 +36,7 @@ public class Household {
                         Toast.makeText(context, "You cannot invite yourself", Toast.LENGTH_SHORT).show();
                         return;
                     }
+                    // Checks if user is already invited
                     ArrayList<String> invites = (ArrayList<String>) userDocument.get("invites");
                     if (invites.contains(householdID)) {
                         Toast.makeText(context, "User is already invited", Toast.LENGTH_SHORT).show();
@@ -45,9 +46,10 @@ public class Household {
                     // TODO change to select a household
                     getHouseholdByID(householdID, householdDocument -> {
                         if (householdDocument != null) {
+                            // Checks that user is a member
                             ArrayList<String> members = (ArrayList<String>) householdDocument.get("members");
-                            if (!members.contains(foundUID)) {
-                                Toast.makeText(context, "User is not apart of this household", Toast.LENGTH_SHORT).show();
+                            if (!members.contains(mAuth.getCurrentUser().getUid())) {
+                                Toast.makeText(context, "You are not apart of this household. No permissions", Toast.LENGTH_SHORT).show();
                                 return;
                             }
                             householdDocument.getReference().update(
@@ -71,6 +73,9 @@ public class Household {
 
         }
     }
+
+
+    // Helper methods
 
     // Callback to handle asynchronously retrieving a user
     public interface OnUserRetrievedListener {
