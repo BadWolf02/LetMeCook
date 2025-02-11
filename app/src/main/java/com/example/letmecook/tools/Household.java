@@ -41,17 +41,19 @@ public class Household {
                         Toast.makeText(context, "User is already invited", Toast.LENGTH_SHORT).show();
                         return;
                     }
-                    // TODO check that user is apart of household so they can invite (permissions)
-
                     // Add target user to invited of current user's household
                     // TODO change to select a household
                     getHouseholdByID(householdID, householdDocument -> {
                         if (householdDocument != null) {
+                            ArrayList<String> members = (ArrayList<String>) householdDocument.get("members");
+                            if (!members.contains(foundUID)) {
+                                Toast.makeText(context, "User is not apart of this household", Toast.LENGTH_SHORT).show();
+                                return;
+                            }
                             householdDocument.getReference().update(
                                     "invited", FieldValue.arrayUnion(username)
                             ).addOnSuccessListener(result -> {
                                         Log.d(TAG, "Household updated");
-                                        return;
                             });
                         }
                     });
