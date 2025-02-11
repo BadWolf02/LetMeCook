@@ -14,6 +14,7 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.*;
 import com.google.firebase.auth.*;
 
+import java.lang.reflect.Array;
 import java.util.Map;
 import java.util.HashMap;
 import java.util.ArrayList;
@@ -114,17 +115,19 @@ public class Authentication {
         user.put("uid", uid);
         user.put("username", username);
         user.put("email", email);
-        user.put("householdID", householdID);
+        ArrayList<String> households = new ArrayList<>();
+        households.add(householdID);
+        user.put("households", households);
         user.put("invites", new ArrayList<>());
         // TODO add more fields as they become necessary
         db.collection("users")
                 .add(user)
                 .addOnSuccessListener(documentReference -> Log.d(TAG, "DocumentSnapshot added with ID: " + documentReference.getId()))
                 .addOnFailureListener(e -> Log.w(TAG, "Error adding document", e));// Create new Household
-        ArrayList<String> members = new ArrayList<>();
-        members.add(mAuth.getCurrentUser().getUid());
         household.put("householdID", householdID);
         household.put("householdName", username + "'s Household");
+        ArrayList<String> members = new ArrayList<>();
+        members.add(mAuth.getCurrentUser().getUid());
         household.put("members", members);
         household.put("invited", new ArrayList<>());
         // TODO add more fields as they become necessary

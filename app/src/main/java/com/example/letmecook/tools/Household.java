@@ -6,16 +6,14 @@ import android.content.Context;
 import android.util.Log;
 import android.widget.Toast;
 
-import com.google.firebase.firestore.*;
 import com.google.firebase.auth.*;
 
-import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FieldValue;
 
 import java.util.ArrayList;
 
 public class Household {
-    FirebaseFirestore db = FirebaseFirestore.getInstance(); // initialise database
+    // FirebaseFirestore db = FirebaseFirestore.getInstance(); // initialise database
     FirebaseAuth mAuth = FirebaseAuth.getInstance(); // initialise authentication
     SearchDB searchDB = new SearchDB();
     private final Context context;
@@ -55,9 +53,7 @@ public class Household {
                             }
                             householdDocument.getReference().update(
                                     "invited", FieldValue.arrayUnion(username)
-                            ).addOnSuccessListener(result -> {
-                                        Log.d(TAG, "Household updated");
-                            });
+                            ).addOnSuccessListener(result -> Log.d(TAG, "Household updated"));
                         }
                     });
                     // Add current user to invites of target user
@@ -74,8 +70,4 @@ public class Household {
 
         }
     }
-
-    // Helper methods
-
-
 }
