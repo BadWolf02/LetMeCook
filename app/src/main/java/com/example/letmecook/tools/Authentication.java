@@ -10,6 +10,7 @@ import android.widget.Toast;
 
 import com.example.letmecook.LoginActivity;
 import com.example.letmecook.MainActivity;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.*;
 import com.google.firebase.auth.*;
 
@@ -17,6 +18,7 @@ import java.util.Map;
 import java.util.HashMap;
 import java.util.ArrayList;
 import java.util.UUID;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 public class Authentication {
     FirebaseFirestore db = FirebaseFirestore.getInstance(); // initialise database
@@ -32,7 +34,9 @@ public class Authentication {
     public void addUserAuth(String username, String email, String password) {
         if (email.isEmpty() || password.isEmpty() || username.isEmpty()) {
             Toast.makeText(context, "Please enter all fields", Toast.LENGTH_SHORT).show();
-        } else {
+        } /* else if (usernameExists(username)) {
+            Toast.makeText(context, "Username already exists", Toast.LENGTH_SHORT).show();
+        } */ else {
             mAuth.createUserWithEmailAndPassword(email, password)
                     .addOnCompleteListener((Activity) context, task -> {
                         if (task.isSuccessful()) {
@@ -143,4 +147,23 @@ public class Authentication {
         return currentUser != null && currentUser.isEmailVerified();
     }
 
+    // Doesn't use a callback as the task needs to return a boolean
+    // https://firebase.blog/posts/2016/09/become-a-firebase-taskmaster-part-3_29/?utm_source=chatgpt.com
+    public Task<Boolean> usernameExists(String username) {
+        // Check if username already exists in Firestore
+        return db.collection("users")
+                .whereEqualTo("username", username)
+                .get()
+                .continueWith(task -> { // returns only when a result is found. Achieves asynchronous behaviour
+                    if (task.isSuccessful() && task.getResult() != null) {
+                        // Check if any documents were returned
+                        return !task.getResult().isEmpty();
+                    } else {
+                        if (!task.isSuccessful()) {
+                            Log.e(TAG, "Error checking username", task.getException());
+                        }
+                        return false;
+                    }
+                });
+    }
 }
