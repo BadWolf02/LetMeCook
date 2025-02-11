@@ -32,33 +32,44 @@ public class Authentication {
 
     // Create user using email and password
     public void addUserAuth(String username, String email, String password) {
+        // Run checks
         if (email.isEmpty() || password.isEmpty() || username.isEmpty()) {
             Toast.makeText(context, "Please enter all fields", Toast.LENGTH_SHORT).show();
-        } /* else if (usernameExists(username)) {
-            Toast.makeText(context, "Username already exists", Toast.LENGTH_SHORT).show();
-        } */ else {
-            mAuth.createUserWithEmailAndPassword(email, password)
-                    .addOnCompleteListener((Activity) context, task -> {
-                        if (task.isSuccessful()) {
-                            // Sign up success
-                            Log.d(TAG, "createUserWithEmail:success");
-                            sendEmailVerification();
-                            createUserInFirestore(mAuth.getCurrentUser().getUid(), username, email);
-                            // Proceed to Login after successful sign up
-                            Intent intent = new Intent(context, LoginActivity.class);
-                            context.startActivity(intent);
-                            ((Activity) context).finish();
-                        } else {
-                            // If sign up fails
-                            Log.w(TAG, "createUserWithEmail:failure", task.getException());
-                            Toast.makeText(context, "Account creation failed.",
-                                    Toast.LENGTH_SHORT).show();
-                        }
-                    });
+            return;
         }
+        // Check if username already exists
+        usernameExists(username).addOnSuccessListener(exists -> {
+            if (exists) {
+                Toast.makeText(context, "Username already exists", Toast.LENGTH_SHORT).show();
+            } else {
+                createUser(username, email, password);
+            }
+        });
+    }
+
+    public void createUser(String username, String email, String password) {
+        mAuth.createUserWithEmailAndPassword(email, password)
+                .addOnCompleteListener((Activity) context, task -> {
+                    if (task.isSuccessful()) {
+                        // Sign up success
+                        Log.d(TAG, "createUserWithEmail:success");
+                        sendEmailVerification();
+                        createUserInFirestore(mAuth.getCurrentUser().getUid(), username, email);
+                        // Proceed to Login after successful sign up
+                        Intent intent = new Intent(context, LoginActivity.class);
+                        context.startActivity(intent);
+                        ((Activity) context).finish();
+                    } else {
+                        // If sign up fails
+                        Log.w(TAG, "createUserWithEmail:failure", task.getException());
+                        Toast.makeText(context, "Account creation failed.",
+                                Toast.LENGTH_SHORT).show();
+                    }
+                });
     }
 
     public void loginUserAuth(String email, String password) {
+        // Run checks
         if (email.isEmpty() || password.isEmpty()) {
             Toast.makeText(context, "Please enter email and password", Toast.LENGTH_SHORT).show();
         } else {
@@ -73,6 +84,7 @@ public class Authentication {
                             context.startActivity(intent);
                             ((Activity) context).finish();
                         } else if (task.isSuccessful() && !isEmailVerified()) {
+                            // Sign in success, email unverified
                             Log.w(TAG, "signInWithEmail:failure", task.getException());
                             Toast.makeText(context, "Email not verified.",
                                     Toast.LENGTH_SHORT).show();
