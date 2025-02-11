@@ -18,7 +18,6 @@ import java.util.Map;
 import java.util.HashMap;
 import java.util.ArrayList;
 import java.util.UUID;
-import java.util.concurrent.atomic.AtomicBoolean;
 
 public class Authentication {
     FirebaseFirestore db = FirebaseFirestore.getInstance(); // initialise database

@@ -17,6 +17,7 @@ import java.util.ArrayList;
 public class Household {
     FirebaseFirestore db = FirebaseFirestore.getInstance(); // initialise database
     FirebaseAuth mAuth = FirebaseAuth.getInstance(); // initialise authentication
+    SearchDB searchDB = new SearchDB();
     private final Context context;
 
     // Constructor to pass activity context
@@ -28,7 +29,7 @@ public class Household {
         if (householdID.isEmpty() || username.isEmpty()) {
           Toast.makeText(context, "Please fill both fields", Toast.LENGTH_SHORT).show();
         } else {
-            getUserDocumentByUsername(username, userDocument -> {
+            searchDB.getUserDocumentByUsernameAsync(username, userDocument -> {
                 if (userDocument != null) {
                     // Checks if user is inviting themselves
                     String foundUID = userDocument.getString("uid");
@@ -44,7 +45,7 @@ public class Household {
                     }
                     // Add target user to invited of current user's household
                     // TODO change to select a household
-                    getHouseholdByID(householdID, householdDocument -> {
+                    searchDB.getHouseholdByIDAsync(householdID, householdDocument -> {
                         if (householdDocument != null) {
                             // Checks that user is a member
                             ArrayList<String> members = (ArrayList<String>) householdDocument.get("members");
@@ -74,52 +75,7 @@ public class Household {
         }
     }
 
-
     // Helper methods
-
-    // Callback to handle asynchronously retrieving a user
-    public interface OnUserRetrievedListener {
-        void onUserRetrieved(DocumentSnapshot userDocument);
-    }
-
-    // Get snapshot for user by uid
-    public void getUserDocumentByUsername(String username, OnUserRetrievedListener listener) {
-        db.collection("users").
-                whereEqualTo("username", username)
-                .get().
-                addOnSuccessListener(queryDocumentSnapshots -> {
-            if (queryDocumentSnapshots != null && !queryDocumentSnapshots.isEmpty()) {
-                // User found, retrieve the first matching document
-                Log.d(TAG, "User found");
-                listener.onUserRetrieved(queryDocumentSnapshots.getDocuments().get(0));
-            } else {
-                Log.e(TAG, "User not found");
-                listener.onUserRetrieved(null);
-            }
-        });
-    }
-
-    // Callback to handle asynchronously retrieving a household
-    public interface OnHouseholdRetrievedListener {
-        void onHouseholdRetrieved(DocumentSnapshot householdDocument);
-    }
-
-    // Get snapshot for household by householdID
-    public void getHouseholdByID(String hid, OnHouseholdRetrievedListener listener) {
-        db.collection("households").
-                whereEqualTo("householdID", hid)
-                .get()
-                .addOnSuccessListener(queryDocumentSnapshots -> {
-            if (queryDocumentSnapshots != null && !queryDocumentSnapshots.isEmpty()) {
-                // Household found, retrieve the first matching document
-                Log.d(TAG, "Household found");
-                listener.onHouseholdRetrieved(queryDocumentSnapshots.getDocuments().get(0));
-            } else {
-                Log.e(TAG, "Household not found");
-                listener.onHouseholdRetrieved(null);
-            }
-        });
-    }
 
 
 }
