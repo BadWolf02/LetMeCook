@@ -30,7 +30,7 @@ public class UserFragment extends Fragment {
                 new ViewModelProvider(this).get(UserViewModel.class);
 
         Authentication auth = new Authentication(requireContext());
-        // Household household = new Household(requireContext());
+        Household household = new Household(requireContext());
 
         binding = FragmentUserBinding.inflate(inflater, container, false);
         View root = binding.getRoot();
@@ -39,10 +39,10 @@ public class UserFragment extends Fragment {
         userViewModel.getText().observe(getViewLifecycleOwner(), textView::setText);
 
         // TODO implement checkbox / force user to click on the household first before inviting
-        // EditText householdInput = binding.getRoot().findViewById(R.id.householdInput);
-        // EditText searchBar = binding.getRoot().findViewById(R.id.searchBar);
-        // Button searchButton = binding.getRoot().findViewById(R.id.searchButton);
-        // searchButton.setOnClickListener(view -> household.inviteUser(householdInput.getText().toString(), searchBar.getText().toString()));
+        EditText householdInput = binding.getRoot().findViewById(R.id.householdInput);
+        EditText searchBar = binding.getRoot().findViewById(R.id.searchBar);
+        Button searchButton = binding.getRoot().findViewById(R.id.searchButton);
+        searchButton.setOnClickListener(view -> household.inviteUser(householdInput.getText().toString(), searchBar.getText().toString()));
 
         Button signOutButton = binding.getRoot().findViewById(R.id.sign_out);
         signOutButton.setOnClickListener(view -> auth.signOut());
