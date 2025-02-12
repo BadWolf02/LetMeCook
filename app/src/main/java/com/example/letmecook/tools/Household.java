@@ -11,6 +11,7 @@ import com.google.firebase.auth.*;
 import com.google.firebase.firestore.FieldValue;
 
 import java.util.ArrayList;
+import java.util.concurrent.atomic.AtomicReference;
 
 public class Household {
     // FirebaseFirestore db = FirebaseFirestore.getInstance(); // initialise database
@@ -67,7 +68,25 @@ public class Household {
                     Toast.makeText(context, "User not found", Toast.LENGTH_SHORT).show();
                 }
             });
-
         }
+    }
+
+    public void acceptInvite(String householdID, String uid) {
+        searchDB.getUserDocumentByIDAsync(uid, userDocument -> {
+            userDocument.getReference().update(
+                    "invites", FieldValue.arrayRemove(householdID)
+            ).addOnSuccessListener(result -> Log.d(TAG, "Household invite removed"));
+            userDocument.getReference().update(
+                    "households", FieldValue.arrayUnion(householdID)
+            ).addOnSuccessListener(result -> Log.d(TAG, "User household added"));
+        });
+        searchDB.getHouseholdByIDAsync(householdID, householdDocument -> {
+            householdDocument.getReference().update(
+                    "invited", FieldValue.arrayRemove(uid)
+            ).addOnSuccessListener(result -> Log.d(TAG, "User invite removed"));
+            householdDocument.getReference().update(
+                    "members", FieldValue.arrayUnion(uid)
+            ).addOnSuccessListener(result -> Log.d(TAG, "Household member added"));
+        });
     }
 }

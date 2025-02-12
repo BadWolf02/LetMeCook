@@ -29,6 +29,16 @@ public class SearchDB {
         return households;
     }
 
+    public AtomicReference<ArrayList<String>> getUserInvites(String uid) {
+        // Must use AtomicReference due to async search
+        AtomicReference<ArrayList<String>> invites = new AtomicReference<>();
+        getUserDocumentByIDAsync(uid, userDocument -> {
+            invites.set(((ArrayList<String>) userDocument.get("invites")));
+            Log.d(TAG, "User invites: " + invites.get());
+        });
+        return invites;
+    }
+
     // Async methods
 
     // Callback to handle asynchronously retrieving a user
