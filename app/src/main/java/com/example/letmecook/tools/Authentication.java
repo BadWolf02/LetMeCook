@@ -119,6 +119,7 @@ public class Authentication {
         households.add(householdID);
         user.put("households", households);
         user.put("invites", new ArrayList<>());
+        user.put("favourite_recipes", new ArrayList<>());
         // TODO add more fields as they become necessary
         db.collection("users")
                 .add(user)
