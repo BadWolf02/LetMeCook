@@ -1,20 +1,18 @@
 package com.example.letmecook;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.widget.Button;
-import android.widget.EditText;
+import android.widget.Toast;
 
-import com.example.letmecook.tools.Authentication;
+import com.example.letmecook.tools.HouseholdAdapter;
 import com.example.letmecook.tools.SearchDB;
-
-import java.util.ArrayList;
-import java.util.concurrent.atomic.AtomicReference;
+import com.google.firebase.auth.FirebaseAuth;
 
 public class TestActivity extends AppCompatActivity {
     // Declaring variables for each interactable field
-    EditText testBar;
     Button testButton;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -22,12 +20,23 @@ public class TestActivity extends AppCompatActivity {
         setContentView(R.layout.activity_test);
 
         SearchDB searchDB = new SearchDB();
+        FirebaseAuth mAuth = FirebaseAuth.getInstance();
+        HouseholdAdapter adapter = new HouseholdAdapter();
 
         // Find the fields
-        testBar = findViewById(R.id.testBar);
         testButton = findViewById(R.id.testButton);
         testButton.setOnClickListener(view -> {
-            searchDB.getUserHouseholds(testBar.getText().toString());
+            searchDB.getUserHouseholdIDs(mAuth.getCurrentUser().getUid(), households -> {
+                if (households != null) {
+                    Toast.makeText(this, households.toString(), Toast.LENGTH_SHORT).show();
+                } else {
+                    Toast.makeText(this, "No households found", Toast.LENGTH_SHORT).show();
+                }
+            });
         });
+
+        RecyclerView recyclerView = findViewById(R.id.recycler_view);
+        recyclerView.setLayoutManager(new LinearLayoutManager(this));
+        recyclerView.setAdapter(adapter);
     }
 }

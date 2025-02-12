@@ -35,8 +35,8 @@ public class UserFragment extends Fragment {
         binding = FragmentUserBinding.inflate(inflater, container, false);
         View root = binding.getRoot();
 
-        final TextView textView = binding.textUser;
-        userViewModel.getText().observe(getViewLifecycleOwner(), textView::setText);
+        // final TextView textView = binding.textUser;
+        // userViewModel.getText().observe(getViewLifecycleOwner(), textView::setText);
 
         // TODO implement checkbox / force user to click on the household first before inviting
         EditText householdInput = binding.getRoot().findViewById(R.id.householdInput);

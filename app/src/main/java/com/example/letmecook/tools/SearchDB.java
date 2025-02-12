@@ -9,7 +9,6 @@ import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.util.ArrayList;
-import java.util.concurrent.atomic.AtomicReference;
 
 public class SearchDB {
     FirebaseFirestore db = FirebaseFirestore.getInstance(); // initialise database
@@ -19,24 +18,33 @@ public class SearchDB {
     public SearchDB() {}
 
     // Methods
-    public AtomicReference<ArrayList<String>> getUserHouseholds(String uid) {
-        // Must use AtomicReference due to async search
-        AtomicReference<ArrayList<String>> households = new AtomicReference<>();
-        getUserDocumentByIDAsync(uid, userDocument -> {
-            households.set(((ArrayList<String>) userDocument.get("households")));
-            Log.d(TAG, "User households: " + households.get());
-        });
-        return households;
+
+    public interface OnUserReturnListener {
+        void onHouseholdRetrieved(ArrayList<String> households);
     }
 
-    public AtomicReference<ArrayList<String>> getUserInvites(String uid) {
-        // Must use AtomicReference due to async search
-        AtomicReference<ArrayList<String>> invites = new AtomicReference<>();
+    public void getUserHouseholdIDs(String uid, OnUserReturnListener listener) {
         getUserDocumentByIDAsync(uid, userDocument -> {
-            invites.set(((ArrayList<String>) userDocument.get("invites")));
-            Log.d(TAG, "User invites: " + invites.get());
+                if (userDocument != null) {
+                    ArrayList<String> households = (ArrayList<String>) userDocument.get("households");
+                    Log.d(TAG, "User households: " + households);
+                    listener.onHouseholdRetrieved(households);
+                } else {
+                    listener.onHouseholdRetrieved(new ArrayList<String>());
+                }
         });
-        return invites;
+    }
+
+    public void getUserInvites(String uid, OnUserReturnListener listener) {
+        getUserDocumentByIDAsync(uid, userDocument -> {
+            if (userDocument != null) {
+                ArrayList<String> invites = (ArrayList<String>) userDocument.get("invites");
+                Log.d(TAG, "User invites: " + invites);
+                listener.onHouseholdRetrieved(invites);
+            } else {
+                listener.onHouseholdRetrieved(new ArrayList<String>());
+            }
+        });
     }
 
     // Async methods
