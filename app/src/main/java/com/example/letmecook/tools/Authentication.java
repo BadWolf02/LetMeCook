@@ -108,10 +108,10 @@ public class Authentication {
     public void createUserInFirestore(String uid, String username, String email) {
         Map<String, Object> user = new HashMap<>();
         Map<String, Object> household = new HashMap<>();
+        Map<String, Object> link = new HashMap<>();
 
         String householdID = UUID.randomUUID().toString();
-        // Create custom user details in Firestore
-        // TODO decide on how best to structure Households
+        // Create user details in Firestore
         user.put("uid", uid);
         user.put("username", username);
         user.put("email", email);
@@ -120,20 +120,26 @@ public class Authentication {
         user.put("households", households);
         user.put("invites", new ArrayList<>());
         user.put("favourite_recipes", new ArrayList<>());
-        // TODO add more fields as they become necessary
         db.collection("users")
                 .add(user)
                 .addOnSuccessListener(documentReference -> Log.d(TAG, "DocumentSnapshot added with ID: " + documentReference.getId()))
                 .addOnFailureListener(e -> Log.w(TAG, "Error adding document", e));// Create new Household
+        // Create household details in Firestore
         household.put("householdID", householdID);
         household.put("householdName", username + "'s Household");
         ArrayList<String> members = new ArrayList<>();
         members.add(mAuth.getCurrentUser().getUid());
         household.put("members", members);
         household.put("invited", new ArrayList<>());
-        // TODO add more fields as they become necessary
         db.collection("households")
                 .add(household)
+                .addOnSuccessListener(documentReference -> Log.d(TAG, "DocumentSnapshot added with ID: " + documentReference.getId()))
+                .addOnFailureListener(e -> Log.w(TAG, "Error adding document", e));
+        // Create link table for users and households
+        link.put("uid", uid);
+        link.put("householdID", householdID);
+        db.collection("users-households")
+                .add(link)
                 .addOnSuccessListener(documentReference -> Log.d(TAG, "DocumentSnapshot added with ID: " + documentReference.getId()))
                 .addOnFailureListener(e -> Log.w(TAG, "Error adding document", e));
     }

@@ -9,12 +9,15 @@ import android.widget.Toast;
 import com.google.firebase.auth.*;
 
 import com.google.firebase.firestore.FieldValue;
+import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.concurrent.atomic.AtomicReference;
 
 public class Household {
-    // FirebaseFirestore db = FirebaseFirestore.getInstance(); // initialise database
+    FirebaseFirestore db = FirebaseFirestore.getInstance(); // initialise database
     FirebaseAuth mAuth = FirebaseAuth.getInstance(); // initialise authentication
     SearchDB searchDB = new SearchDB();
     private final Context context;
@@ -72,6 +75,7 @@ public class Household {
     }
 
     public void acceptInvite(String householdID, String uid) {
+        // Update user document
         searchDB.getUserDocumentByIDAsync(uid, userDocument -> {
             userDocument.getReference().update(
                     "invites", FieldValue.arrayRemove(householdID)
@@ -80,6 +84,7 @@ public class Household {
                     "households", FieldValue.arrayUnion(householdID)
             ).addOnSuccessListener(result -> Log.d(TAG, "User household added"));
         });
+        // Update household document
         searchDB.getHouseholdByIDAsync(householdID, householdDocument -> {
             householdDocument.getReference().update(
                     "invited", FieldValue.arrayRemove(uid)
@@ -88,5 +93,13 @@ public class Household {
                     "members", FieldValue.arrayUnion(uid)
             ).addOnSuccessListener(result -> Log.d(TAG, "Household member added"));
         });
+        // Update link document
+        Map<String, String> newLink = new HashMap<>();
+        newLink.put("uid", uid);
+        newLink.put("householdID", householdID);
+        db.collection("users-households")
+                .add(newLink)
+                .addOnSuccessListener(documentReference -> Log.d(TAG, "DocumentSnapshot added with ID: " + documentReference.getId()))
+                .addOnFailureListener(e -> Log.w(TAG, "Error adding document", e));
     }
 }

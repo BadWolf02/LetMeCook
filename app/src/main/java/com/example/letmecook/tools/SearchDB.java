@@ -9,6 +9,7 @@ import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.util.ArrayList;
+import java.util.Objects;
 
 public class SearchDB {
     FirebaseFirestore db = FirebaseFirestore.getInstance(); // initialise database
@@ -50,12 +51,12 @@ public class SearchDB {
     // Async methods
 
     // Callback to handle asynchronously retrieving a user
-    public interface OnUserRetrievedListener {
-        void onUserRetrieved(DocumentSnapshot userDocument);
+    public interface OnDocumentRetrievedListener {
+        void onDocumentRetrieved(DocumentSnapshot document);
     }
 
     // Get snapshot for user by uid
-    public void getUserDocumentByIDAsync(String uid, OnUserRetrievedListener listener) {
+    public void getUserDocumentByIDAsync(String uid, OnDocumentRetrievedListener listener) {
         db.collection("users")
                 .whereEqualTo("uid", uid)
                 .get()
@@ -63,16 +64,16 @@ public class SearchDB {
                     if (queryDocumentSnapshots != null && !queryDocumentSnapshots.isEmpty()) {
                         // User found, retrieve the first matching document
                         Log.d(TAG, "User found");
-                        listener.onUserRetrieved(queryDocumentSnapshots.getDocuments().get(0));
+                        listener.onDocumentRetrieved(queryDocumentSnapshots.getDocuments().get(0));
                     } else {
                         Log.e(TAG, "User not found");
-                        listener.onUserRetrieved(null);
+                        listener.onDocumentRetrieved(null);
                     }
                 });
     }
 
     // Get snapshot for user by uid
-    public void getUserDocumentByUsernameAsync(String username, OnUserRetrievedListener listener) {
+    public void getUserDocumentByUsernameAsync(String username, OnDocumentRetrievedListener listener) {
         db.collection("users")
                 .whereEqualTo("username", username)
                 .get()
@@ -80,21 +81,16 @@ public class SearchDB {
                     if (queryDocumentSnapshots != null && !queryDocumentSnapshots.isEmpty()) {
                         // User found, retrieve the first matching document
                         Log.d(TAG, "User found");
-                        listener.onUserRetrieved(queryDocumentSnapshots.getDocuments().get(0));
+                        listener.onDocumentRetrieved(queryDocumentSnapshots.getDocuments().get(0));
                     } else {
                         Log.e(TAG, "User not found");
-                        listener.onUserRetrieved(null);
+                        listener.onDocumentRetrieved(null);
                     }
                 });
     }
 
-    // Callback to handle asynchronously retrieving a household
-    public interface OnHouseholdRetrievedListener {
-        void onHouseholdRetrieved(DocumentSnapshot householdDocument);
-    }
-
     // Get snapshot for household by householdID
-    public void getHouseholdByIDAsync(String hid, OnHouseholdRetrievedListener listener) {
+    public void getHouseholdByIDAsync(String hid, OnDocumentRetrievedListener listener) {
         db.collection("households").
                 whereEqualTo("householdID", hid)
                 .get()
@@ -102,11 +98,45 @@ public class SearchDB {
                     if (queryDocumentSnapshots != null && !queryDocumentSnapshots.isEmpty()) {
                         // Household found, retrieve the first matching document
                         Log.d(TAG, "Household found");
-                        listener.onHouseholdRetrieved(queryDocumentSnapshots.getDocuments().get(0));
+                        listener.onDocumentRetrieved(queryDocumentSnapshots.getDocuments().get(0));
                     } else {
                         Log.e(TAG, "Household not found");
-                        listener.onHouseholdRetrieved(null);
+                        listener.onDocumentRetrieved(null);
                     }
                 });
+    }
+
+    // Get snapshot for link by uid or householdID
+    public void getLinkByIDAsync(String id, String type, OnDocumentRetrievedListener listener) {
+        if (Objects.equals(type, "uid")) {
+            db.collection("users-households").
+                    whereEqualTo("uid", id)
+                    .get()
+                    .addOnSuccessListener(queryDocumentSnapshots -> {
+                        if (queryDocumentSnapshots != null && !queryDocumentSnapshots.isEmpty()) {
+                            // Household found, retrieve the first matching document
+                            Log.d(TAG, "Link found");
+                            listener.onDocumentRetrieved(queryDocumentSnapshots.getDocuments().get(0));
+                        } else {
+                            Log.e(TAG, "Link not found");
+                            listener.onDocumentRetrieved(null);
+                        }
+                    });
+        } else if (Objects.equals(type, "hid")) {
+            db.collection("users-households").
+                    whereEqualTo("householdID", id)
+                    .get()
+                    .addOnSuccessListener(queryDocumentSnapshots -> {
+                        if (queryDocumentSnapshots != null && !queryDocumentSnapshots.isEmpty()) {
+                            // Household found, retrieve the first matching document
+                            Log.d(TAG, "Link found");
+                            listener.onDocumentRetrieved(queryDocumentSnapshots.getDocuments().get(0));
+                        } else {
+                            Log.e(TAG, "Link not found");
+                            listener.onDocumentRetrieved(null);
+                        }
+                    });
+        }
+
     }
 }
