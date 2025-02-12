@@ -20,25 +20,20 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.LetMeCook"
         tools:targetApi="31">
+
         <activity
             android:name=".CameraActivity"
             android:exported="true">
-
-
         </activity>
-
         <activity
             android:name=".ScanActivity"
             android:exported="true" >
-
-
         </activity>
         <!-- auto download barcode scanning to device -->
         <meta-data
             android:name="com.google.mlkit.vision.DEPENDENCIES"
             android:value="barcode" />
         <!-- To use multiple models: android:value="barcode,model2,model3" -->
-
         <activity
             android:name=".LoginActivity"
             android:exported="true">
@@ -46,8 +41,6 @@
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
-
-
         </activity>
         <activity
             android:name=".SignUpActivity"
@@ -55,8 +48,10 @@
         <activity
             android:name=".MainActivity"
             android:exported="true">
-
         </activity>
+        <activity
+            android:name=".HouseholdManageActivity"
+            android:exported="true" />
     </application>
 
 </manifest>
