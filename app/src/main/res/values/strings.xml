@@ -24,4 +24,5 @@
     <string name="household_button">Navigate to Household Manager</string>
     <string name="manage_your_household">Manage Your Household</string>
     <string name="manage">Manage</string>
+    <string name="view_invites">View invites</string>
 </resources>

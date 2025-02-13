@@ -14,11 +14,13 @@ import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 
 import com.example.letmecook.HouseholdManageActivity;
+import com.example.letmecook.ViewInviteActivity;
 import com.example.letmecook.tools.Authentication;
 
 import com.example.letmecook.R;
 import com.example.letmecook.databinding.FragmentUserBinding;
 import com.example.letmecook.tools.Household;
+
 
 public class UserFragment extends Fragment {
 
@@ -41,6 +43,12 @@ public class UserFragment extends Fragment {
         Button householdButton = binding.getRoot().findViewById(R.id.householdButton);
         householdButton.setOnClickListener(view -> {
             Intent intent = new Intent(getActivity(), HouseholdManageActivity.class);
+            startActivity(intent);
+        });
+
+        Button inviteButton = binding.getRoot().findViewById(R.id.inviteButton);
+        inviteButton.setOnClickListener(view -> {
+            Intent intent = new Intent(getActivity(), ViewInviteActivity.class);
             startActivity(intent);
         });
 
