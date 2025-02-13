@@ -115,9 +115,7 @@ public class Authentication {
         user.put("uid", uid);
         user.put("username", username);
         user.put("email", email);
-        ArrayList<String> households = new ArrayList<>();
-        households.add(householdID);
-        user.put("households", households);
+        user.put("householdID", householdID);
         user.put("invites", new ArrayList<>());
         user.put("favourite_recipes", new ArrayList<>());
         db.collection("users")

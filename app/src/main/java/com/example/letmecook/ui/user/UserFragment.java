@@ -38,15 +38,14 @@ public class UserFragment extends Fragment {
         // final TextView textView = binding.textUser;
         // userViewModel.getText().observe(getViewLifecycleOwner(), textView::setText);
 
-        // TODO implement checkbox / force user to click on the household first before inviting
-        EditText householdInput = binding.getRoot().findViewById(R.id.householdInput);
-        EditText searchBar = binding.getRoot().findViewById(R.id.searchBar);
-        Button searchButton = binding.getRoot().findViewById(R.id.searchButton);
-        searchButton.setOnClickListener(view -> household.inviteUser(householdInput.getText().toString(), searchBar.getText().toString()));
+        Button householdButton = binding.getRoot().findViewById(R.id.householdButton);
+        householdButton.setOnClickListener(view -> {
+            Intent intent = new Intent(getActivity(), HouseholdManageActivity.class);
+            startActivity(intent);
+        });
 
         Button signOutButton = binding.getRoot().findViewById(R.id.sign_out);
         signOutButton.setOnClickListener(view -> auth.signOut());
-
 
         return root;
     }

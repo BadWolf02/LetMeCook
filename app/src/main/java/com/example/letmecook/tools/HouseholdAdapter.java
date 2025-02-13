@@ -20,7 +20,7 @@ import com.google.firebase.auth.*;
 // https://developer.android.com/develop/ui/views/layout/recyclerview#java
 
 public class HouseholdAdapter extends RecyclerView.Adapter<HouseholdAdapter.ViewHolder> {
-    private final ArrayList<String> userHouseholds = new ArrayList<>();
+    private final ArrayList<String> invitedUsers = new ArrayList<>();
     private final SearchDB searchDB = new SearchDB();
     private final FirebaseAuth mAuth = FirebaseAuth.getInstance();
 
@@ -35,14 +35,20 @@ public class HouseholdAdapter extends RecyclerView.Adapter<HouseholdAdapter.View
     }
 
     private void fetchHouseholds() {
-        searchDB.getUserHouseholdIDs(mAuth.getCurrentUser().getUid(), households -> {
-            if (households != null) {
-                Log.d(TAG, "Fetched households");
-                userHouseholds.clear();
-                userHouseholds.addAll(households);
-                notifyDataSetChanged(); // Refresh RecyclerView after getting data
+        searchDB.getUserHouseholdID(mAuth.getCurrentUser().getUid(), hid -> {
+            if (hid != null) {
+                searchDB.getHouseholdInvites(hid, invited -> {
+                    if (invited != null) {
+                        Log.d(TAG, "Fetched invited users");
+                        invitedUsers.clear();
+                        invitedUsers.addAll(invited);
+                        notifyDataSetChanged(); // Refresh RecyclerView after getting data
+                    } else {
+                        Log.e(TAG, "Invited list is null");
+                    }
+                });
             } else {
-                Log.e(TAG, "Households list is null");
+                Log.e(TAG, "Household ID is null");
             }
         });
     }
@@ -53,7 +59,7 @@ public class HouseholdAdapter extends RecyclerView.Adapter<HouseholdAdapter.View
         public ViewHolder(View view) {
             super(view);
             // Define click listener for the ViewHolder's View
-            textView = (TextView) view.findViewById(R.id.householdText);
+            textView = (TextView) view.findViewById(R.id.inviteText);
         }
 
         public void bind(String householdName) {
@@ -77,15 +83,12 @@ public class HouseholdAdapter extends RecyclerView.Adapter<HouseholdAdapter.View
     public void onBindViewHolder(ViewHolder viewHolder, final int position) {
         // Get element from your dataset at this position and replace the
         // contents of the view with that element
-        viewHolder.bind(userHouseholds.get(position));
+        viewHolder.bind(invitedUsers.get(position));
     }
 
     // Return the size of your dataset (invoked by the layout manager)
     @Override
     public int getItemCount() {
-        if (userHouseholds == null) {
-            return 0;
-        }
-        return userHouseholds.size();
+        return invitedUsers.size();
     }
 }

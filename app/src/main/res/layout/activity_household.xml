@@ -37,6 +37,7 @@
                 android:textStyle="bold"
                 android:textColor="?attr/colorOnPrimary" />
 
+            <!--
             <EditText
                 android:id="@+id/householdInput"
                 android:layout_width="match_parent"
@@ -54,6 +55,7 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/textSearchMember" />
 
+             -->
             <EditText
                 android:id="@+id/searchBar"
                 android:layout_width="match_parent"
@@ -69,7 +71,7 @@
                 android:textColorHighlight="@color/cardview_dark_background"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/householdInput" />
+                app:layout_constraintTop_toBottomOf="@id/textSearchMember" />
 
             <Button
                 android:id="@+id/searchButton"
@@ -83,5 +85,16 @@
                 app:layout_constraintTop_toBottomOf="@id/searchBar" />
         </LinearLayout>
     </androidx.cardview.widget.CardView>
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recycler_view"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="24dp"
+        app:layout_constraintTop_toBottomOf="@id/searchCard"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" >
+
+    </androidx.recyclerview.widget.RecyclerView>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

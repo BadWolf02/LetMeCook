@@ -26,13 +26,7 @@ public class TestActivity extends AppCompatActivity {
         // Find the fields
         testButton = findViewById(R.id.testButton);
         testButton.setOnClickListener(view -> {
-            searchDB.getUserHouseholdIDs(mAuth.getCurrentUser().getUid(), households -> {
-                if (households != null) {
-                    Toast.makeText(this, households.toString(), Toast.LENGTH_SHORT).show();
-                } else {
-                    Toast.makeText(this, "No households found", Toast.LENGTH_SHORT).show();
-                }
-            });
+            Toast.makeText(TestActivity.this, "Testing", Toast.LENGTH_SHORT).show();
         });
 
         RecyclerView recyclerView = findViewById(R.id.recycler_view);

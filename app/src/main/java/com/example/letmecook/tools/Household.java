@@ -26,6 +26,14 @@ public class Household {
         this.context = context;
     }
 
+
+    public void inviteUserSingleHousehold(String username) {
+        String uid = mAuth.getCurrentUser().getUid();
+        searchDB.getUserHouseholdID(uid, householdID -> {
+            inviteUser(householdID, username);
+        });
+    }
+
     public void inviteUser(String householdID, String username) {
         if (householdID.isEmpty() || username.isEmpty()) {
           Toast.makeText(context, "Please fill both fields", Toast.LENGTH_SHORT).show();
@@ -45,7 +53,6 @@ public class Household {
                         return;
                     }
                     // Add target user to invited of current user's household
-                    // TODO change to select a household
                     searchDB.getHouseholdByIDAsync(householdID, householdDocument -> {
                         if (householdDocument != null) {
                             // Checks that user is a member
@@ -121,6 +128,7 @@ public class Household {
                 ).addOnSuccessListener(result -> Log.d(TAG, "Household renamed in household"));
             }
         });
+        // TODO check if works
         searchDB.getLinkByIDAsync(householdID, "hid", householdDocument -> {
             if (householdDocument != null) {
                 householdDocument.getReference().update(

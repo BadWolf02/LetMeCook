@@ -7,7 +7,7 @@
     android:background="?attr/colorPrimaryVariant">
 
     <TextView
-        android:id="@+id/householdText"
+        android:id="@+id/inviteText"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textStyle="bold"

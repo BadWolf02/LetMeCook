@@ -47,59 +47,25 @@
             android:padding="24dp">
 
             <TextView
-                android:id="@+id/textSearchMember"
+                android:id="@+id/textManageHousehold"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="@string/household_search"
+                android:text="@string/manage_your_household"
                 android:textAlignment="center"
                 android:textColor="?attr/colorOnPrimary"
                 android:textSize="24sp"
                 android:textStyle="bold" />
 
-            <EditText
-                android:id="@+id/householdInput"
-                android:layout_width="match_parent"
-                android:layout_height="50dp"
-                android:layout_marginTop="20dp"
-                android:autofillHints=""
-                android:background="@drawable/custom_edittext"
-                android:drawablePadding="8dp"
-                android:hint="@string/household"
-                android:inputType="textNoSuggestions"
-                android:padding="8dp"
-                android:textColor="?attr/colorOnPrimary"
-                android:textColorHighlight="@color/cardview_dark_background"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/textSearchMember" />
-
-            <EditText
-                android:id="@+id/searchBar"
-                android:layout_width="match_parent"
-                android:layout_height="50dp"
-                android:layout_marginTop="20dp"
-                android:autofillHints=""
-                android:background="@drawable/custom_edittext"
-                android:drawablePadding="8dp"
-                android:hint="@string/search"
-                android:inputType="textNoSuggestions"
-                android:padding="8dp"
-                android:textColor="?attr/colorOnPrimary"
-                android:textColorHighlight="@color/cardview_dark_background"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/householdInput" />
-
             <Button
-                android:id="@+id/searchButton"
+                android:id="@+id/householdButton"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="20dp"
                 android:backgroundTint="?attr/colorSecondaryVariant"
-                android:text="@string/invite"
+                android:text="@string/manage"
                 android:textColor="?attr/colorOnSecondary"
                 app:cornerRadius="20dp"
-                app:layout_constraintTop_toBottomOf="@id/searchBar" />
+                app:layout_constraintTop_toBottomOf="@id/textManageHousehold" />
         </LinearLayout>
     </androidx.cardview.widget.CardView>
 

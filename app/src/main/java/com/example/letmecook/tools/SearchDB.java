@@ -20,32 +20,84 @@ public class SearchDB {
 
     // Methods
 
-    public interface OnUserReturnListener {
-        void onHouseholdRetrieved(ArrayList<String> households);
+    // Used for if there are multiple households allowed
+    public interface OnHouseholdsRetrievedListener {
+        void onHouseholdsRetrieved(ArrayList<String> households);
     }
 
-    public void getUserHouseholdIDs(String uid, OnUserReturnListener listener) {
+    public void getUserHouseholdIDs(String uid, OnHouseholdsRetrievedListener listener) {
         getUserDocumentByIDAsync(uid, userDocument -> {
                 if (userDocument != null) {
                     ArrayList<String> households = (ArrayList<String>) userDocument.get("households");
                     Log.d(TAG, "User households: " + households);
-                    listener.onHouseholdRetrieved(households);
+                    listener.onHouseholdsRetrieved(households);
                 } else {
-                    listener.onHouseholdRetrieved(new ArrayList<String>());
+                    listener.onHouseholdsRetrieved(new ArrayList<String>());
                 }
         });
     }
 
-    public void getUserInvites(String uid, OnUserReturnListener listener) {
+    // Used for if there is one household allowed
+    public interface OnHouseholdRetrievedListener {
+        void onHouseholdRetrieved(String hid);
+    }
+
+    public void getUserHouseholdID(String uid, OnHouseholdRetrievedListener listener) {
+        getUserDocumentByIDAsync(uid, userDocument -> {
+           if (userDocument != null) {
+               String hid = (String) userDocument.get("householdID");
+               Log.d(TAG, "User household: " + hid);
+               listener.onHouseholdRetrieved(hid);
+           } else {
+               listener.onHouseholdRetrieved(null);
+           }
+        });
+    }
+
+    public interface OnHouseholdNameRetrievedListener {
+        void onHouseholdNameRetrieved(String householdName);
+    }
+
+    public void getHouseholdName(String uid, OnHouseholdNameRetrievedListener listener) {
+        getUserHouseholdID(uid, hid -> {
+            if (hid != null) {
+                getHouseholdByIDAsync(hid, householdDocument -> {
+                    if (householdDocument != null) {
+                        String householdName = (String) householdDocument.get("householdName");
+                        Log.d(TAG, "Household name: " + householdName);
+                        listener.onHouseholdNameRetrieved(householdName);
+                    } else {
+                        listener.onHouseholdNameRetrieved(null);
+                    }
+                });
+            } else {
+                listener.onHouseholdNameRetrieved(null);
+            }
+        });
+    }
+
+    public void getUserInvites(String uid, OnHouseholdsRetrievedListener listener) {
         getUserDocumentByIDAsync(uid, userDocument -> {
             if (userDocument != null) {
                 ArrayList<String> invites = (ArrayList<String>) userDocument.get("invites");
-                Log.d(TAG, "User invites: " + invites);
-                listener.onHouseholdRetrieved(invites);
+                Log.d(TAG, "Households invited to: " + invites);
+                listener.onHouseholdsRetrieved(invites);
             } else {
-                listener.onHouseholdRetrieved(new ArrayList<String>());
+                listener.onHouseholdsRetrieved(new ArrayList<String>());
             }
         });
+    }
+
+    public void getHouseholdInvites(String hid, OnHouseholdsRetrievedListener listener) {
+        getHouseholdByIDAsync(hid, householdDocument -> {
+            if (householdDocument != null) {
+                ArrayList<String> invited = (ArrayList<String>) householdDocument.get("invited");
+                Log.d(TAG, "Users invited: " + invited);
+                listener.onHouseholdsRetrieved(invited);
+            } else {
+                listener.onHouseholdsRetrieved(new ArrayList<String>());
+            }
+            });
     }
 
     // Async methods
@@ -90,7 +142,7 @@ public class SearchDB {
     }
 
     // Get snapshot for household by householdID
-    public void getHouseholdByIDAsync(String hid, OnDocumentRetrievedListener listener) {
+    public void getHouseholdByIDAsync(Object hid, OnDocumentRetrievedListener listener) {
         db.collection("households").
                 whereEqualTo("householdID", hid)
                 .get()
