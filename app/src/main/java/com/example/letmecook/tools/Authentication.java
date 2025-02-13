@@ -138,6 +138,7 @@ public class Authentication {
         // Create link table for users and households
         link.put("uid", uid);
         link.put("householdID", householdID);
+        link.put("householdName", username + "'s Household");
         db.collection("users-households")
                 .add(link)
                 .addOnSuccessListener(documentReference -> Log.d(TAG, "DocumentSnapshot added with ID: " + documentReference.getId()))

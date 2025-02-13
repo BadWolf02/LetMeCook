@@ -14,7 +14,6 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.concurrent.atomic.AtomicReference;
 
 public class Household {
     FirebaseFirestore db = FirebaseFirestore.getInstance(); // initialise database
@@ -101,5 +100,33 @@ public class Household {
                 .add(newLink)
                 .addOnSuccessListener(documentReference -> Log.d(TAG, "DocumentSnapshot added with ID: " + documentReference.getId()))
                 .addOnFailureListener(e -> Log.w(TAG, "Error adding document", e));
+    }
+
+    public void deleteInvite(String householdID, String uid) {
+        searchDB.getUserDocumentByIDAsync(uid, userDocument ->
+                userDocument.getReference().update(
+                "invites", FieldValue.arrayRemove(householdID)
+                ).addOnSuccessListener(result -> Log.d(TAG, "Household invite removed")));
+        searchDB.getHouseholdByIDAsync(householdID, householdDocument ->
+                householdDocument.getReference().update(
+                "invited", FieldValue.arrayRemove(uid)
+                ).addOnSuccessListener(result -> Log.d(TAG, "User invite removed")));
+    }
+
+    public void renameHousehold(String householdID, String newName) {
+        searchDB.getHouseholdByIDAsync(householdID, householdDocument -> {
+            if (householdDocument != null) {
+                householdDocument.getReference().update(
+                        "householdName", newName
+                ).addOnSuccessListener(result -> Log.d(TAG, "Household renamed in household"));
+            }
+        });
+        searchDB.getLinkByIDAsync(householdID, "hid", householdDocument -> {
+            if (householdDocument != null) {
+                householdDocument.getReference().update(
+                        "householdName", newName
+                ).addOnSuccessListener(result -> Log.d(TAG, "Household renamed in link"));
+            }
+        });
     }
 }
