@@ -27,7 +27,6 @@ public class UsersInvitedAdapter extends RecyclerView.Adapter<UsersInvitedAdapte
 
     /**
      * Initialize the dataset of the Adapter
-     *
      * userHouseholds ArrayList<String> containing the data to populate views to be used
      * by RecyclerView
      */

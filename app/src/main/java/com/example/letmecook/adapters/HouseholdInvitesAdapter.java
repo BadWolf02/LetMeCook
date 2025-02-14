@@ -33,7 +33,6 @@ public class HouseholdInvitesAdapter extends RecyclerView.Adapter<HouseholdInvit
 
     /**
      * Initialize the dataset of the Adapter
-     *
      * myInvites ArrayList<String> containing the data to populate views to be used
      * by RecyclerView
      */

@@ -8,7 +8,6 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import android.os.Bundle;
 import android.util.Log;
-import android.widget.Button;
 
 import com.example.letmecook.adapters.HouseholdInvitesAdapter;
 import com.example.letmecook.db_tools.Household;

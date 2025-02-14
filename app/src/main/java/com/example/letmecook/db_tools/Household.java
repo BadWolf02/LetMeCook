@@ -12,12 +12,8 @@ import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Map;
 
 public class Household {
-    FirebaseFirestore db = FirebaseFirestore.getInstance(); // initialise database
     FirebaseAuth mAuth = FirebaseAuth.getInstance(); // initialise authentication
     SearchDB searchDB = new SearchDB();
     private final Context context;
@@ -30,9 +26,7 @@ public class Household {
 
     public void inviteUserSingleHousehold(String username) {
         String uid = mAuth.getCurrentUser().getUid();
-        searchDB.getUserHouseholdID(uid, householdID -> {
-            inviteUser(householdID, username);
-        });
+        searchDB.getUserHouseholdID(uid, householdID -> inviteUser(householdID, username));
     }
 
     public void inviteUser(String householdID, String username) {

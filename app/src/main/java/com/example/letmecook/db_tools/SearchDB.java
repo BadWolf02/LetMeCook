@@ -13,7 +13,6 @@ import java.util.Objects;
 
 public class SearchDB {
     FirebaseFirestore db = FirebaseFirestore.getInstance(); // initialise database
-    FirebaseAuth mAuth = FirebaseAuth.getInstance(); // initialise authentication
 
     // Constructor
     public SearchDB() {}
@@ -32,7 +31,7 @@ public class SearchDB {
                     Log.d(TAG, "User households: " + households);
                     listener.onHouseholdsRetrieved(households);
                 } else {
-                    listener.onHouseholdsRetrieved(new ArrayList<String>());
+                    listener.onHouseholdsRetrieved(new ArrayList<>());
                 }
         });
     }
@@ -83,7 +82,7 @@ public class SearchDB {
                 Log.d(TAG, "Households invited to: " + invites);
                 listener.onHouseholdsRetrieved(invites);
             } else {
-                listener.onHouseholdsRetrieved(new ArrayList<String>());
+                listener.onHouseholdsRetrieved(new ArrayList<>());
             }
         });
     }
@@ -95,7 +94,7 @@ public class SearchDB {
                 Log.d(TAG, "Users invited: " + invited);
                 listener.onHouseholdsRetrieved(invited);
             } else {
-                listener.onHouseholdsRetrieved(new ArrayList<String>());
+                listener.onHouseholdsRetrieved(new ArrayList<>());
             }
             });
     }
@@ -108,7 +107,7 @@ public class SearchDB {
                 listener.onHouseholdsRetrieved(members);
             } else {
                 Log.e(TAG, "Household not found");
-                listener.onHouseholdsRetrieved(new ArrayList<String>());
+                listener.onHouseholdsRetrieved(new ArrayList<>());
             }
         });
     }

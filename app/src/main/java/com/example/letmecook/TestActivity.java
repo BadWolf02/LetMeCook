@@ -25,9 +25,7 @@ public class TestActivity extends AppCompatActivity {
 
         // Find the fields
         testButton = findViewById(R.id.testButton);
-        testButton.setOnClickListener(view -> {
-            Toast.makeText(TestActivity.this, "Testing", Toast.LENGTH_SHORT).show();
-        });
+        testButton.setOnClickListener(view -> Toast.makeText(TestActivity.this, "Testing", Toast.LENGTH_SHORT).show());
 
         RecyclerView recyclerView = findViewById(R.id.recycler_view);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
