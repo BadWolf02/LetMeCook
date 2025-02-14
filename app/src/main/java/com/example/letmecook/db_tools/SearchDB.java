@@ -100,6 +100,19 @@ public class SearchDB {
             });
     }
 
+    public void getHouseholdMembers(String hid, OnHouseholdsRetrievedListener listener) {
+        getHouseholdByIDAsync(hid, householdDocument -> {
+            if (householdDocument != null) {
+                ArrayList<String> members = (ArrayList<String>) householdDocument.get("members");
+                Log.d(TAG, "Members: " + members);
+                listener.onHouseholdsRetrieved(members);
+            } else {
+                Log.e(TAG, "Household not found");
+                listener.onHouseholdsRetrieved(new ArrayList<String>());
+            }
+        });
+    }
+
     // Async methods
 
     // Callback to handle asynchronously retrieving a user

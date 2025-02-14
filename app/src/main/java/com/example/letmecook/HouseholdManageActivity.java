@@ -9,6 +9,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
+import com.example.letmecook.adapters.MembersAdapter;
 import com.google.firebase.auth.*;
 
 import com.example.letmecook.db_tools.Household;
@@ -30,7 +31,8 @@ public class HouseholdManageActivity extends AppCompatActivity {
         FirebaseAuth mAuth = FirebaseAuth.getInstance();
         SearchDB searchDB = new SearchDB();
         Household household = new Household(HouseholdManageActivity.this);
-        UsersInvitedAdapter adapter = new UsersInvitedAdapter();
+        UsersInvitedAdapter invitesAdapter = new UsersInvitedAdapter();
+        MembersAdapter membersAdapter = new MembersAdapter();
 
         name = findViewById(R.id.name);
         id = findViewById(R.id.id);
@@ -43,8 +45,12 @@ public class HouseholdManageActivity extends AppCompatActivity {
                 household.inviteUserSingleHousehold(searchBar.getText().toString())
         );
 
-        RecyclerView recyclerView = findViewById(R.id.recycler_view);
-        recyclerView.setLayoutManager(new LinearLayoutManager(this));
-        recyclerView.setAdapter(adapter);
+        RecyclerView membersRecyclerView = findViewById(R.id.members_recycler_view);
+        membersRecyclerView.setLayoutManager(new LinearLayoutManager(this));
+        membersRecyclerView.setAdapter(membersAdapter);
+
+        RecyclerView invitesRecyclerView = findViewById(R.id.invites_recycler_view);
+        invitesRecyclerView.setLayoutManager(new LinearLayoutManager(this));
+        invitesRecyclerView.setAdapter(invitesAdapter);
     }
 }
