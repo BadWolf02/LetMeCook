@@ -7,6 +7,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.view.View;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
@@ -107,11 +108,14 @@ public class CameraActivity extends AppCompatActivity {
     }
 
     private void processBarcodeImage(InputImage inputImage, ImageProxy imageProxy){
+        TextView barcodeResult = findViewById(R.id.BarcodeResult);
         BarcodeScanner scanner = BarcodeScanning.getClient();       // instance of barcode scanner
         scanner.process(inputImage).addOnSuccessListener(barcodes -> {
             for(Barcode barcode : barcodes){
                 String rawValue = barcode.getRawValue();
-                Toast.makeText(this, "Barcode Detected: "+ rawValue, Toast.LENGTH_SHORT).show();
+//                Toast.makeText(this, "Barcode Detected: "+ rawValue, Toast.LENGTH_SHORT).show();
+                String scannedBarcode = rawValue;
+                barcodeResult.setText("Scanned value: " + scannedBarcode);
             }
             // Close image after processing it
             imageProxy.close();

@@ -15,6 +15,7 @@
     <string name="passwordRestriction">Password must be at least 8 characters and contain a number, a lowercase letter and an uppercase letter</string>
     <string name="take_photo">Take Photo</string>
     <string name="scan_Barcode">Scan Barcode</string>
+    <string name="barcode_placeholder">Scanned Barcode Will Appear Here.</string>
     <string name="start_capture">Start Capture</string>
     <string name="stop_capture">Stop Capture</string>
     <string name="search">Search</string>
