@@ -12,6 +12,7 @@ import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -81,6 +82,8 @@ public class Household {
     }
 
     public void acceptInvite(String householdID, String uid) {
+        final String[] currentHouseholdID = new String[1];
+        searchDB.getUserHouseholdID(uid, hid -> currentHouseholdID[0] =hid);
         // Update user document
         searchDB.getUserDocumentByIDAsync(uid, userDocument -> {
             if (userDocument != null) {
@@ -94,7 +97,7 @@ public class Household {
                 Log.e(TAG, "User not found");
             }
         });
-        // Update household document
+        // Update new household document
         searchDB.getHouseholdByIDAsync(householdID, householdDocument -> {
             if (householdDocument != null) {
                 householdDocument.getReference().update(
@@ -107,6 +110,17 @@ public class Household {
                 Log.e(TAG, "Household not found");
             }
         });
+        // Update old household document
+        searchDB.getHouseholdByIDAsync(currentHouseholdID[0], householdDocument -> {
+            if (householdDocument != null) {
+                householdDocument.getReference().update(
+                        "members", FieldValue.arrayRemove(uid)
+                ).addOnSuccessListener(result -> Log.d(TAG, "Household member removed"));
+            } else {
+                Log.e(TAG, "Household not found");
+            }
+        });
+        deleteHousehold(currentHouseholdID[0]);
         // Update link document
         /*
         Map<String, String> newLink = new HashMap<>();
@@ -144,6 +158,24 @@ public class Household {
                 householdDocument.getReference().update(
                         "householdName", newName
                 ).addOnSuccessListener(result -> Log.d(TAG, "Household renamed in link"));
+            }
+        });
+    }
+
+    public void deleteHousehold(String householdID) {
+        searchDB.getHouseholdByIDAsync(householdID, householdDocument -> {
+            if (householdDocument != null) {
+                // Run checks
+                ArrayList<String> members = (ArrayList<String>) householdDocument.get("members");
+                if (!members.isEmpty()) {
+                    Log.d(TAG, "Household has members");
+                } else {
+                    householdDocument.getReference()
+                            .delete().
+                            addOnSuccessListener(result -> Log.d(TAG, "Household deleted"));
+                }
+            } else {
+                Log.e(TAG, "Household not found");
             }
         });
     }
