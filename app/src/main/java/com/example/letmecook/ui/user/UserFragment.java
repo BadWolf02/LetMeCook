@@ -6,20 +6,18 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.EditText;
-import android.widget.ImageButton;
-import android.widget.TextView;
+
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 
 import com.example.letmecook.HouseholdManageActivity;
 import com.example.letmecook.ViewInviteActivity;
-import com.example.letmecook.tools.Authentication;
+import com.example.letmecook.db_tools.Authentication;
 
 import com.example.letmecook.R;
 import com.example.letmecook.databinding.FragmentUserBinding;
-import com.example.letmecook.tools.Household;
+import com.example.letmecook.db_tools.Household;
 
 
 public class UserFragment extends Fragment {

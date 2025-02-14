@@ -1,4 +1,4 @@
-package com.example.letmecook.tools;
+package com.example.letmecook.db_tools;
 
 import static android.content.ContentValues.TAG;
 
@@ -58,7 +58,7 @@ public class SearchDB {
         void onHouseholdNameRetrieved(String householdName);
     }
 
-    public void getHouseholdName(String uid, OnHouseholdNameRetrievedListener listener) {
+    public void getUserHouseholdName(String uid, OnHouseholdNameRetrievedListener listener) {
         getUserHouseholdID(uid, hid -> {
             if (hid != null) {
                 getHouseholdByIDAsync(hid, householdDocument -> {
