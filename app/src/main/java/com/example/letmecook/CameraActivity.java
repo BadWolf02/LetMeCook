@@ -5,7 +5,10 @@ import android.content.ContentValues;
 import android.media.Image;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.provider.MediaStore;
+import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -34,7 +37,17 @@ import com.google.mlkit.vision.barcode.BarcodeScanning;
 import com.google.mlkit.vision.barcode.common.Barcode;
 import com.google.mlkit.vision.common.InputImage;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.IOException;
 import java.util.concurrent.ExecutionException;
+
+import okhttp3.Call;
+import okhttp3.Callback;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.Response;
 
 public class CameraActivity extends AppCompatActivity {
     ProcessCameraProvider cameraProvider;
@@ -77,6 +90,52 @@ public class CameraActivity extends AppCompatActivity {
 
 
     }
+
+    public void fetchProductInfo(String barcode) {
+        OkHttpClient client = new OkHttpClient();
+        String url = "https://world.openfoodfacts.org/api/v2/product/" + barcode + ".json";
+
+        Request request = new Request.Builder()
+                .url(url)
+                .build();
+
+        client.newCall(request).enqueue(new Callback() {
+            @Override
+            public void onFailure(Call call, IOException e) {
+                Log.e("API_ERROR", "Failed to fetch data", e);
+            }
+
+            @Override
+            public void onResponse(Call call, Response response) throws IOException {
+                if (!response.isSuccessful()) {
+                    Log.e("API_ERROR", "Unexpected response: " + response);
+                    return;
+                }
+
+                try {
+                    String responseData = response.body().string();
+                    JSONObject json = new JSONObject(responseData);
+                    JSONObject product = json.getJSONObject("product");
+
+                    String productName = product.optString("product_name", "Unknown Product");
+                    JSONObject nutriments = product.optJSONObject("nutriments");
+
+                    String energy = nutriments != null ? nutriments.optString("energy-kcal_100g", "No Data") + " kcal" : "No Data";
+
+                    // Update UI on the main thread
+                    new Handler(Looper.getMainLooper()).post(() -> {
+                        TextView barcodeResult = findViewById(R.id.BarcodeResult);
+                        barcodeResult.setText("Product: " + productName + "\nCalories (per 100g): " + energy);
+                    });
+
+                } catch (JSONException e) {
+                    Log.e("API_ERROR", "JSON parsing error", e);
+                }
+            }
+        });
+    }
+
+
 // allows the user to save photos of recipes to their camera roll (can remove if not wanted)
     private void takePhoto() {
         if(imageCapture == null) return;
@@ -113,9 +172,8 @@ public class CameraActivity extends AppCompatActivity {
         scanner.process(inputImage).addOnSuccessListener(barcodes -> {
             for(Barcode barcode : barcodes){
                 String rawValue = barcode.getRawValue();
-//                Toast.makeText(this, "Barcode Detected: "+ rawValue, Toast.LENGTH_SHORT).show();
-                String scannedBarcode = rawValue;
-                barcodeResult.setText("Scanned value: " + scannedBarcode);
+//                barcodeResult.setText("Scanned value: " + rawValue); // placeholder showing the raw value of the barcode
+                fetchProductInfo(rawValue);   // API call for last scanned product
             }
             // Close image after processing it
             imageProxy.close();
