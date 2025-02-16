@@ -6,7 +6,7 @@ import android.os.Bundle;
 import android.widget.Button;
 import android.widget.EditText;
 
-import com.example.letmecook.tools.Authentication;
+import com.example.letmecook.db_tools.Authentication;
 
 public class SignUpActivity extends AppCompatActivity {
     // Declaring variables for each interactable field

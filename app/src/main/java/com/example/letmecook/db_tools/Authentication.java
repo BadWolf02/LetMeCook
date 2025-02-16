@@ -1,4 +1,4 @@
-package com.example.letmecook.tools;
+package com.example.letmecook.db_tools;
 
 import static android.content.ContentValues.TAG;
 
@@ -14,7 +14,6 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.*;
 import com.google.firebase.auth.*;
 
-import java.lang.reflect.Array;
 import java.util.Map;
 import java.util.HashMap;
 import java.util.ArrayList;

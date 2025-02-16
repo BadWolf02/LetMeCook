@@ -7,8 +7,8 @@ import android.os.Bundle;
 import android.widget.Button;
 import android.widget.Toast;
 
-import com.example.letmecook.tools.HouseholdAdapter;
-import com.example.letmecook.tools.SearchDB;
+import com.example.letmecook.adapters.UsersInvitedAdapter;
+import com.example.letmecook.db_tools.SearchDB;
 import com.google.firebase.auth.FirebaseAuth;
 
 public class TestActivity extends AppCompatActivity {
@@ -21,13 +21,11 @@ public class TestActivity extends AppCompatActivity {
 
         SearchDB searchDB = new SearchDB();
         FirebaseAuth mAuth = FirebaseAuth.getInstance();
-        HouseholdAdapter adapter = new HouseholdAdapter();
+        UsersInvitedAdapter adapter = new UsersInvitedAdapter();
 
         // Find the fields
         testButton = findViewById(R.id.testButton);
-        testButton.setOnClickListener(view -> {
-            Toast.makeText(TestActivity.this, "Testing", Toast.LENGTH_SHORT).show();
-        });
+        testButton.setOnClickListener(view -> Toast.makeText(TestActivity.this, "Testing", Toast.LENGTH_SHORT).show());
 
         RecyclerView recyclerView = findViewById(R.id.recycler_view);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));

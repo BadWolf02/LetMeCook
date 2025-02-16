@@ -1,4 +1,4 @@
-package com.example.letmecook.tools;
+package com.example.letmecook.db_tools;
 
 import static android.content.ContentValues.TAG;
 
@@ -12,11 +12,8 @@ import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
 
 public class Household {
-    FirebaseFirestore db = FirebaseFirestore.getInstance(); // initialise database
     FirebaseAuth mAuth = FirebaseAuth.getInstance(); // initialise authentication
     SearchDB searchDB = new SearchDB();
     private final Context context;
@@ -29,9 +26,7 @@ public class Household {
 
     public void inviteUserSingleHousehold(String username) {
         String uid = mAuth.getCurrentUser().getUid();
-        searchDB.getUserHouseholdID(uid, householdID -> {
-            inviteUser(householdID, username);
-        });
+        searchDB.getUserHouseholdID(uid, householdID -> inviteUser(householdID, username));
     }
 
     public void inviteUser(String householdID, String username) {
@@ -81,25 +76,47 @@ public class Household {
     }
 
     public void acceptInvite(String householdID, String uid) {
+        final String[] currentHouseholdID = new String[1];
+        searchDB.getUserHouseholdID(uid, hid -> currentHouseholdID[0] =hid);
         // Update user document
         searchDB.getUserDocumentByIDAsync(uid, userDocument -> {
-            userDocument.getReference().update(
-                    "invites", FieldValue.arrayRemove(householdID)
-            ).addOnSuccessListener(result -> Log.d(TAG, "Household invite removed"));
-            userDocument.getReference().update(
-                    "households", FieldValue.arrayUnion(householdID)
-            ).addOnSuccessListener(result -> Log.d(TAG, "User household added"));
+            if (userDocument != null) {
+                userDocument.getReference().update(
+                        "invites", FieldValue.arrayRemove(householdID)
+                ).addOnSuccessListener(result -> Log.d(TAG, "Household invite removed"));
+                userDocument.getReference().update(
+                        "householdID", householdID
+                ).addOnSuccessListener(result -> Log.d(TAG, "User household changed"));
+            } else {
+                Log.e(TAG, "User not found");
+            }
         });
-        // Update household document
+        // Update new household document
         searchDB.getHouseholdByIDAsync(householdID, householdDocument -> {
-            householdDocument.getReference().update(
-                    "invited", FieldValue.arrayRemove(uid)
-            ).addOnSuccessListener(result -> Log.d(TAG, "User invite removed"));
-            householdDocument.getReference().update(
-                    "members", FieldValue.arrayUnion(uid)
-            ).addOnSuccessListener(result -> Log.d(TAG, "Household member added"));
+            if (householdDocument != null) {
+                householdDocument.getReference().update(
+                        "invited", FieldValue.arrayRemove(uid)
+                ).addOnSuccessListener(result -> Log.d(TAG, "User invite removed"));
+                householdDocument.getReference().update(
+                        "members", FieldValue.arrayUnion(uid)
+                ).addOnSuccessListener(result -> Log.d(TAG, "Household member added"));
+            } else {
+                Log.e(TAG, "Household not found");
+            }
         });
+        // Update old household document
+        searchDB.getHouseholdByIDAsync(currentHouseholdID[0], householdDocument -> {
+            if (householdDocument != null) {
+                householdDocument.getReference().update(
+                        "members", FieldValue.arrayRemove(uid)
+                ).addOnSuccessListener(result -> Log.d(TAG, "Household member removed"));
+            } else {
+                Log.e(TAG, "Household not found");
+            }
+        });
+        deleteHousehold(currentHouseholdID[0]);
         // Update link document
+        /*
         Map<String, String> newLink = new HashMap<>();
         newLink.put("uid", uid);
         newLink.put("householdID", householdID);
@@ -107,9 +124,10 @@ public class Household {
                 .add(newLink)
                 .addOnSuccessListener(documentReference -> Log.d(TAG, "DocumentSnapshot added with ID: " + documentReference.getId()))
                 .addOnFailureListener(e -> Log.w(TAG, "Error adding document", e));
+         */
     }
 
-    public void deleteInvite(String householdID, String uid) {
+    public void denyInvite(String householdID, String uid) {
         searchDB.getUserDocumentByIDAsync(uid, userDocument ->
                 userDocument.getReference().update(
                 "invites", FieldValue.arrayRemove(householdID)
@@ -134,6 +152,24 @@ public class Household {
                 householdDocument.getReference().update(
                         "householdName", newName
                 ).addOnSuccessListener(result -> Log.d(TAG, "Household renamed in link"));
+            }
+        });
+    }
+
+    public void deleteHousehold(String householdID) {
+        searchDB.getHouseholdByIDAsync(householdID, householdDocument -> {
+            if (householdDocument != null) {
+                // Run checks
+                ArrayList<String> members = (ArrayList<String>) householdDocument.get("members");
+                if (!members.isEmpty()) {
+                    Log.d(TAG, "Household has members");
+                } else {
+                    householdDocument.getReference()
+                            .delete().
+                            addOnSuccessListener(result -> Log.d(TAG, "Household deleted"));
+                }
+            } else {
+                Log.e(TAG, "Household not found");
             }
         });
     }

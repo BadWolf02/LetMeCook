@@ -1,4 +1,4 @@
-package com.example.letmecook.tools;
+package com.example.letmecook.adapters;
 
 import static android.content.ContentValues.TAG;
 
@@ -15,33 +15,35 @@ import com.example.letmecook.R;
 
 import java.util.ArrayList;
 
+import com.example.letmecook.db_tools.SearchDB;
 import com.google.firebase.auth.*;
 
 // https://developer.android.com/develop/ui/views/layout/recyclerview#java
 
-public class HouseholdAdapter extends RecyclerView.Adapter<HouseholdAdapter.ViewHolder> {
+public class UsersInvitedAdapter extends RecyclerView.Adapter<UsersInvitedAdapter.ViewHolder> {
     private final ArrayList<String> invitedUsers = new ArrayList<>();
     private final SearchDB searchDB = new SearchDB();
     private final FirebaseAuth mAuth = FirebaseAuth.getInstance();
 
     /**
      * Initialize the dataset of the Adapter
-     *
      * userHouseholds ArrayList<String> containing the data to populate views to be used
      * by RecyclerView
      */
-    public HouseholdAdapter() {
-        fetchHouseholds();
+    public UsersInvitedAdapter() {
+        fetchInvites();
     }
 
-    private void fetchHouseholds() {
+    private void fetchInvites() {
+        // Get the user's household
         searchDB.getUserHouseholdID(mAuth.getCurrentUser().getUid(), hid -> {
             if (hid != null) {
+                // Get invites in the household
                 searchDB.getHouseholdInvites(hid, invited -> {
                     if (invited != null) {
                         Log.d(TAG, "Fetched invited users");
                         invitedUsers.clear();
-                        invitedUsers.addAll(invited);
+                        invitedUsers.addAll(invited); // Store invited users
                         notifyDataSetChanged(); // Refresh RecyclerView after getting data
                     } else {
                         Log.e(TAG, "Invited list is null");
@@ -59,11 +61,11 @@ public class HouseholdAdapter extends RecyclerView.Adapter<HouseholdAdapter.View
         public ViewHolder(View view) {
             super(view);
             // Define click listener for the ViewHolder's View
-            textView = (TextView) view.findViewById(R.id.inviteText);
+            textView = view.findViewById(R.id.rowText);
         }
 
-        public void bind(String householdName) {
-            textView.setText(householdName);
+        public void bind(String username) {
+            textView.setText(username);
         }
     }
 

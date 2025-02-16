@@ -1,4 +1,4 @@
-package com.example.letmecook.tools;
+package com.example.letmecook.db_tools;
 
 import static android.content.ContentValues.TAG;
 
@@ -13,7 +13,6 @@ import java.util.Objects;
 
 public class SearchDB {
     FirebaseFirestore db = FirebaseFirestore.getInstance(); // initialise database
-    FirebaseAuth mAuth = FirebaseAuth.getInstance(); // initialise authentication
 
     // Constructor
     public SearchDB() {}
@@ -32,7 +31,7 @@ public class SearchDB {
                     Log.d(TAG, "User households: " + households);
                     listener.onHouseholdsRetrieved(households);
                 } else {
-                    listener.onHouseholdsRetrieved(new ArrayList<String>());
+                    listener.onHouseholdsRetrieved(new ArrayList<>());
                 }
         });
     }
@@ -58,7 +57,7 @@ public class SearchDB {
         void onHouseholdNameRetrieved(String householdName);
     }
 
-    public void getHouseholdName(String uid, OnHouseholdNameRetrievedListener listener) {
+    public void getUserHouseholdName(String uid, OnHouseholdNameRetrievedListener listener) {
         getUserHouseholdID(uid, hid -> {
             if (hid != null) {
                 getHouseholdByIDAsync(hid, householdDocument -> {
@@ -83,7 +82,7 @@ public class SearchDB {
                 Log.d(TAG, "Households invited to: " + invites);
                 listener.onHouseholdsRetrieved(invites);
             } else {
-                listener.onHouseholdsRetrieved(new ArrayList<String>());
+                listener.onHouseholdsRetrieved(new ArrayList<>());
             }
         });
     }
@@ -95,9 +94,22 @@ public class SearchDB {
                 Log.d(TAG, "Users invited: " + invited);
                 listener.onHouseholdsRetrieved(invited);
             } else {
-                listener.onHouseholdsRetrieved(new ArrayList<String>());
+                listener.onHouseholdsRetrieved(new ArrayList<>());
             }
             });
+    }
+
+    public void getHouseholdMembers(String hid, OnHouseholdsRetrievedListener listener) {
+        getHouseholdByIDAsync(hid, householdDocument -> {
+            if (householdDocument != null) {
+                ArrayList<String> members = (ArrayList<String>) householdDocument.get("members");
+                Log.d(TAG, "Members: " + members);
+                listener.onHouseholdsRetrieved(members);
+            } else {
+                Log.e(TAG, "Household not found");
+                listener.onHouseholdsRetrieved(new ArrayList<>());
+            }
+        });
     }
 
     // Async methods
