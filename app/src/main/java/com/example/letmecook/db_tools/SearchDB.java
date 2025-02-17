@@ -4,8 +4,10 @@ import static android.content.ContentValues.TAG;
 
 import android.util.Log;
 
+import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.Query;
 
 import java.lang.reflect.Array;
 import java.util.ArrayList;
@@ -40,6 +42,84 @@ public class SearchDB {
     }
 
     // Recipes
+
+    // Returns recipes based on name, cuisine and ingredients. Accepts null in absence of parameter
+    // TODO make recipes case insensitive / standardized to capitals
+    public void filterRecipes(String name,
+                              String author,
+                              String cuisine,
+                              ArrayList<String> ingredients,
+                              OnDocumentArrayRetrievedListener listener) {
+        Query recipeQuery = db.collection("recipes");
+
+        // Checks for exact name match
+        if (name != null && !name.isEmpty()) {
+            recipeQuery = recipeQuery.whereEqualTo("r_name", name);
+        }
+
+        // Checks for exact author match
+        if (name != null && !name.isEmpty()) {
+            recipeQuery = recipeQuery.whereEqualTo("author", author);
+        }
+
+        // Checks for exact cuisine match
+        if (cuisine != null && !cuisine.isEmpty()) {
+            recipeQuery = recipeQuery.whereEqualTo("cuisine", cuisine);
+        }
+
+        // Checks for match of ingredients
+        if (ingredients != null && !ingredients.isEmpty()) {
+            for (String ingredient : ingredients) {
+                recipeQuery = recipeQuery.whereArrayContains("ingredients", ingredient);
+            }
+        }
+
+        recipeQuery
+                .get()
+                .addOnSuccessListener(queryDocumentSnapshots -> {
+                    if (queryDocumentSnapshots != null && !queryDocumentSnapshots.isEmpty()) {
+                        Log.d(TAG, "Recipe(s) found");
+                        // Store all documents in a list
+                        ArrayList<DocumentSnapshot> filteredRecipes = new ArrayList<>(queryDocumentSnapshots.getDocuments());
+                        listener.onDocumentArrayRetrieved(filteredRecipes);
+                    } else {
+                        Log.e(TAG, "No recipes found");
+                        listener.onDocumentArrayRetrieved(new ArrayList<DocumentSnapshot>());
+                    }
+                });
+    }
+
+    public void getRecipesByName(String name, OnDocumentArrayRetrievedListener listener) {
+        db.collection("recipes")
+                .whereEqualTo("r_name", name)
+                .get()
+                .addOnSuccessListener(queryDocumentSnapshots -> {
+                    if (queryDocumentSnapshots != null && !queryDocumentSnapshots.isEmpty()) {
+                        Log.d(TAG, "Recipe(s) found");
+                        ArrayList<DocumentSnapshot> documents = (ArrayList<DocumentSnapshot>) queryDocumentSnapshots.getDocuments();
+                        listener.onDocumentArrayRetrieved(documents);
+                    } else {
+                        Log.e(TAG, "No recipes found");
+                        listener.onDocumentArrayRetrieved(new ArrayList<DocumentSnapshot>());
+                    }
+                });
+    }
+
+    public void getRecipesByAuthor(String author, OnDocumentArrayRetrievedListener listener) {
+        db.collection("recipes")
+                .whereEqualTo("author", author)
+                .get()
+                .addOnSuccessListener(queryDocumentSnapshots -> {
+                    if (queryDocumentSnapshots != null && !queryDocumentSnapshots.isEmpty()) {
+                        Log.d(TAG, "Recipe(s) found");
+                        ArrayList<DocumentSnapshot> documents = (ArrayList<DocumentSnapshot>) queryDocumentSnapshots.getDocuments();
+                        listener.onDocumentArrayRetrieved(documents);
+                    } else {
+                        Log.e(TAG, "No recipes found");
+                        listener.onDocumentArrayRetrieved(new ArrayList<DocumentSnapshot>());
+                    }
+                });
+    }
 
     public void getRecipesByIngredient(String ingredient, OnDocumentArrayRetrievedListener listener) {
         db.collection("recipes")
