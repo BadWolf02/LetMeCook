@@ -107,7 +107,6 @@ public class Authentication {
     public void createUserInFirestore(String uid, String username, String email) {
         Map<String, Object> user = new HashMap<>();
         Map<String, Object> household = new HashMap<>();
-        Map<String, Object> link = new HashMap<>();
 
         String householdID = UUID.randomUUID().toString();
         // Create user details in Firestore
@@ -131,14 +130,6 @@ public class Authentication {
         household.put("inventory", new ArrayList<>());
         db.collection("households")
                 .add(household)
-                .addOnSuccessListener(documentReference -> Log.d(TAG, "DocumentSnapshot added with ID: " + documentReference.getId()))
-                .addOnFailureListener(e -> Log.w(TAG, "Error adding document", e));
-        // Create link table for users and households
-        link.put("uid", uid);
-        link.put("householdID", householdID);
-        link.put("householdName", username + "'s Household");
-        db.collection("users-households")
-                .add(link)
                 .addOnSuccessListener(documentReference -> Log.d(TAG, "DocumentSnapshot added with ID: " + documentReference.getId()))
                 .addOnFailureListener(e -> Log.w(TAG, "Error adding document", e));
     }

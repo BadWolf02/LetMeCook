@@ -169,39 +169,4 @@ public class SearchDB {
                     }
                 });
     }
-
-    // Get snapshot for link by uid or householdID
-    // TODO check if it returns all results
-    public void getLinkByIDAsync(String id, String type, OnDocumentRetrievedListener listener) {
-        if (Objects.equals(type, "uid")) {
-            db.collection("users-households").
-                    whereEqualTo("uid", id)
-                    .get()
-                    .addOnSuccessListener(queryDocumentSnapshots -> {
-                        if (queryDocumentSnapshots != null && !queryDocumentSnapshots.isEmpty()) {
-                            // Household found, retrieve the first matching document
-                            Log.d(TAG, "Link found");
-                            listener.onDocumentRetrieved((DocumentSnapshot) queryDocumentSnapshots.getDocuments());
-                        } else {
-                            Log.e(TAG, "Link not found");
-                            listener.onDocumentRetrieved(null);
-                        }
-                    });
-        } else if (Objects.equals(type, "hid")) {
-            db.collection("users-households").
-                    whereEqualTo("householdID", id)
-                    .get()
-                    .addOnSuccessListener(queryDocumentSnapshots -> {
-                        if (queryDocumentSnapshots != null && !queryDocumentSnapshots.isEmpty()) {
-                            // Household found, retrieve the first matching document
-                            Log.d(TAG, "Link found");
-                            listener.onDocumentRetrieved((DocumentSnapshot) queryDocumentSnapshots.getDocuments());
-                        } else {
-                            Log.e(TAG, "Link not found");
-                            listener.onDocumentRetrieved(null);
-                        }
-                    });
-        }
-
-    }
 }

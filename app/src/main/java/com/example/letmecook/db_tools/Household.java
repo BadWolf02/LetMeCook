@@ -115,16 +115,6 @@ public class Household {
             }
         });
         deleteHousehold(currentHouseholdID[0]);
-        // Update link document
-        /*
-        Map<String, String> newLink = new HashMap<>();
-        newLink.put("uid", uid);
-        newLink.put("householdID", householdID);
-        db.collection("users-households")
-                .add(newLink)
-                .addOnSuccessListener(documentReference -> Log.d(TAG, "DocumentSnapshot added with ID: " + documentReference.getId()))
-                .addOnFailureListener(e -> Log.w(TAG, "Error adding document", e));
-         */
     }
 
     public void denyInvite(String householdID, String uid) {
@@ -144,14 +134,6 @@ public class Household {
                 householdDocument.getReference().update(
                         "householdName", newName
                 ).addOnSuccessListener(result -> Log.d(TAG, "Household renamed in household"));
-            }
-        });
-        // TODO check if works
-        searchDB.getLinkByIDAsync(householdID, "hid", householdDocument -> {
-            if (householdDocument != null) {
-                householdDocument.getReference().update(
-                        "householdName", newName
-                ).addOnSuccessListener(result -> Log.d(TAG, "Household renamed in link"));
             }
         });
     }
