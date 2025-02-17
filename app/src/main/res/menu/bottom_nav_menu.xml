@@ -16,14 +16,20 @@
         android:icon="@drawable/ic_calendar_black_24dp"
         android:title="@string/title_calendar"/> <!-- calendar -->
 
-    <item
-        android:id="@+id/navigation_shopping"
-        android:icon="@drawable/ic_shopping_black_24dp"
-        android:title="@string/title_shopping"/> <!-- shopping -->
+<!--    <item-->
+<!--        android:id="@+id/navigation_shopping"-->
+<!--        android:icon="@drawable/ic_shopping_black_24dp"-->
+<!--        android:title="@string/title_shopping"/> &lt;!&ndash; shopping &ndash;&gt;-->
 
     <item
         android:id="@+id/navigation_user"
         android:icon="@drawable/ic_person_black_24dp"
         android:title="@string/title_user"/> <!-- user -->
+
+    <item
+        android:id="@+id/navigation_inventory"
+        android:icon="@drawable/ic_shopping_black_24dp"
+        android:title="@string/title_inventory"/> <!-- inventory -->
+
 
 </menu>

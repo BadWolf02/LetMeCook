@@ -29,4 +29,5 @@
     <string name="accept">Accept</string>
     <string name="deny">Deny</string>
     <string name="members">Members</string>
+    <string name="title_inventory">Inventory</string>
 </resources>

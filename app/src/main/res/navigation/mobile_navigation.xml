@@ -34,4 +34,11 @@
         android:name="com.example.letmecook.ui.user.UserFragment"
         android:label="@string/title_user"
         tools:layout="@layout/fragment_user" />
+
+    <fragment
+        android:id="@+id/navigation_inventory"
+        android:name="com.example.letmecook.ui.inventory.InventoryFragment"
+        android:label="@string/title_inventory"
+        tools:layout="@layout/fragment_inventory" />
+
 </navigation>
