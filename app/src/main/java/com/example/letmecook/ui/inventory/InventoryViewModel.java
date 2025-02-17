@@ -1,16 +1,16 @@
-package com.example.letmecook.ui.calendar;
+package com.example.letmecook.ui.inventory;
 
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
-public class CalendarViewModel extends ViewModel {
+public class InventoryViewModel extends ViewModel {
 
     private final MutableLiveData<String> mText;
 
-    public CalendarViewModel() {
+    public InventoryViewModel() {
         mText = new MutableLiveData<>();
-        mText.setValue("This is calendar fragment");
+        mText.setValue("This is inventory fragment");
     }
 
     public LiveData<String> getText() {

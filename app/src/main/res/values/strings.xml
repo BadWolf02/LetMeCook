@@ -26,7 +26,8 @@
     <string name="manage_your_household">Manage Your Household</string>
     <string name="manage">Manage</string>
     <string name="view_invites">View invites</string>
+    <string name="members">Members</string>
     <string name="accept">Accept</string>
     <string name="deny">Deny</string>
-    <string name="members">Members</string>
+    <string name="title_inventory">Inventory</string>
 </resources>
