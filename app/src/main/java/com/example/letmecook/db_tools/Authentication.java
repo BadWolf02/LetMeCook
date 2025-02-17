@@ -128,6 +128,7 @@ public class Authentication {
         members.add(mAuth.getCurrentUser().getUid());
         household.put("members", members);
         household.put("invited", new ArrayList<>());
+        household.put("inventory", new ArrayList<>());
         db.collection("households")
                 .add(household)
                 .addOnSuccessListener(documentReference -> Log.d(TAG, "DocumentSnapshot added with ID: " + documentReference.getId()))
