@@ -9,7 +9,7 @@ import android.widget.Toast;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-import com.example.letmecook.tools.Firebase;
+//import com.example.letmecook.tools.Firebase;
 import com.google.firebase.firestore.*;
 
 
@@ -135,12 +135,13 @@ public class Recipe {
     public void cook_recipe(){} //TODO probably makes more sense to add this function somewhere else
 
     public void create(){
+
         // autofill author
         // check that all the mandatory fields have been filled
         // add new entry to the Recipes dB
         // redirect user to the finished recipe page
         // set r_type
-        if ( this.r_name!=null && this.steps!=null && this.ingredients!=null && this.r_type!=null){
+       //  if ( this.r_name!=null && this.steps!=null && this.ingredients!=null && this.r_type!=null){
             // the stuff to respective fielsds
             // add author and allergens too
             // access recipies collection
@@ -163,7 +164,8 @@ public class Recipe {
             if (this.cusine!=null){
                 recipe.put("cusine", this.cusine);
             }
-            //recipesRef.add(recipe).addOnSuccessListener(documentReference -> {
+            recipesRef.add(recipe); //TODO next: all on sucess listener and make sure it dosn't create after each new letter
+            //.addOnSuccessListener(documentReference -> {
                 //Toast.makeText(context , "recipe sucessfully saved", Toast.LENGTH_LONG) ;}).addOnFailureListener(e->{System.err.println("adding recipe failed");});
             //TODO figure out how to get this to work, can't really have the context here
         }
@@ -176,11 +178,11 @@ public class Recipe {
     //TODO add method to go through
 
 
-    public void getRecipeFromDb(String r_id){
+  //  public void getRecipeFromDb(String r_id){
         // access db and fill in all the fileds here
 
-    }
+   // }
 
 
 
-}
+
