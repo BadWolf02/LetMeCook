@@ -55,7 +55,30 @@ public class RecipesFragment extends Fragment {
 
 
         recipesViewModel = new ViewModelProvider(this).get(RecipesViewModel.class);
+
+        /**
+         * handle user entering recipe name
+         */
         EditText edit_r_name = binding.textViewRecipeName;
+        edit_r_name.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+                Log.d("recipe name", "");
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                Log.d("recipe name", s.toString());
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                Log.d("recipe name", "name is "+s.toString());
+                recipe.setR_name(s.toString());
+                recipe.create();
+            }
+        });
+
 
 
 
@@ -98,7 +121,6 @@ public class RecipesFragment extends Fragment {
                     layout.addView(add_step_box, next_step_index);
                     next_step_index ++;
                     Log.e(TAG, "trying to add field");
-
                     // increment step_no when saved
                     recipe.incrementStepsAmount();
 
@@ -162,9 +184,9 @@ public class RecipesFragment extends Fragment {
                 }
             }));
             meal_type_dropdown_builder.setPositiveButton("select", ((dialog, which) -> {
-
                 meal_type_adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
                 meal_type_dropdown_trigger.setAdapter(meal_type_adapter);//meal_type_adapter((TextUtils.join(", ", selected_meal_types)));
+
         })); //TODO figure this out
             meal_type_dropdown_builder.setNegativeButton("Cancel", (dialog, whick) -> {
                 dialog.dismiss();
