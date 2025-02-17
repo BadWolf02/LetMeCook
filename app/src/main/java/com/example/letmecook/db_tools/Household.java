@@ -9,7 +9,6 @@ import android.widget.Toast;
 import com.google.firebase.auth.*;
 
 import com.google.firebase.firestore.FieldValue;
-import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.util.ArrayList;
 
@@ -33,7 +32,7 @@ public class Household {
         if (householdID.isEmpty() || username.isEmpty()) {
           Toast.makeText(context, "Please fill both fields", Toast.LENGTH_SHORT).show();
         } else {
-            searchDB.getUserDocumentByUsernameAsync(username, userDocument -> {
+            searchDB.getUserDocumentByUsername(username, userDocument -> {
                 if (userDocument != null) {
                     // Checks if user is inviting themselves
                     String foundUID = userDocument.getString("uid");
@@ -48,7 +47,7 @@ public class Household {
                         return;
                     }
                     // Add target user to invited of current user's household
-                    searchDB.getHouseholdByIDAsync(householdID, householdDocument -> {
+                    searchDB.getHouseholdByID(householdID, householdDocument -> {
                         if (householdDocument != null) {
                             // Checks that user is a member
                             ArrayList<String> members = (ArrayList<String>) householdDocument.get("members");
@@ -79,7 +78,7 @@ public class Household {
         final String[] currentHouseholdID = new String[1];
         searchDB.getUserHouseholdID(uid, hid -> currentHouseholdID[0] =hid);
         // Update user document
-        searchDB.getUserDocumentByIDAsync(uid, userDocument -> {
+        searchDB.getUserDocumentByID(uid, userDocument -> {
             if (userDocument != null) {
                 userDocument.getReference().update(
                         "invites", FieldValue.arrayRemove(householdID)
@@ -92,7 +91,7 @@ public class Household {
             }
         });
         // Update new household document
-        searchDB.getHouseholdByIDAsync(householdID, householdDocument -> {
+        searchDB.getHouseholdByID(householdID, householdDocument -> {
             if (householdDocument != null) {
                 householdDocument.getReference().update(
                         "invited", FieldValue.arrayRemove(uid)
@@ -105,7 +104,7 @@ public class Household {
             }
         });
         // Update old household document
-        searchDB.getHouseholdByIDAsync(currentHouseholdID[0], householdDocument -> {
+        searchDB.getHouseholdByID(currentHouseholdID[0], householdDocument -> {
             if (householdDocument != null) {
                 householdDocument.getReference().update(
                         "members", FieldValue.arrayRemove(uid)
@@ -128,18 +127,18 @@ public class Household {
     }
 
     public void denyInvite(String householdID, String uid) {
-        searchDB.getUserDocumentByIDAsync(uid, userDocument ->
+        searchDB.getUserDocumentByID(uid, userDocument ->
                 userDocument.getReference().update(
                 "invites", FieldValue.arrayRemove(householdID)
                 ).addOnSuccessListener(result -> Log.d(TAG, "Household invite removed")));
-        searchDB.getHouseholdByIDAsync(householdID, householdDocument ->
+        searchDB.getHouseholdByID(householdID, householdDocument ->
                 householdDocument.getReference().update(
                 "invited", FieldValue.arrayRemove(uid)
                 ).addOnSuccessListener(result -> Log.d(TAG, "User invite removed")));
     }
 
     public void renameHousehold(String householdID, String newName) {
-        searchDB.getHouseholdByIDAsync(householdID, householdDocument -> {
+        searchDB.getHouseholdByID(householdID, householdDocument -> {
             if (householdDocument != null) {
                 householdDocument.getReference().update(
                         "householdName", newName
@@ -157,7 +156,7 @@ public class Household {
     }
 
     public void deleteHousehold(String householdID) {
-        searchDB.getHouseholdByIDAsync(householdID, householdDocument -> {
+        searchDB.getHouseholdByID(householdID, householdDocument -> {
             if (householdDocument != null) {
                 // Run checks
                 ArrayList<String> members = (ArrayList<String>) householdDocument.get("members");

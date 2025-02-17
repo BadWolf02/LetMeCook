@@ -4,10 +4,10 @@ import static android.content.ContentValues.TAG;
 
 import android.util.Log;
 
-import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Objects;
 
@@ -19,36 +19,99 @@ public class SearchDB {
 
     // Methods
 
-    // Used for if there are multiple households allowed
-    public interface OnHouseholdsRetrievedListener {
-        void onHouseholdsRetrieved(ArrayList<String> households);
+    // Callback to handle asynchronously retrieving an array of strings
+    public interface OnStringArrayRetrievedListener {
+        void onStringArrayRetrieved(ArrayList<String> foundArray);
     }
 
-    public void getUserHouseholdIDs(String uid, OnHouseholdsRetrievedListener listener) {
-        getUserDocumentByIDAsync(uid, userDocument -> {
-                if (userDocument != null) {
-                    ArrayList<String> households = (ArrayList<String>) userDocument.get("households");
-                    Log.d(TAG, "User households: " + households);
-                    listener.onHouseholdsRetrieved(households);
+    // Callback to handle asynchronously retrieving an array of documents
+    public interface OnDocumentArrayRetrievedListener {
+        void onDocumentArrayRetrieved(ArrayList<DocumentSnapshot> foundArray);
+    }
+
+    // Callback to handle asynchronously retrieving a string
+    public interface OnStringRetrievedListener {
+        void onStringRetrieved(String foundString);
+    }
+
+    // Callback to handle asynchronously retrieving a document
+    public interface OnDocumentRetrievedListener {
+        void onDocumentRetrieved(DocumentSnapshot document);
+    }
+
+    // Recipes
+
+    public void getRecipesByIngredient(String ingredient, OnDocumentArrayRetrievedListener listener) {
+        db.collection("recipes")
+                .whereArrayContains("ingredients", ingredient)
+                .get()
+                .addOnSuccessListener(queryDocumentSnapshots -> {
+                    if (queryDocumentSnapshots != null && !queryDocumentSnapshots.isEmpty()) {
+                        Log.d(TAG, "Recipe(s) found");
+                        ArrayList<DocumentSnapshot> documents = (ArrayList<DocumentSnapshot>) queryDocumentSnapshots.getDocuments();
+                        listener.onDocumentArrayRetrieved(documents);
+                    } else {
+                        Log.e(TAG, "No recipes found");
+                        listener.onDocumentArrayRetrieved(new ArrayList<DocumentSnapshot>());
+                    }
+                });
+    }
+
+    public void getRecipesByCuisine(String cuisine, OnDocumentArrayRetrievedListener listener) {
+        db.collection("recipes")
+                .whereEqualTo("cuisine", cuisine)
+                .get()
+                .addOnSuccessListener(queryDocumentSnapshots -> {
+                    if (queryDocumentSnapshots != null && !queryDocumentSnapshots.isEmpty()) {
+                        Log.d(TAG, "Recipe(s) found");
+                        ArrayList<DocumentSnapshot> documents = (ArrayList<DocumentSnapshot>) queryDocumentSnapshots.getDocuments();
+                        listener.onDocumentArrayRetrieved(documents);
+                    } else {
+                        Log.e(TAG, "No recipes found");
+                        listener.onDocumentArrayRetrieved(new ArrayList<DocumentSnapshot>());
+                    }
+                });
+    }
+
+    public void getRecipeIngredients(String rid, OnStringArrayRetrievedListener listener) {
+            getRecipeDocumentByID(rid, recipeDocument -> {
+                if (recipeDocument != null) {
+                    ArrayList<String> ingredients = (ArrayList<String>) recipeDocument.get("ingredients");
+                    Log.d(TAG, "Ingredients: " + ingredients);
+                    listener.onStringArrayRetrieved(ingredients);
                 } else {
-                    listener.onHouseholdsRetrieved(new ArrayList<>());
+                    listener.onStringArrayRetrieved(new ArrayList<>());
                 }
-        });
+            });
     }
 
-    // Used for if there is one household allowed
-    public interface OnHouseholdRetrievedListener {
-        void onHouseholdRetrieved(String hid);
+    public void getRecipeDocumentByID(String rid, OnDocumentRetrievedListener listener) {
+        db.collection("recipes").
+                whereEqualTo("recipeID", rid)
+                .get()
+                .addOnSuccessListener(queryDocumentSnapshots -> {
+                    if (queryDocumentSnapshots != null && !queryDocumentSnapshots.isEmpty()) {
+                        // Recipe found, retrieve the first matching document
+                        Log.d(TAG, "Recipe found");
+                        listener.onDocumentRetrieved(queryDocumentSnapshots.getDocuments().get(0));
+                    } else {
+                        Log.e(TAG, "Recipe not found");
+                        listener.onDocumentRetrieved(null);
+                    }
+                });
     }
 
-    public void getUserHouseholdID(String uid, OnHouseholdRetrievedListener listener) {
-        getUserDocumentByIDAsync(uid, userDocument -> {
+    // Households
+
+
+    public void getUserHouseholdID(String uid, OnStringRetrievedListener listener) {
+        getUserDocumentByID(uid, userDocument -> {
            if (userDocument != null) {
                String hid = (String) userDocument.get("householdID");
                Log.d(TAG, "User household: " + hid);
-               listener.onHouseholdRetrieved(hid);
+               listener.onStringRetrieved(hid);
            } else {
-               listener.onHouseholdRetrieved(null);
+               listener.onStringRetrieved(null);
            }
         });
     }
@@ -60,7 +123,7 @@ public class SearchDB {
     public void getUserHouseholdName(String uid, OnHouseholdNameRetrievedListener listener) {
         getUserHouseholdID(uid, hid -> {
             if (hid != null) {
-                getHouseholdByIDAsync(hid, householdDocument -> {
+                getHouseholdByID(hid, householdDocument -> {
                     if (householdDocument != null) {
                         String householdName = (String) householdDocument.get("householdName");
                         Log.d(TAG, "Household name: " + householdName);
@@ -75,52 +138,47 @@ public class SearchDB {
         });
     }
 
-    public void getUserInvites(String uid, OnHouseholdsRetrievedListener listener) {
-        getUserDocumentByIDAsync(uid, userDocument -> {
+    public void getUserInvites(String uid, OnStringArrayRetrievedListener listener) {
+        getUserDocumentByID(uid, userDocument -> {
             if (userDocument != null) {
                 ArrayList<String> invites = (ArrayList<String>) userDocument.get("invites");
                 Log.d(TAG, "Households invited to: " + invites);
-                listener.onHouseholdsRetrieved(invites);
+                listener.onStringArrayRetrieved(invites);
             } else {
-                listener.onHouseholdsRetrieved(new ArrayList<>());
+                listener.onStringArrayRetrieved(new ArrayList<>());
             }
         });
     }
 
-    public void getHouseholdInvites(String hid, OnHouseholdsRetrievedListener listener) {
-        getHouseholdByIDAsync(hid, householdDocument -> {
+    public void getHouseholdInvites(String hid, OnStringArrayRetrievedListener listener) {
+        getHouseholdByID(hid, householdDocument -> {
             if (householdDocument != null) {
                 ArrayList<String> invited = (ArrayList<String>) householdDocument.get("invited");
                 Log.d(TAG, "Users invited: " + invited);
-                listener.onHouseholdsRetrieved(invited);
+                listener.onStringArrayRetrieved(invited);
             } else {
-                listener.onHouseholdsRetrieved(new ArrayList<>());
+                listener.onStringArrayRetrieved(new ArrayList<>());
             }
             });
     }
 
-    public void getHouseholdMembers(String hid, OnHouseholdsRetrievedListener listener) {
-        getHouseholdByIDAsync(hid, householdDocument -> {
+    public void getHouseholdMembers(String hid, OnStringArrayRetrievedListener listener) {
+        getHouseholdByID(hid, householdDocument -> {
             if (householdDocument != null) {
                 ArrayList<String> members = (ArrayList<String>) householdDocument.get("members");
                 Log.d(TAG, "Members: " + members);
-                listener.onHouseholdsRetrieved(members);
+                listener.onStringArrayRetrieved(members);
             } else {
                 Log.e(TAG, "Household not found");
-                listener.onHouseholdsRetrieved(new ArrayList<>());
+                listener.onStringArrayRetrieved(new ArrayList<>());
             }
         });
     }
 
-    // Async methods
-
-    // Callback to handle asynchronously retrieving a user
-    public interface OnDocumentRetrievedListener {
-        void onDocumentRetrieved(DocumentSnapshot document);
-    }
+    // User
 
     // Get snapshot for user by uid
-    public void getUserDocumentByIDAsync(String uid, OnDocumentRetrievedListener listener) {
+    public void getUserDocumentByID(String uid, OnDocumentRetrievedListener listener) {
         db.collection("users")
                 .whereEqualTo("uid", uid)
                 .get()
@@ -137,7 +195,7 @@ public class SearchDB {
     }
 
     // Get snapshot for user by uid
-    public void getUserDocumentByUsernameAsync(String username, OnDocumentRetrievedListener listener) {
+    public void getUserDocumentByUsername(String username, OnDocumentRetrievedListener listener) {
         db.collection("users")
                 .whereEqualTo("username", username)
                 .get()
@@ -154,7 +212,7 @@ public class SearchDB {
     }
 
     // Get snapshot for household by householdID
-    public void getHouseholdByIDAsync(Object hid, OnDocumentRetrievedListener listener) {
+    public void getHouseholdByID(Object hid, OnDocumentRetrievedListener listener) {
         db.collection("households").
                 whereEqualTo("householdID", hid)
                 .get()
