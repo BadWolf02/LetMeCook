@@ -18,6 +18,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.NumberPicker;
 import android.widget.ScrollView;
 import android.widget.Spinner;
 import android.widget.TextView;
@@ -200,14 +201,36 @@ public class RecipesFragment extends Fragment {
         });
 
 
+        // total time h selection handler
+        NumberPicker number_picker_h = binding.totalTimeH;
+        NumberPicker number_picker_min = binding.totalTimeMin;
 
-        //TODO do this next: add clicklistener for crate recipie and make it save recipie to db
+        number_picker_h.setMinValue(0);
+        number_picker_h.setMaxValue(100);
+        number_picker_h.setFormatter(i -> String.format("%02d", i));
+
+        number_picker_min.setMinValue(0);
+        number_picker_min.setMaxValue(59);
+        number_picker_min.setFormatter(i -> String.format("%02d", i));
+
+        number_picker_h.setOnValueChangedListener((picker, oldVal, newVal) -> {
+            recipe.setTotal_time_h(newVal);//TODO continue here next
+        });
+
+        number_picker_min.setOnValueChangedListener(((picker, oldVal, newVal) -> {
+            recipe.setTotal_time_min(newVal);
+        }));
+
+
+
+
         Button create_recipe_btn = binding.addRecipeBtn;
         create_recipe_btn.setOnClickListener(v -> {
             Log.d("adding step", "about to add lastep");
             // add_last_step_to_recipe();
            recipe.create();
         });
+
 
 
 

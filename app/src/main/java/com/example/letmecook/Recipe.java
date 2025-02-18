@@ -22,9 +22,12 @@ public class Recipe {
     public String author; // username or official/ the site we scraped it from
     public String r_type; // can be public, private or official
     public String cusine; //TODO make this similar to ingredients where you can only add valid stuff
-    public String cooking_time;
-    public String total_time;
-    public String prep_time;
+    public int cooking_time_h;
+    public int cooking_time_min;
+
+    public int total_time_h;
+    public int total_time_min;
+    public int  prep_time;
     public ArrayList<String> ingredients;
 
     public ArrayList<String> mealType;
@@ -89,12 +92,32 @@ public class Recipe {
         return this.r_type;
     }
 
-    public void setCooking_time(String cooking_time){
-        this.cooking_time = cooking_time;
+    public void setCooking_time_h(Integer cooking_time){
+        this.cooking_time_h = cooking_time;
     }
-    public String getCooking_time(){
-        return this.cooking_time;
+    public void setCooking_time_min(Integer cooking_time){
+        this.cooking_time_min = cooking_time;
     }
+    public Integer getCooking_time_h(){
+        return this.cooking_time_h;
+    }
+    public Integer getCooking_time_min(){
+        return this.cooking_time_min;
+    }
+
+    public void setTotal_time_h(int cooking_time){
+        this.total_time_h = cooking_time;
+    }
+    public void setTotal_time_min(int cooking_time){
+        this.total_time_min = cooking_time;
+    }
+    public Integer getTotal_time_h(){
+        return this.total_time_h;
+    }
+    public Integer getTotal_time_min(){
+        return this.total_time_min;
+    }
+
 
     public void setCusine(String cusine){
         this.cusine = cusine;
@@ -163,12 +186,12 @@ public class Recipe {
             recipe.put("steps", this.steps);
             recipe.put("r_type", this.r_type);
             recipe.put("allergens", this.allergens);
-            if (this.cooking_time!=null) {
-                recipe.put("cooking_time", this.cooking_time);
-            }
-            if (this.total_time!=null){
-                recipe.put("total_time", this.total_time);
-            }
+//            if (this.cooking_time!=null) {
+//                recipe.put("cooking_time", this.cooking_time);
+//            }
+//            if (this.total_time!=null){
+//                recipe.put("total_time", this.total_time);
+//            }
             if (this.cusine!=null){
                 recipe.put("cusine", this.cusine);
             }
