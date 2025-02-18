@@ -37,7 +37,9 @@ public class RecipesFragment extends Fragment {
     private FragmentRecipesBinding binding; // binding object allows interaction with views
     public Recipe recipe = new Recipe();
 
-    private int next_step_index = 2; // TODO change this to be fetched dynamically
+    private ArrayList<Object> steps = new ArrayList();
+
+    private int next_step_index = 3; // TODO change this to be fetched dynamically
 
 
     public View onCreateView(@NonNull LayoutInflater inflater,
@@ -48,7 +50,6 @@ public class RecipesFragment extends Fragment {
 
         final TextView textView = binding.textRecipes;
         recipesViewModel.getText().observe(getViewLifecycleOwner(), textView::setText);
-
 
 
     View root = binding.getRoot();
@@ -75,7 +76,7 @@ public class RecipesFragment extends Fragment {
             public void afterTextChanged(Editable s) {
                 Log.d("recipe name", "name is "+s.toString());
                 recipe.setR_name(s.toString());
-                recipe.create();
+
             }
         });
 
@@ -86,8 +87,6 @@ public class RecipesFragment extends Fragment {
         // add recipe step
         Button add_step_btn = binding.addStepBtn;
         add_step_btn.setOnClickListener(v -> {
-
-
                     // public void add_recipe_step(){
                     // change the entered text to a text box??
                     // add a new step text field
@@ -96,7 +95,7 @@ public class RecipesFragment extends Fragment {
                     String add_step_text = add_step_text_field.getText().toString();
                     if ( add_step_text.trim() != "") {
                         Log.d("empty string",  add_step_text.toString());
-                        recipe.addStep(add_step_text.toString());
+                        steps.add(add_step_text.toString());
             }
                     Log.d("empty string", add_step_text); //TODO remove this
 
@@ -108,22 +107,19 @@ public class RecipesFragment extends Fragment {
                     EditText add_step_box = new EditText(getContext());
                     add_step_box.setId(step_no); //TODO
                     add_step_box.setHint("add Step");
-                    Log.d("reached", "1");
                     ScrollView scrollView = getView().findViewById(R.id.scrollView);
                     LinearLayout layout = scrollView.findViewById(R.id.layout); // .layout //TODO figure out what needs to be here instead of dynamic layout? linear maybe
-                    Log.d("reached", "2");
                     LinearLayout.LayoutParams editbox_params = new LinearLayout.LayoutParams(
                             ViewGroup.LayoutParams.MATCH_PARENT,
                             ViewGroup.LayoutParams.WRAP_CONTENT);
                     add_step_box.setLayoutParams(editbox_params);
-                    Log.d("reached", "3");
+                    steps.add(add_step_box);
                     // TODO add the index (starting at 0 of where we want to add the new edit view -> see if I can update this dynamically too depending on what is above
                     layout.addView(add_step_box, next_step_index);
                     next_step_index ++;
                     Log.e(TAG, "trying to add field");
                     // increment step_no when saved
                     recipe.incrementStepsAmount();
-
 
                     // TODO get it to autoscroll
                 });
@@ -186,9 +182,11 @@ public class RecipesFragment extends Fragment {
             meal_type_dropdown_builder.setPositiveButton("select", ((dialog, which) -> {
                 meal_type_adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
                 meal_type_dropdown_trigger.setAdapter(meal_type_adapter);//meal_type_adapter((TextUtils.join(", ", selected_meal_types)));
-
-        })); //TODO figure this out
-            meal_type_dropdown_builder.setNegativeButton("Cancel", (dialog, whick) -> {
+                recipe.setMealType(selected_meal_types);
+        }));
+            //TODO chane this to unselect and enter none
+            meal_type_dropdown_builder.setNegativeButton("No type", (dialog, whick) -> {
+                recipe.setMealType(null);
                 dialog.dismiss();
             });
             AlertDialog meal_type_dropdown = meal_type_dropdown_builder.create();
@@ -203,18 +201,35 @@ public class RecipesFragment extends Fragment {
 
 
 
-
+        //TODO do this next: add clicklistener for crate recipie and make it save recipie to db
+        Button create_recipe_btn = binding.addRecipeBtn;
+        create_recipe_btn.setOnClickListener(v -> {
+            Log.d("adding step", "about to add lastep");
+            // add_last_step_to_recipe();
+           recipe.create();
+        });
 
 
 
         return root;
-
-
-
-
     }
 
     //add recipe step
+    // :( this won't work if there has been nothing entered and I try to do a toString it causes a null pointer exception
+//    public void add_last_step_to_recipe(){
+//        Log.d("adding step", "add last step method reached");
+//        //check that this actually has the right amount of steps
+//        EditText last_step = getView().findViewById(next_step_index); //TODO do this next
+//       //  for (int i=0; i<=recipe.getStepsAmount(); i++){
+//        if (last_step.toString() != ""){
+//            recipe.addStep(last_step.toString());
+//            Log.d("adding steps to recipe", "last step: "+last_step.toString());
+//        }
+//        else {
+//            Log.d("adding steps to recipe", "last step was empty");
+//        }
+//    }
+
 
     public void set_r_name(){
         EditText r_name_field = getView().findViewById(R.id.set_recipe_name_btn_a);
