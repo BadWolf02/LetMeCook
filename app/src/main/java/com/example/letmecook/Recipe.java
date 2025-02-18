@@ -27,6 +27,8 @@ public class Recipe {
     public String prep_time;
     public ArrayList<String> ingredients;
 
+    public ArrayList<String> mealType;
+
     public Integer allergens;
 
     public ArrayList<String> steps = new ArrayList<>(); //TODO make sure to initialize all the other variables too in order to be able to use them in the methods without causing null pointer exceptions
@@ -41,8 +43,14 @@ public class Recipe {
 
     //TODO ratings
 
-    public void create_recepie(){
+    public void create_recepie(){ }
 
+    public void setMealType(ArrayList<String> mealTypes){
+        this.mealType = mealTypes;
+    }
+
+    public ArrayList getMealType(){
+        return this.mealType;
     }
 
     public Integer getStepsAmount (){
@@ -145,7 +153,7 @@ public class Recipe {
             // the stuff to respective fielsds
             // add author and allergens too
             // access recipies collection
-            boolean success;
+
             CollectionReference recipesRef = db.collection("recipes");
 
             HashMap<String, Object> recipe = new HashMap<>();
@@ -164,11 +172,13 @@ public class Recipe {
             if (this.cusine!=null){
                 recipe.put("cusine", this.cusine);
             }
-            recipesRef.add(recipe); //TODO next: all on sucess listener and make sure it dosn't create after each new letter
-            //.addOnSuccessListener(documentReference -> {
+            if (getMealType()!=null){
+                recipe.put("meal type", this.mealType);
+            }
+            recipesRef.add(recipe);
                 //Toast.makeText(context , "recipe sucessfully saved", Toast.LENGTH_LONG) ;}).addOnFailureListener(e->{System.err.println("adding recipe failed");});
             //TODO figure out how to get this to work, can't really have the context here
-        }
+    };
 
         // check if cusine has been filled in and add that
         // check if cook_time has been filled in and add
@@ -182,7 +192,4 @@ public class Recipe {
         // access db and fill in all the fileds here
 
    // }
-
-
-
 
