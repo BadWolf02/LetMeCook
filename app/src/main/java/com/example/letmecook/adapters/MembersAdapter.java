@@ -27,7 +27,7 @@ public class MembersAdapter extends RecyclerView.Adapter<MembersAdapter.ViewHold
 
     /**
      * Initialize the dataset of the Adapter
-     * userHouseholds ArrayList<String> containing the data to populate views to be used
+     * membersList ArrayList<String> containing the data to populate views to be used
      * by RecyclerView
      */
     public MembersAdapter() {

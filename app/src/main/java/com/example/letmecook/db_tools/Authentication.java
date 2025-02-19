@@ -110,18 +110,19 @@ public class Authentication {
 
         String householdID = UUID.randomUUID().toString();
         // Create user details in Firestore
-        user.put("uid", uid);
+        // user.put("uid", uid);
         user.put("username", username);
         user.put("email", email);
         user.put("householdID", householdID);
         user.put("invites", new ArrayList<>());
         user.put("favourite_recipes", new ArrayList<>());
         db.collection("users")
-                .add(user)
-                .addOnSuccessListener(documentReference -> Log.d(TAG, "DocumentSnapshot added with ID: " + documentReference.getId()))
+                .document(uid)
+                .set(user)
+                .addOnSuccessListener(documentReference -> Log.d(TAG, "DocumentSnapshot added with ID: " + uid))
                 .addOnFailureListener(e -> Log.w(TAG, "Error adding document", e));// Create new Household
         // Create household details in Firestore
-        household.put("householdID", householdID);
+        // household.put("householdID", householdID);
         household.put("householdName", username + "'s Household");
         ArrayList<String> members = new ArrayList<>();
         members.add(mAuth.getCurrentUser().getUid());
@@ -129,8 +130,9 @@ public class Authentication {
         household.put("invited", new ArrayList<>());
         household.put("inventory", new ArrayList<>());
         db.collection("households")
-                .add(household)
-                .addOnSuccessListener(documentReference -> Log.d(TAG, "DocumentSnapshot added with ID: " + documentReference.getId()))
+                .document(householdID)
+                .set(household)
+                .addOnSuccessListener(documentReference -> Log.d(TAG, "DocumentSnapshot added with ID: " + householdID))
                 .addOnFailureListener(e -> Log.w(TAG, "Error adding document", e));
     }
 
