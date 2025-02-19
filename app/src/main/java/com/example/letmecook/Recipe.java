@@ -22,12 +22,13 @@ public class Recipe {
     public String author; // username or official/ the site we scraped it from
     public String r_type; // can be public, private or official
     public String cusine; //TODO make this similar to ingredients where you can only add valid stuff
-    public int cooking_time_h;
-    public int cooking_time_min;
+    public Integer cooking_time_h;
+    public Integer cooking_time_min;
+    public Integer total_time_h;
 
-    public int total_time_h;
-    public int total_time_min;
-    public int  prep_time;
+    public Integer total_time_min;
+    HashMap<String, Integer> timings = new HashMap<>();
+    // public Integer  prep_time;
     public ArrayList<String> ingredients;
 
     public ArrayList<String> mealType;
@@ -165,6 +166,15 @@ public class Recipe {
 
     public void cook_recipe(){} //TODO probably makes more sense to add this function somewhere else
 
+    public void clear_total_time(){ //TODO do this next, have to add on click listener that calls these
+        this.total_time_h = null;
+        this.total_time_min = null;
+    }
+    public void clear_cooking_time(){
+        this.total_time_h = null;
+        this.total_time_min = null;
+    }
+
     public void create(){
 
         // autofill author
@@ -198,10 +208,31 @@ public class Recipe {
             if (getMealType()!=null){
                 recipe.put("meal type", this.mealType);
             }
+
+            //check if the total cooking time has been set
+            if ((this.cooking_time_min != null) | (this.cooking_time_h != null) | (this.total_time_h != null) | (this.total_time_min != null)){
+
+                if (this.cooking_time_h != null) {
+                    this.timings.put("cooking_time_min", this.cooking_time_min);
+                }
+                if(this.cooking_time_min != null){
+                    this.timings.put("cooking_time_min", this.cooking_time_min);
+                }
+                if (this.total_time_min != null){
+                    this.timings.put("total_time_min", this.total_time_min);
+                }
+                if (this.total_time_h != null){
+                    this.timings.put("total_time_h", this.total_time_h);
+                }
+            }
+
+
+
             recipesRef.add(recipe);
                 //Toast.makeText(context , "recipe sucessfully saved", Toast.LENGTH_LONG) ;}).addOnFailureListener(e->{System.err.println("adding recipe failed");});
             //TODO figure out how to get this to work, can't really have the context here
     };
+
 
         // check if cusine has been filled in and add that
         // check if cook_time has been filled in and add
