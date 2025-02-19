@@ -1,5 +1,6 @@
 package com.example.letmecook.ui.inventory;
 
+import android.content.Intent;
 import android.os.Bundle; //Passes data to the fragment and restores its state after config changes
 import android.view.LayoutInflater; // handles the XML layout file into a View object
 import android.view.View;
@@ -8,6 +9,8 @@ import android.widget.TextView;
 import androidx.annotation.NonNull; //Arguments or return values that cannot be null
 import androidx.fragment.app.Fragment; //base class for the fragment
 import androidx.lifecycle.ViewModelProvider; //managing ViewModelProvider
+
+import com.example.letmecook.CameraActivity;
 import com.example.letmecook.databinding.FragmentInventoryBinding;
 
 public class InventoryFragment extends Fragment {
@@ -22,6 +25,8 @@ public class InventoryFragment extends Fragment {
         binding = FragmentInventoryBinding.inflate(inflater, container, false);
         View root = binding.getRoot();
 
+        binding.toCamera.setOnClickListener(v -> openCamera());
+
         final TextView textView = binding.textInventory;
         inventoryViewModel.getText().observe(getViewLifecycleOwner(), textView::setText);
         return root;
@@ -31,5 +36,9 @@ public class InventoryFragment extends Fragment {
     public void onDestroyView() {
         super.onDestroyView();
         binding = null;
+    }
+    private void openCamera() {
+        Intent intent = new Intent(requireContext(), CameraActivity.class);
+        startActivity(intent);
     }
 }
