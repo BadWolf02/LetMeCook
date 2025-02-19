@@ -201,28 +201,55 @@ public class RecipesFragment extends Fragment {
         });
 
 
-        // total time h selection handler
-        NumberPicker number_picker_h = binding.totalTimeH;
-        NumberPicker number_picker_min = binding.totalTimeMin;
+        // total time h and min selection handler
+        NumberPicker total_time_h_picker = binding.totalTimeH;
+        NumberPicker total_time_min_picker = binding.totalTimeMin;
+        Button total_time_clear_btn = binding.totalTimeClearBtn;
 
-        number_picker_h.setMinValue(0);
-        number_picker_h.setMaxValue(100);
-        number_picker_h.setFormatter(i -> String.format("%02d", i));
 
-        number_picker_min.setMinValue(0);
-        number_picker_min.setMaxValue(59);
-        number_picker_min.setFormatter(i -> String.format("%02d", i));
+        total_time_h_picker.setMinValue(0);
+        total_time_h_picker.setMaxValue(100);
+        total_time_h_picker.setFormatter(i -> String.format("%02d", i));
 
-        number_picker_h.setOnValueChangedListener((picker, oldVal, newVal) -> {
-            recipe.setTotal_time_h(newVal);//TODO continue here next
+        total_time_min_picker.setMinValue(0);
+        total_time_min_picker.setMaxValue(59);
+        total_time_min_picker.setFormatter(i -> String.format("%02d", i));
+
+        total_time_h_picker.setOnValueChangedListener((picker, oldVal, newVal) -> {
+            recipe.setTotal_time_h(newVal);
         });
 
-        number_picker_min.setOnValueChangedListener(((picker, oldVal, newVal) -> {
+        total_time_min_picker.setOnValueChangedListener(((picker, oldVal, newVal) -> {
             recipe.setTotal_time_min(newVal);
         }));
+        total_time_clear_btn.setOnClickListener(v -> {recipe.clear_total_time();});
 
 
+        // total time h and min selection handler
+        NumberPicker cooking_time_h_picker = binding.cookingTimeH;
+        NumberPicker cooking_time_min_picker = binding.cookingTimeMin;
+        Button cooking_time_clear_btn = binding.cookingTimeClearBtn;
 
+        cooking_time_h_picker.setMinValue(0);
+        cooking_time_h_picker.setMaxValue(100);
+        cooking_time_h_picker.setFormatter(i -> String.format("%02d", i));
+
+        cooking_time_min_picker.setMinValue(0);
+        cooking_time_min_picker.setMaxValue(59);
+        cooking_time_min_picker.setFormatter(i -> String.format("%02d", i));
+
+
+        cooking_time_h_picker.setOnValueChangedListener((picker, oldVal, newVal) -> {
+            recipe.setCooking_time_h(newVal);
+        });
+
+        cooking_time_min_picker.setOnValueChangedListener(((picker, oldVal, newVal) -> {
+            recipe.setCooking_time_min(newVal);
+        }));
+
+        cooking_time_clear_btn.setOnClickListener(v -> {
+            recipe.clear_cooking_time();
+        });
 
         Button create_recipe_btn = binding.addRecipeBtn;
         create_recipe_btn.setOnClickListener(v -> {
@@ -230,8 +257,6 @@ public class RecipesFragment extends Fragment {
             // add_last_step_to_recipe();
            recipe.create();
         });
-
-
 
 
         return root;
