@@ -88,7 +88,7 @@ public class HouseholdInvitesAdapter extends RecyclerView.Adapter<HouseholdInvit
     public ViewHolder onCreateViewHolder(ViewGroup viewGroup, int viewType) {
         // Create a new view, which defines the UI of the list item
         View view = LayoutInflater.from(viewGroup.getContext())
-                .inflate(R.layout.text_row_button, viewGroup, false);
+                .inflate(R.layout.invite_row_item, viewGroup, false);
 
         return new ViewHolder(view);
     }

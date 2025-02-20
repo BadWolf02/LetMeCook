@@ -11,6 +11,7 @@ import com.google.firebase.firestore.Query;
 
 import java.lang.reflect.Array;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
 public class SearchDB {
@@ -23,12 +24,12 @@ public class SearchDB {
 
     // Callback to handle asynchronously retrieving an array of strings
     public interface OnStringArrayRetrievedListener {
-        void onStringArrayRetrieved(ArrayList<String> foundArray);
+        void onStringArrayRetrieved(List<String> foundArray);
     }
 
     // Callback to handle asynchronously retrieving an array of documents
     public interface OnDocumentArrayRetrievedListener {
-        void onDocumentArrayRetrieved(ArrayList<DocumentSnapshot> foundArray);
+        void onDocumentArrayRetrieved(List<DocumentSnapshot> foundArray);
     }
 
     // Callback to handle asynchronously retrieving a string
@@ -48,7 +49,7 @@ public class SearchDB {
     public void filterRecipes(String name,
                               String author,
                               String cuisine,
-                              ArrayList<String> ingredients,
+                              List<String> ingredients,
                               OnDocumentArrayRetrievedListener listener) {
         Query recipeQuery = db.collection("recipes");
 
@@ -80,11 +81,11 @@ public class SearchDB {
                     if (queryDocumentSnapshots != null && !queryDocumentSnapshots.isEmpty()) {
                         Log.d(TAG, "Recipe(s) found");
                         // Store all documents in a list
-                        ArrayList<DocumentSnapshot> filteredRecipes = new ArrayList<>(queryDocumentSnapshots.getDocuments());
+                        List<DocumentSnapshot> filteredRecipes = new ArrayList<>(queryDocumentSnapshots.getDocuments());
                         listener.onDocumentArrayRetrieved(filteredRecipes);
                     } else {
                         Log.e(TAG, "No recipes found");
-                        listener.onDocumentArrayRetrieved(new ArrayList<DocumentSnapshot>());
+                        listener.onDocumentArrayRetrieved(new ArrayList<>());
                     }
                 });
     }
@@ -96,7 +97,7 @@ public class SearchDB {
                 .addOnSuccessListener(queryDocumentSnapshots -> {
                     if (queryDocumentSnapshots != null && !queryDocumentSnapshots.isEmpty()) {
                         Log.d(TAG, "Recipe(s) found");
-                        ArrayList<DocumentSnapshot> documents = (ArrayList<DocumentSnapshot>) queryDocumentSnapshots.getDocuments();
+                        List<DocumentSnapshot> documents = (List<DocumentSnapshot>) queryDocumentSnapshots.getDocuments();
                         listener.onDocumentArrayRetrieved(documents);
                     } else {
                         Log.e(TAG, "No recipes found");
@@ -112,7 +113,7 @@ public class SearchDB {
                 .addOnSuccessListener(queryDocumentSnapshots -> {
                     if (queryDocumentSnapshots != null && !queryDocumentSnapshots.isEmpty()) {
                         Log.d(TAG, "Recipe(s) found");
-                        ArrayList<DocumentSnapshot> documents = (ArrayList<DocumentSnapshot>) queryDocumentSnapshots.getDocuments();
+                        List<DocumentSnapshot> documents = (List<DocumentSnapshot>) queryDocumentSnapshots.getDocuments();
                         listener.onDocumentArrayRetrieved(documents);
                     } else {
                         Log.e(TAG, "No recipes found");
@@ -128,7 +129,7 @@ public class SearchDB {
                 .addOnSuccessListener(queryDocumentSnapshots -> {
                     if (queryDocumentSnapshots != null && !queryDocumentSnapshots.isEmpty()) {
                         Log.d(TAG, "Recipe(s) found");
-                        ArrayList<DocumentSnapshot> documents = (ArrayList<DocumentSnapshot>) queryDocumentSnapshots.getDocuments();
+                        List<DocumentSnapshot> documents = (List<DocumentSnapshot>) queryDocumentSnapshots.getDocuments();
                         listener.onDocumentArrayRetrieved(documents);
                     } else {
                         Log.e(TAG, "No recipes found");
@@ -144,7 +145,7 @@ public class SearchDB {
                 .addOnSuccessListener(queryDocumentSnapshots -> {
                     if (queryDocumentSnapshots != null && !queryDocumentSnapshots.isEmpty()) {
                         Log.d(TAG, "Recipe(s) found");
-                        ArrayList<DocumentSnapshot> documents = (ArrayList<DocumentSnapshot>) queryDocumentSnapshots.getDocuments();
+                        List<DocumentSnapshot> documents = (List<DocumentSnapshot>) queryDocumentSnapshots.getDocuments();
                         listener.onDocumentArrayRetrieved(documents);
                     } else {
                         Log.e(TAG, "No recipes found");
@@ -156,7 +157,7 @@ public class SearchDB {
     public void getRecipeIngredients(String rid, OnStringArrayRetrievedListener listener) {
             getRecipeDocumentByID(rid, recipeDocument -> {
                 if (recipeDocument != null) {
-                    ArrayList<String> ingredients = (ArrayList<String>) recipeDocument.get("ingredients");
+                    List<String> ingredients = (List<String>) recipeDocument.get("ingredients");
                     Log.d(TAG, "Ingredients: " + ingredients);
                     listener.onStringArrayRetrieved(ingredients);
                 } else {
@@ -221,7 +222,7 @@ public class SearchDB {
     public void getUserInvites(String uid, OnStringArrayRetrievedListener listener) {
         getUserDocumentByID(uid, userDocument -> {
             if (userDocument != null) {
-                ArrayList<String> invites = (ArrayList<String>) userDocument.get("invites");
+                List<String> invites = (List<String>) userDocument.get("invites");
                 Log.d(TAG, "Households invited to: " + invites);
                 listener.onStringArrayRetrieved(invites);
             } else {
@@ -233,7 +234,7 @@ public class SearchDB {
     public void getHouseholdInvites(String hid, OnStringArrayRetrievedListener listener) {
         getHouseholdByID(hid, householdDocument -> {
             if (householdDocument != null) {
-                ArrayList<String> invited = (ArrayList<String>) householdDocument.get("invited");
+                List<String> invited = (List<String>) householdDocument.get("invited");
                 Log.d(TAG, "Users invited: " + invited);
                 listener.onStringArrayRetrieved(invited);
             } else {
@@ -245,7 +246,7 @@ public class SearchDB {
     public void getHouseholdMembers(String hid, OnStringArrayRetrievedListener listener) {
         getHouseholdByID(hid, householdDocument -> {
             if (householdDocument != null) {
-                ArrayList<String> members = (ArrayList<String>) householdDocument.get("members");
+                List<String> members = (List<String>) householdDocument.get("members");
                 Log.d(TAG, "Members: " + members);
                 listener.onStringArrayRetrieved(members);
             } else {
