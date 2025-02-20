@@ -45,6 +45,12 @@
                 android:layout_height="wrap_content"
                 android:hint="enter recipe name" />
 
+            <MultiAutoCompleteTextView
+                android:id="@+id/multiAutoCompleteTextView"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="ingreedients" />
+
             <EditText
                 android:id="@+id/EditText_add_step1"
                 android:layout_width="match_parent"
