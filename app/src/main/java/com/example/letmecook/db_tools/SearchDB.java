@@ -113,7 +113,8 @@ public class SearchDB {
                 .addOnSuccessListener(queryDocumentSnapshots -> {
                     if (queryDocumentSnapshots != null && !queryDocumentSnapshots.isEmpty()) {
                         Log.d(TAG, "Recipe(s) found");
-                        List<DocumentSnapshot> documents = (List<DocumentSnapshot>) queryDocumentSnapshots.getDocuments();
+                        List<DocumentSnapshot> documents = (
+                                List<DocumentSnapshot>) queryDocumentSnapshots.getDocuments();
                         listener.onDocumentArrayRetrieved(documents);
                     } else {
                         Log.e(TAG, "No recipes found");
