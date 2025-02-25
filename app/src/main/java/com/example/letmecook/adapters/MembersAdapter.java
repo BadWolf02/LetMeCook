@@ -2,6 +2,7 @@ package com.example.letmecook.adapters;
 
 import static android.content.ContentValues.TAG;
 
+import android.annotation.SuppressLint;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -34,6 +35,7 @@ public class MembersAdapter extends RecyclerView.Adapter<MembersAdapter.ViewHold
         fetchMembers();
     }
 
+    @SuppressLint("NotifyDataSetChanged")
     private void fetchMembers() {
         // Get the user's household
         searchDB.getUserHouseholdID(mAuth.getCurrentUser().getUid(), hid -> {
