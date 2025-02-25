@@ -4,12 +4,10 @@ import static android.content.ContentValues.TAG;
 
 import android.util.Log;
 
-import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -50,23 +48,20 @@ public class SearchDB {
                               String author,
                               String cuisine,
                               List<String> ingredients,
+                              int page,
                               OnDocumentArrayRetrievedListener listener) {
+
         Query recipeQuery = db.collection("recipes");
+        int pageOffset = ((page - 1) * 8); // create page offset for pagination. 8 items per page
 
         // Checks for exact name match
-        if (name != null && !name.isEmpty()) {
-            recipeQuery = recipeQuery.whereEqualTo("r_name", name);
-        }
+        if (name != null && !name.isEmpty()) {recipeQuery = recipeQuery.whereEqualTo("r_name", name);}
 
         // Checks for exact author match
-        if (name != null && !name.isEmpty()) {
-            recipeQuery = recipeQuery.whereEqualTo("author", author);
-        }
+        if (author != null && !author.isEmpty()) {recipeQuery = recipeQuery.whereEqualTo("author", author);}
 
         // Checks for exact cuisine match
-        if (cuisine != null && !cuisine.isEmpty()) {
-            recipeQuery = recipeQuery.whereEqualTo("cuisine", cuisine);
-        }
+        if (cuisine != null && !cuisine.isEmpty()) {recipeQuery = recipeQuery.whereEqualTo("cuisine", cuisine);}
 
         // Checks for match of ingredients
         if (ingredients != null && !ingredients.isEmpty()) {
@@ -75,14 +70,24 @@ public class SearchDB {
             }
         }
 
+        Query finalRecipeQuery = recipeQuery;
         recipeQuery
+                .orderBy("r_name", Query.Direction.ASCENDING)
+                .limit(8L * page) // collect everything up to the page requested
                 .get()
                 .addOnSuccessListener(queryDocumentSnapshots -> {
                     if (queryDocumentSnapshots != null && !queryDocumentSnapshots.isEmpty()) {
                         Log.d(TAG, "Recipe(s) found");
-                        // Store all documents in a list
-                        List<DocumentSnapshot> filteredRecipes = new ArrayList<>(queryDocumentSnapshots.getDocuments());
-                        listener.onDocumentArrayRetrieved(filteredRecipes);
+                        // Use pagination to only retrieve given page of results
+                        DocumentSnapshot lastDocument = queryDocumentSnapshots.getDocuments().get(pageOffset);
+                        finalRecipeQuery
+                                .startAfter(lastDocument)
+                                .limit(8)
+                                .get()
+                                .addOnSuccessListener(newQuerySnapshots -> {
+                            List<DocumentSnapshot> filteredRecipes = new ArrayList<>(newQuerySnapshots.getDocuments());
+                            listener.onDocumentArrayRetrieved(filteredRecipes);
+                        });
                     } else {
                         Log.e(TAG, "No recipes found");
                         listener.onDocumentArrayRetrieved(new ArrayList<>());
@@ -97,11 +102,11 @@ public class SearchDB {
                 .addOnSuccessListener(queryDocumentSnapshots -> {
                     if (queryDocumentSnapshots != null && !queryDocumentSnapshots.isEmpty()) {
                         Log.d(TAG, "Recipe(s) found");
-                        List<DocumentSnapshot> documents = (List<DocumentSnapshot>) queryDocumentSnapshots.getDocuments();
+                        List<DocumentSnapshot> documents = queryDocumentSnapshots.getDocuments();
                         listener.onDocumentArrayRetrieved(documents);
                     } else {
                         Log.e(TAG, "No recipes found");
-                        listener.onDocumentArrayRetrieved(new ArrayList<DocumentSnapshot>());
+                        listener.onDocumentArrayRetrieved(new ArrayList<>());
                     }
                 });
     }
@@ -113,12 +118,11 @@ public class SearchDB {
                 .addOnSuccessListener(queryDocumentSnapshots -> {
                     if (queryDocumentSnapshots != null && !queryDocumentSnapshots.isEmpty()) {
                         Log.d(TAG, "Recipe(s) found");
-                        List<DocumentSnapshot> documents = (
-                                List<DocumentSnapshot>) queryDocumentSnapshots.getDocuments();
+                        List<DocumentSnapshot> documents = queryDocumentSnapshots.getDocuments();
                         listener.onDocumentArrayRetrieved(documents);
                     } else {
                         Log.e(TAG, "No recipes found");
-                        listener.onDocumentArrayRetrieved(new ArrayList<DocumentSnapshot>());
+                        listener.onDocumentArrayRetrieved(new ArrayList<>());
                     }
                 });
     }
@@ -130,11 +134,11 @@ public class SearchDB {
                 .addOnSuccessListener(queryDocumentSnapshots -> {
                     if (queryDocumentSnapshots != null && !queryDocumentSnapshots.isEmpty()) {
                         Log.d(TAG, "Recipe(s) found");
-                        List<DocumentSnapshot> documents = (List<DocumentSnapshot>) queryDocumentSnapshots.getDocuments();
+                        List<DocumentSnapshot> documents = queryDocumentSnapshots.getDocuments();
                         listener.onDocumentArrayRetrieved(documents);
                     } else {
                         Log.e(TAG, "No recipes found");
-                        listener.onDocumentArrayRetrieved(new ArrayList<DocumentSnapshot>());
+                        listener.onDocumentArrayRetrieved(new ArrayList<>());
                     }
                 });
     }
@@ -146,11 +150,11 @@ public class SearchDB {
                 .addOnSuccessListener(queryDocumentSnapshots -> {
                     if (queryDocumentSnapshots != null && !queryDocumentSnapshots.isEmpty()) {
                         Log.d(TAG, "Recipe(s) found");
-                        List<DocumentSnapshot> documents = (List<DocumentSnapshot>) queryDocumentSnapshots.getDocuments();
+                        List<DocumentSnapshot> documents = queryDocumentSnapshots.getDocuments();
                         listener.onDocumentArrayRetrieved(documents);
                     } else {
                         Log.e(TAG, "No recipes found");
-                        listener.onDocumentArrayRetrieved(new ArrayList<DocumentSnapshot>());
+                        listener.onDocumentArrayRetrieved(new ArrayList<>());
                     }
                 });
     }
