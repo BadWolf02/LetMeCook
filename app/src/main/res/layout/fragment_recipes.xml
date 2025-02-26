@@ -37,6 +37,12 @@
             app:layout_constraintTop_toTopOf="parent"
             tools:layout_editor_absoluteX="1dp">
 
+            <Button
+                android:id="@+id/add_recipe_btn"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="add recipe" />
+
             <ListView
                 android:id="@+id/meal_type_dropdown_trigger"
                 android:layout_width="match_parent"
@@ -57,7 +63,7 @@
                 android:id="@+id/multiAutoCompleteTextView"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="ingreedients" />
+                android:hint="add ingreedients" />
 
             <EditText
                 android:id="@+id/EditText_add_step1"
@@ -208,11 +214,6 @@
                 android:layout_height="wrap_content"
                 android:text="TextView" />
 
-            <Button
-                android:id="@+id/add_recipe_btn"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="add recipe" />
 
         </LinearLayout>
 

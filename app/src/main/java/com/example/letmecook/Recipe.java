@@ -13,6 +13,7 @@ import java.util.HashMap;
 import com.google.firebase.firestore.*;
 
 
+
 public class Recipe {
 
     //TODO use not null for required fields??
@@ -35,10 +36,12 @@ public class Recipe {
 
     public Integer allergens;
 
-    public ArrayList<String> steps = new ArrayList<>(); //TODO make sure to initialize all the other variables too in order to be able to use them in the methods without causing null pointer exceptions
+    public HashMap<String, String> steps = new HashMap<>(); //TODO make sure to initialize all the other variables too in order to be able to use them in the methods without causing null pointer exceptions
     private int stepsAmount;
 
     FirebaseFirestore db = FirebaseFirestore.getInstance();
+
+
     // protected Firebase db = new Firebase(Context Recipe.this); //probably worng, want it to take the context from the add recipe or display recipe
 
     public Recipe() {
@@ -140,15 +143,9 @@ public class Recipe {
         this.allergens = this.allergens | allergens;
     }
 
-    public void addStep(String text){
-        this.stepsAmount += 1;
-        StringBuilder step = new StringBuilder();
-        step.append(text).append(String.valueOf(stepsAmount)).toString();
-        if ( step.toString() == ""){
-            Log.d("no string", "no step to add");
-        }
-
-        this.steps.add(step.toString());
+    public void addStep(Integer id, String text){
+       this.stepsAmount += 1; //TODO take this and use it to hashmap instead of adding new thing to array
+        this.steps.put(id.toString(), text.toString());
     }
 
 
@@ -191,17 +188,18 @@ public class Recipe {
 
             HashMap<String, Object> recipe = new HashMap<>();
             recipe.put("r_name", this.r_name);
-            recipe.put("author", this.author);
+            // recipe.put("author", this.author);
             recipe.put("ingredienets", this.ingredients);
             recipe.put("steps", this.steps);
-            recipe.put("r_type", this.r_type);
-            recipe.put("allergens", this.allergens);
+            // recipe.put("r_type", this.r_type);
+            // recipe.put("allergens", this.allergens);
 //            if (this.cooking_time!=null) {
 //                recipe.put("cooking_time", this.cooking_time);
 //            }
 //            if (this.total_time!=null){
 //                recipe.put("total_time", this.total_time);
 //            }
+        
             if (this.cusine!=null){
                 recipe.put("cusine", this.cusine);
             }

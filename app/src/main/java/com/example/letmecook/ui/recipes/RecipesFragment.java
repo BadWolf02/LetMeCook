@@ -42,7 +42,9 @@ public class RecipesFragment extends Fragment {
 
     private ArrayList<Object> steps = new ArrayList();
 
-    private int next_step_index = 3; // TODO change this to be fetched dynamically
+    private ArrayList<Integer> steps_list = new ArrayList();
+
+    private int next_step_index = 5; // TODO change this to be fetched dynamically
 
 
     public View onCreateView(@NonNull LayoutInflater inflater,
@@ -54,6 +56,8 @@ public class RecipesFragment extends Fragment {
         final TextView textView = binding.textRecipes;
         recipesViewModel.getText().observe(getViewLifecycleOwner(), textView::setText);
 
+        // add the default first edit text box id to the list of step ids
+        // steps_list.add("EditText_add_step1");
 
     View root = binding.getRoot();
 
@@ -88,8 +92,12 @@ public class RecipesFragment extends Fragment {
 
 
 
+        //TODO do this next, adding steps working and saving however its saving the actual objects not the text from the objects so change that
 
         // add recipe step
+        // EditText stp1 = binding.EditTextAddStep1;
+        int stp1_id = R.id.EditText_add_step1;
+        steps_list.add(stp1_id);
         Button add_step_btn = binding.addStepBtn;
         add_step_btn.setOnClickListener(v -> {
                     // public void add_recipe_step(){
@@ -107,10 +115,10 @@ public class RecipesFragment extends Fragment {
 
                     // add this to db either save straight to a map here or to the recipie cals
                     // dynamically create another edit text
-                    Integer step_no = recipe.getStepsAmount() + 1;
-                    //TODO dynamically create this here
+                    Integer step_id = View.generateViewId();
+                    // dynamically create new recipie step box
                     EditText add_step_box = new EditText(getContext());
-                    add_step_box.setId(step_no); //TODO
+                    add_step_box.setId(step_id); //TODO
                     add_step_box.setHint("add Step");
                     ScrollView scrollView = getView().findViewById(R.id.scrollView);
                     LinearLayout layout = scrollView.findViewById(R.id.layout); // .layout //TODO figure out what needs to be here instead of dynamic layout? linear maybe
@@ -118,7 +126,8 @@ public class RecipesFragment extends Fragment {
                             ViewGroup.LayoutParams.MATCH_PARENT,
                             ViewGroup.LayoutParams.WRAP_CONTENT);
                     add_step_box.setLayoutParams(editbox_params);
-                    steps.add(add_step_box);
+                    // steps.add(add_step_box);
+                    steps_list.add(step_id);
                     // TODO add the index (starting at 0 of where we want to add the new edit view -> see if I can update this dynamically too depending on what is above
                     layout.addView(add_step_box, next_step_index);
                     next_step_index ++;
@@ -126,7 +135,7 @@ public class RecipesFragment extends Fragment {
                     // increment step_no when saved
                     recipe.incrementStepsAmount();
 
-                    // TODO get it to autoscroll
+                    // TODO get it to autoscroll -> actually autoscroll is fine, it is just uner the bottom nav bar so that needs to be fixed in the activity
                 });
 
         // }
@@ -154,8 +163,6 @@ public class RecipesFragment extends Fragment {
         Log.d("spinner", "got spinner view by id");
         cusine_spinner.setAdapter(cusine_adapter);
         Log.d("spinner", "set up adapter");
-
-
 
 
         // dropdown for meal Type
@@ -258,29 +265,45 @@ public class RecipesFragment extends Fragment {
         Button create_recipe_btn = binding.addRecipeBtn;
         create_recipe_btn.setOnClickListener(v -> {
             Log.d("adding step", "about to add lastep");
-            // add_last_step_to_recipe();
+            add_steps_to_recipe();
            recipe.create();
         });
+
+
+
 
 
         return root;
     }
 
-    //add recipe step
-    // :( this won't work if there has been nothing entered and I try to do a toString it causes a null pointer exception
-//    public void add_last_step_to_recipe(){
-//        Log.d("adding step", "add last step method reached");
+  //  add recipe step
+   //  :( this won't work if there has been nothing entered and I try to do a toString it causes a null pointer exception
+    // nvm causes a null pointer exception anyway
+    // probs have to move this to above return root but if I do that I would have to move it all to after the create() mcall making it really messy
+    public void add_steps_to_recipe(){
+        Log.d("adding step", "add last step method reached");
+        if (steps_list.size()> 0) {
+            for (int step_id : steps_list) {
+                EditText stp = getView().findViewById(step_id);
+                Editable stp_text = stp.getText();
+                if (stp_text != null && stp_text.length() > 0) {
+                    recipe.addStep(step_id, stp_text.toString());
+                }
+            }
+        }
 //        //check that this actually has the right amount of steps
-//        EditText last_step = getView().findViewById(next_step_index); //TODO do this next
+//        EditText last_step = getView().findViewById(next_step_index-1);   //TODO causes a null pointer exception so maybe the id is not being set properly
+//        Log.d("last step field: ", last_step.toString());
 //       //  for (int i=0; i<=recipe.getStepsAmount(); i++){
-//        if (last_step.toString() != ""){
+//        if (last_step.toString().isEmpty()){
 //            recipe.addStep(last_step.toString());
 //            Log.d("adding steps to recipe", "last step: "+last_step.toString());
 //        }
 //        else {
 //            Log.d("adding steps to recipe", "last step was empty");
 //        }
-//    }
+//        Log.d("adding last step", "end of add last step method reached");
+    }
 
 
     public void set_r_name(){
