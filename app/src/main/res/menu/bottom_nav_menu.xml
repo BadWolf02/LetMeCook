@@ -12,9 +12,9 @@
         android:title="@string/title_recipes"/> <!-- recipes -->
 
     <item
-        android:id="@+id/navigation_calendar"
-        android:icon="@drawable/ic_calendar_black_24dp"
-        android:title="@string/title_calendar"/> <!-- calendar -->
+        android:id="@+id/navigation_inventory"
+        android:icon="@drawable/ic_inventory_black_24dp"
+        android:title="@string/title_inventory"/> <!-- inventory -->
 
 <!--    <item-->
 <!--        android:id="@+id/navigation_shopping"-->

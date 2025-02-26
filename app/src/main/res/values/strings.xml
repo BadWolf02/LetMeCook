@@ -10,7 +10,7 @@
     <string name="username">Username</string>
     <string name="signup">Sign Up</string>
     <string name="sign_out">Sign Out</string>
-    <string name="Scan">Scan</string>
+    <string name="Scan">Scan items into the inventory</string>
     <string name="email">Email</string>
     <string name="passwordRestriction">Password must be at least 8 characters and contain a number, a lowercase letter and an uppercase letter</string>
     <string name="take_photo">Take Photo</string>
@@ -26,8 +26,8 @@
     <string name="manage_your_household">Manage Your Household</string>
     <string name="manage">Manage</string>
     <string name="view_invites">View invites</string>
+    <string name="members">Members</string>
     <string name="accept">Accept</string>
     <string name="deny">Deny</string>
-    <string name="members">Members</string>
     <string name="title_inventory">Inventory</string>
 </resources>

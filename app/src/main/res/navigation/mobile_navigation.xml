@@ -18,10 +18,10 @@
         tools:layout="@layout/fragment_recipes" />
 
     <fragment
-        android:id="@+id/navigation_calendar"
-        android:name="com.example.letmecook.ui.calendar.CalendarFragment"
-        android:label="@string/title_calendar"
-        tools:layout="@layout/fragment_user" />
+        android:id="@+id/navigation_inventory"
+        android:name="com.example.letmecook.ui.inventory.InventoryFragment"
+        android:label="@string/title_inventory"
+        tools:layout="@layout/fragment_inventory" />
 
     <fragment
         android:id="@+id/navigation_shopping"

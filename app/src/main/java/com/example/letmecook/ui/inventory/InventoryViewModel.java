@@ -15,8 +15,11 @@ public class InventoryViewModel extends ViewModel {
     private final MutableLiveData<String> inventoryText;
     private final String userId;
     private final SearchDB searchDB;
+    private final MutableLiveData<String> mText;
 
     public InventoryViewModel() {
+        mText = new MutableLiveData<>();
+        mText.setValue("This is inventory fragment");
         inventoryText = new MutableLiveData<>();
         inventoryText.setValue("Loading inventory...");
         userId = FirebaseAuth.getInstance().getCurrentUser().getUid();
@@ -28,6 +31,10 @@ public class InventoryViewModel extends ViewModel {
         return inventoryText;
     }
 
+    public LiveData<String> getText() {
+        return mText;
+    }
+}
     private void loadInventory() {
         searchDB.getUserDocumentByIDAsync(userId, userDocument -> {
             if (userDocument != null) {
