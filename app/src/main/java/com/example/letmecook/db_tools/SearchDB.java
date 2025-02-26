@@ -87,18 +87,23 @@ public class SearchDB {
                             return;
                         }
 
-                        DocumentSnapshot lastDocument = results.get(pageOffset);
+                        if (results.size() >= 6) {
+                            DocumentSnapshot lastDocument = results.get(pageOffset);
 
-                        // Fetch only 6 results starting after the correct document
-                        finalRecipeQuery
-                                .orderBy("r_name", Query.Direction.ASCENDING)
-                                .startAfter(lastDocument)
-                                .limit(6)
-                                .get().addOnSuccessListener(newQuerySnapshots -> {
-                            List<DocumentSnapshot> filteredRecipes = new ArrayList<>(newQuerySnapshots.getDocuments());
-                            Log.d(TAG, "Recipes retrieved for this page: " + filteredRecipes.size());
-                            listener.onDocumentArrayRetrieved(filteredRecipes);
-                        });
+                            // Fetch only 6 results starting after the correct document
+                            finalRecipeQuery
+                                    .orderBy("r_name", Query.Direction.ASCENDING)
+                                    .startAfter(lastDocument)
+                                    .limit(6)
+                                    .get().addOnSuccessListener(newQuerySnapshots -> {
+                                        List<DocumentSnapshot> filteredRecipes = new ArrayList<>(newQuerySnapshots.getDocuments());
+                                        Log.d(TAG, "Recipes retrieved for this page: " + filteredRecipes.size());
+                                        listener.onDocumentArrayRetrieved(filteredRecipes);
+                                    });
+                        } else {
+                            Log.d(TAG, "First page too small. No pagination");
+                            listener.onDocumentArrayRetrieved(results);
+                        }
                     } else {
                         Log.e(TAG, "No recipes found");
                         listener.onDocumentArrayRetrieved(new ArrayList<>());

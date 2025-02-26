@@ -67,6 +67,7 @@ private FragmentHomeBinding binding;
     // Call adapter's applyFilters method with user input
     private void filterRecipes(String name, String author, String cuisine, ArrayList<String> ingredients) {
         adapter.applyFilters(name, author, cuisine, ingredients, () -> {});
+        changePage(0);
     }
 
     private void changePage(int direction) {
