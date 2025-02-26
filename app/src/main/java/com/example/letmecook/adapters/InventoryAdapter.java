@@ -14,11 +14,9 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.letmecook.R;
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.DocumentReference;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Map;
 
 public class InventoryAdapter extends RecyclerView.Adapter<InventoryAdapter.ViewHolder> {
@@ -36,8 +34,7 @@ public class InventoryAdapter extends RecyclerView.Adapter<InventoryAdapter.View
         this.context = context;
         this.inventoryMap = inventoryMap;
         this.itemRemovedListener = listener;
-        // Initialize Firestore
-        this.firestore = FirebaseFirestore.getInstance();
+        this.firestore = FirebaseFirestore.getInstance(); // Initialize Firestore
     }
 
     public void updateInventory(Map<String, Integer> newInventory) {
@@ -54,8 +51,8 @@ public class InventoryAdapter extends RecyclerView.Adapter<InventoryAdapter.View
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-        List<String> ingredientList = new ArrayList<>(inventoryMap.keySet());
-        String ingredient = ingredientList.get(position);
+        String[] ingredientList = inventoryMap.keySet().toArray(new String[0]);
+        String ingredient = ingredientList[position];
         int quantity = inventoryMap.getOrDefault(ingredient, 0);
 
         holder.itemText.setText(ingredient + ": " + quantity);
@@ -84,7 +81,6 @@ public class InventoryAdapter extends RecyclerView.Adapter<InventoryAdapter.View
                     Toast.makeText(context, "Invalid quantity", Toast.LENGTH_SHORT).show();
                 } else {
                     updateInventory(ingredient, currentQuantity - amountToRemove);
-                    updateFirestoreInventory(ingredient, currentQuantity - amountToRemove); // Update Firestore
                 }
             } catch (NumberFormatException e) {
                 Toast.makeText(context, "Invalid input", Toast.LENGTH_SHORT).show();
@@ -97,31 +93,33 @@ public class InventoryAdapter extends RecyclerView.Adapter<InventoryAdapter.View
     }
 
     private void updateInventory(String ingredient, int newQuantity) {
+        // Update the local map
         if (newQuantity <= 0) {
-            inventoryMap.remove(ingredient);
+            inventoryMap.remove(ingredient); // Remove from local map
         } else {
-            inventoryMap.put(ingredient, newQuantity);
+            inventoryMap.put(ingredient, newQuantity); // Update local map
         }
 
+        // Update Firestore
+        updateFirestore(inventoryMap);
+
+        // Notify the listener to update the UI
         itemRemovedListener.onItemRemoved(inventoryMap);
         notifyDataSetChanged();
     }
 
-    // Update the inventory in Firestore after a change
-    private void updateFirestoreInventory(String ingredient, int newQuantity) {
-        DocumentReference ingredientRef = firestore.collection("inventory").document(ingredient);
+    private void updateFirestore(Map<String, Integer> updatedInventory) {
+        String userId = FirebaseAuth.getInstance().getCurrentUser().getUid(); // Assume user is authenticated
 
-        if (newQuantity <= 0) {
-            // If quantity becomes 0 or less, delete the ingredient from Firestore
-            ingredientRef.delete()
-                    .addOnSuccessListener(aVoid -> Toast.makeText(context, ingredient + " removed from Firestore", Toast.LENGTH_SHORT).show())
-                    .addOnFailureListener(e -> Toast.makeText(context, "Error removing ingredient", Toast.LENGTH_SHORT).show());
-        } else {
-            // Update the quantity of the ingredient in Firestore
-            ingredientRef.update("quantity", newQuantity)
-                    .addOnSuccessListener(aVoid -> Toast.makeText(context, ingredient + " updated in Firestore", Toast.LENGTH_SHORT).show())
-                    .addOnFailureListener(e -> Toast.makeText(context, "Error updating ingredient", Toast.LENGTH_SHORT).show());
-        }
+        firestore.collection("users")
+                .document(userId)
+                .update("inventory", updatedInventory) // Update the entire inventory map
+                .addOnSuccessListener(aVoid -> {
+                    Toast.makeText(context, "Inventory updated", Toast.LENGTH_SHORT).show();
+                })
+                .addOnFailureListener(e -> {
+                    Toast.makeText(context, "Failed to update inventory", Toast.LENGTH_SHORT).show();
+                });
     }
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
