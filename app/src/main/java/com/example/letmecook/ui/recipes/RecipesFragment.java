@@ -180,6 +180,9 @@ public class RecipesFragment extends Fragment {
 
         meal_type_dropdown_trigger.setOnTouchListener((v, event) ->{
 
+            // prevent multiple dialogs being opened at the same time
+            meal_type_dropdown_trigger.setEnabled(false);
+
             AlertDialog.Builder meal_type_dropdown_builder = new AlertDialog.Builder(requireContext());
             meal_type_dropdown_builder.setTitle("Meal type");
 
@@ -191,14 +194,17 @@ public class RecipesFragment extends Fragment {
                     selected_meal_types.remove(meal_types[which]);
                 }
             }));
-            meal_type_dropdown_builder.setPositiveButton("select", ((dialog, which) -> {
+            meal_type_dropdown_builder.setPositiveButton("confirm", ((dialog, which) -> {
                 meal_type_adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
                 meal_type_dropdown_trigger.setAdapter(meal_type_adapter);//meal_type_adapter((TextUtils.join(", ", selected_meal_types)));
                 recipe.setMealType(selected_meal_types);
+                meal_type_dropdown_trigger.setEnabled(true);
+                dialog.dismiss();
         }));
             //TODO chane this to unselect and enter none
-            meal_type_dropdown_builder.setNegativeButton("No type", (dialog, whick) -> {
+            meal_type_dropdown_builder.setNegativeButton("clear", (dialog, whick) -> {
                 recipe.setMealType(null);
+                meal_type_dropdown_trigger.setEnabled(true);
                 dialog.dismiss();
             });
             AlertDialog meal_type_dropdown = meal_type_dropdown_builder.create();
