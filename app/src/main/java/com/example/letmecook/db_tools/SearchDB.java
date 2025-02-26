@@ -72,21 +72,32 @@ public class SearchDB {
         }
 
         Query finalRecipeQuery = recipeQuery;
-        recipeQuery
+        finalRecipeQuery
                 .orderBy("r_name", Query.Direction.ASCENDING)
                 .limit(8L * page) // collect everything up to the page requested
                 .get()
                 .addOnSuccessListener(queryDocumentSnapshots -> {
                     if (queryDocumentSnapshots != null && !queryDocumentSnapshots.isEmpty()) {
-                        Log.d(TAG, "Recipe(s) found");
+                        List<DocumentSnapshot> results = queryDocumentSnapshots.getDocuments();
+                        Log.d(TAG, "Total recipes found: " + results.size());
                         // Use pagination to only retrieve given page of results
-                        DocumentSnapshot lastDocument = queryDocumentSnapshots.getDocuments().get(pageOffset);
+                        if (pageOffset >= results.size()) {
+                            Log.e(TAG, "Page offset out of bounds");
+                            listener.onDocumentArrayRetrieved(new ArrayList<>());
+                            return;
+                        }
+
+                        DocumentSnapshot lastDocument = results.get(pageOffset);
+
+                        // ✅ Fetch only 8 results starting after the correct document
                         finalRecipeQuery
+                                .orderBy("r_name", Query.Direction.ASCENDING)
                                 .startAfter(lastDocument)
-                                .limit(8)
-                                .get()
-                                .addOnSuccessListener(newQuerySnapshots -> {
+                                .limit(8);
+
+                        finalRecipeQuery.get().addOnSuccessListener(newQuerySnapshots -> {
                             List<DocumentSnapshot> filteredRecipes = new ArrayList<>(newQuerySnapshots.getDocuments());
+                            Log.d(TAG, "Recipes retrieved for this page: " + filteredRecipes.size());
                             listener.onDocumentArrayRetrieved(filteredRecipes);
                         });
                     } else {
