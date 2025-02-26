@@ -2,6 +2,7 @@ package com.example.letmecook;
 
 import static android.content.ContentValues.TAG;
 
+import android.annotation.SuppressLint;
 import android.os.Bundle;
 import android.util.Log;
 import android.widget.TextView;
@@ -14,7 +15,7 @@ import java.util.List;
 
 public class RecipeViewActivity extends AppCompatActivity {
     private TextView nameTextView, authorTextView, cuisineTextView, ingredientsTextView, stepsTextView;
-    private FirebaseFirestore db = FirebaseFirestore.getInstance();
+    private final FirebaseFirestore db = FirebaseFirestore.getInstance();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -51,6 +52,7 @@ public class RecipeViewActivity extends AppCompatActivity {
     }
 
     // Method to store recipe data in TextViews
+    @SuppressLint("SetTextI18n")
     private void fetchRecipeData(String recipeID) {
         db.collection("recipes")
                 .document(recipeID)

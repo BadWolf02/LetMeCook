@@ -3,7 +3,6 @@ package com.example.letmecook.db_tools;
 import static android.content.ContentValues.TAG;
 
 import android.util.Log;
-import android.widget.Toast;
 
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -53,7 +52,7 @@ public class SearchDB {
                               OnDocumentArrayRetrievedListener listener) {
 
         Query recipeQuery = db.collection("recipes");
-        int pageOffset = ((page - 1) * 8); // create page offset for pagination. 8 items per page
+        int pageOffset = ((page - 1) * 6); // create page offset for pagination. 6 items per page
 
         // Checks for exact name match
         if (name != null && !name.isEmpty()) {recipeQuery = recipeQuery.whereEqualTo("r_name", name);}
@@ -71,10 +70,11 @@ public class SearchDB {
             }
         }
 
+        // https://firebase.google.com/docs/firestore/query-data/query-cursors
         Query finalRecipeQuery = recipeQuery;
         finalRecipeQuery
                 .orderBy("r_name", Query.Direction.ASCENDING)
-                .limit(8L * page) // collect everything up to the page requested
+                .limit(6L * page) // collect everything up to the page requested
                 .get()
                 .addOnSuccessListener(queryDocumentSnapshots -> {
                     if (queryDocumentSnapshots != null && !queryDocumentSnapshots.isEmpty()) {
@@ -89,13 +89,12 @@ public class SearchDB {
 
                         DocumentSnapshot lastDocument = results.get(pageOffset);
 
-                        // ✅ Fetch only 8 results starting after the correct document
+                        // Fetch only 6 results starting after the correct document
                         finalRecipeQuery
                                 .orderBy("r_name", Query.Direction.ASCENDING)
                                 .startAfter(lastDocument)
-                                .limit(8);
-
-                        finalRecipeQuery.get().addOnSuccessListener(newQuerySnapshots -> {
+                                .limit(6)
+                                .get().addOnSuccessListener(newQuerySnapshots -> {
                             List<DocumentSnapshot> filteredRecipes = new ArrayList<>(newQuerySnapshots.getDocuments());
                             Log.d(TAG, "Recipes retrieved for this page: " + filteredRecipes.size());
                             listener.onDocumentArrayRetrieved(filteredRecipes);
