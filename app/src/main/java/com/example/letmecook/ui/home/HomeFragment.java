@@ -6,6 +6,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.SearchView;
 import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
@@ -13,7 +14,6 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.example.letmecook.R;
 import com.example.letmecook.adapters.RecipeSearchAdapter;
 import com.example.letmecook.databinding.FragmentHomeBinding;
 
@@ -24,9 +24,7 @@ public class HomeFragment extends Fragment {
 private FragmentHomeBinding binding;
 
     private RecipeSearchAdapter adapter;
-    private RecyclerView recyclerView;
-    private EditText searchInput;
-    private Button searchButton, prevPageButton, nextPageButton;
+    private Button prevPageButton, nextPageButton;
 
     public View onCreateView(@NonNull LayoutInflater inflater,
             ViewGroup container, Bundle savedInstanceState) {
@@ -35,9 +33,8 @@ private FragmentHomeBinding binding;
         View root = binding.getRoot();
 
         // Initialize UI components
-        recyclerView = binding.recyclerView;
-        searchInput = binding.testInput;
-        searchButton = binding.testButton;
+        RecyclerView recyclerView = binding.recyclerView;
+        SearchView searchBar = binding.searchBar;
         prevPageButton = binding.prevButton;
         nextPageButton = binding.nextButton;
 
@@ -45,9 +42,27 @@ private FragmentHomeBinding binding;
         recyclerView.setLayoutManager(new LinearLayoutManager(requireContext()));
         adapter = new RecipeSearchAdapter(requireContext()); // Initialize adapter
         recyclerView.setAdapter(adapter);
-        adapter.applyFilters(null, null, null, null, () -> {});
+        filterRecipes(null, null, null, null);
 
-        searchButton.setOnClickListener(view -> filterRecipes(null, searchInput.getText().toString(), null, null));
+        searchBar.setIconified(false);
+        searchBar.clearFocus();
+
+        searchBar.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                filterRecipes(null, query, null, null);
+                return true;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String newText) {
+                if (newText.isEmpty()) {
+                    filterRecipes(null, newText, null, null);
+                    return true;
+                }
+                return false;
+            }
+        });
 
         prevPageButton.setOnClickListener(view -> changePage(-1));
         nextPageButton.setOnClickListener(view -> changePage(1));
