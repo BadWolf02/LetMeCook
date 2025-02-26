@@ -8,94 +8,94 @@ import android.util.Log;
 import com.example.letmecook.db_tools.SearchDB;
 import com.google.firebase.auth.FirebaseAuth;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashMap;
 import java.util.Map;
 
 public class InventoryViewModel extends ViewModel {
 
-    private final MutableLiveData<String> inventoryText;
-    private final MutableLiveData<String> mText;
+    private final MutableLiveData<Map<String, Integer>> inventoryLiveData;
+    private final MutableLiveData<String> messageText;
     private final String userId;
     private final SearchDB searchDB;
-
     private static final String TAG = "InventoryViewModel";
+    private String householdID;
 
     public InventoryViewModel() {
-        mText = new MutableLiveData<>();
-        mText.setValue("This is inventory fragment");
-
-        inventoryText = new MutableLiveData<>();
-        inventoryText.setValue("Loading inventory...");
-
+        inventoryLiveData = new MutableLiveData<>(new HashMap<>());
+        messageText = new MutableLiveData<>("Loading inventory...");
         userId = FirebaseAuth.getInstance().getUid();
         searchDB = new SearchDB();
-
         loadInventory();
     }
 
-    public LiveData<String> getInventoryText() {
-        return inventoryText;
+    public LiveData<Map<String, Integer>> getInventoryLiveData() {
+        return inventoryLiveData;
     }
 
-    public LiveData<String> getText() {
-        return mText;
+    public LiveData<String> getMessageText() {
+        return messageText;
+    }
+
+    public String getHouseholdID() {
+        return householdID;
     }
 
     public void loadInventory() {
         if (userId == null) {
             Log.e(TAG, "User ID is null. User might not be logged in.");
-            inventoryText.setValue("User not logged in.");
+            messageText.setValue("User not logged in.");
             return;
         }
 
         searchDB.getUserDocumentByID(userId, userDocument -> {
             if (userDocument != null) {
-                String householdID = userDocument.getString("householdID");
+                householdID = userDocument.getString("householdID");
                 if (householdID != null) {
                     searchDB.getHouseholdDocumentByID(householdID, householdSnapshot -> {
-                        if (householdSnapshot != null) {
-                            if (householdSnapshot.contains("inventory")) {
-                                Object inventoryObj = householdSnapshot.get("inventory");
-                                if (inventoryObj instanceof Map) {
-                                    Map<String, Object> inventoryMap = (Map<String, Object>) inventoryObj;
-                                    if (inventoryMap.isEmpty()) {
-                                        inventoryText.setValue("Your inventory is empty");
-                                    } else {
-                                        StringBuilder inventoryTextBuilder = new StringBuilder();
-                                        for (Map.Entry<String, Object> entry : inventoryMap.entrySet()) {
-                                            String ingredient = entry.getKey();
-                                            Object quantity = entry.getValue();
+                        if (householdSnapshot != null && householdSnapshot.contains("inventory")) {
+                            Object inventoryObj = householdSnapshot.get("inventory");
+                            if (inventoryObj instanceof Map) {
+                                Map<String, Object> rawInventoryMap = (Map<String, Object>) inventoryObj;
 
-                                            if (quantity instanceof Number) {
-                                                inventoryTextBuilder.append(ingredient)
-                                                        .append(": ")
-                                                        .append(quantity)
-                                                        .append("\n");
-                                            } else {
-                                                inventoryTextBuilder.append(ingredient)
-                                                        .append(": ? (Invalid quantity)\n");
-                                            }
-                                        }
-                                        inventoryText.setValue(inventoryTextBuilder.toString());
+                                Map<String, Integer> inventoryMap = new HashMap<>();
+                                for (Map.Entry<String, Object> entry : rawInventoryMap.entrySet()) {
+                                    if (entry.getValue() instanceof Number) {
+                                        inventoryMap.put(entry.getKey(), ((Number) entry.getValue()).intValue());
                                     }
+                                }
+
+                                if (inventoryMap.isEmpty()) {
+                                    messageText.setValue("Your inventory is empty");
                                 } else {
-                                    Log.e(TAG, "Inventory is not a map. Type: " + (inventoryObj != null ? inventoryObj.getClass().getSimpleName() : "null"));
-                                    inventoryText.setValue("Inventory data is invalid.");
+                                    inventoryLiveData.setValue(inventoryMap);
+                                    messageText.setValue(""); // Clear loading message
                                 }
                             } else {
-                                inventoryText.setValue("Your inventory is empty");
+                                messageText.setValue("Inventory data is invalid.");
                             }
                         } else {
-                            inventoryText.setValue("Household not found");
+                            messageText.setValue("Your inventory is empty");
                         }
                     });
                 } else {
-                    inventoryText.setValue("Household not assigned.");
+                    messageText.setValue("Household not assigned.");
                 }
             } else {
-                inventoryText.setValue("User data missing.");
+                messageText.setValue("User data missing.");
             }
         });
+    }
+
+    public void updateInventory(Map<String, Integer> updatedInventory) {
+        if (householdID != null) {
+            searchDB.updateHouseholdInventory(householdID, updatedInventory, success -> {
+                if (success) {
+                    inventoryLiveData.setValue(updatedInventory);
+                    messageText.setValue("Inventory updated!");
+                } else {
+                    messageText.setValue("Failed to update inventory.");
+                }
+            });
+        }
     }
 }

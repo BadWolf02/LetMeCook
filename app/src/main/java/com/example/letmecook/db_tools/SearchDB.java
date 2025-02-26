@@ -8,6 +8,7 @@ import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.util.ArrayList;
+import java.util.Map;
 
 public class SearchDB {
     FirebaseFirestore db = FirebaseFirestore.getInstance(); // initialise database
@@ -146,5 +147,16 @@ public class SearchDB {
                         listener.onDocumentRetrieved(null);
                     }
                 });
+    }
+
+    public void updateHouseholdInventory(String householdID, Map<String, Integer> updatedInventory, OnUpdateListener listener) {
+        db.collection("households").document(householdID)
+                .update("inventory", updatedInventory)
+                .addOnSuccessListener(aVoid -> listener.onUpdate(true))
+                .addOnFailureListener(e -> listener.onUpdate(false));
+    }
+
+    public interface OnUpdateListener {
+        void onUpdate(boolean success);
     }
 }

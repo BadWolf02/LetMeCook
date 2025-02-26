@@ -30,4 +30,6 @@
     <string name="accept">Accept</string>
     <string name="deny">Deny</string>
     <string name="title_inventory">Inventory</string>
+    <string name="ingredient">Ingredient</string>
+    <string name="remove_item">Remove Item</string>
 </resources>

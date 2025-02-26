@@ -1,52 +1,49 @@
 package com.example.letmecook.ui.inventory;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+
 import com.example.letmecook.R;
-import com.example.letmecook.CameraActivity;
-import com.example.letmecook.databinding.FragmentInventoryBinding;
+import com.example.letmecook.adapters.InventoryAdapter;
 
 public class InventoryFragment extends Fragment {
 
-    private static final String TAG = "InventoryFragment";
-    private FragmentInventoryBinding binding;
     private InventoryViewModel inventoryViewModel;
+    private InventoryAdapter inventoryAdapter;
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        View view = inflater.inflate(R.layout.fragment_inventory, container, false);
+
+        TextView inventoryText = view.findViewById(R.id.text_inventory);
+        RecyclerView recyclerView = view.findViewById(R.id.inventory_recycler_view);
+        recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+
         inventoryViewModel = new ViewModelProvider(this).get(InventoryViewModel.class);
 
-        // Use view binding to inflate the layout
-        binding = FragmentInventoryBinding.inflate(inflater, container, false);
-        View root = binding.getRoot();
-
-        // Handle the "Open Camera" button click
-        binding.toCamera.setOnClickListener(v -> openCamera());
-
-        // Observe LiveData and update the inventory text
-        inventoryViewModel.getInventoryText().observe(getViewLifecycleOwner(), inventoryText -> {
-            binding.textInventory.setText(inventoryText);
+        inventoryViewModel.getInventoryLiveData().observe(getViewLifecycleOwner(), inventory -> {
+            if (inventoryAdapter == null) {
+                inventoryAdapter = new InventoryAdapter(getContext(), inventory, updatedInventory -> {
+                    inventoryViewModel.updateInventory(updatedInventory);
+                });
+                recyclerView.setAdapter(inventoryAdapter);
+            } else {
+                inventoryAdapter.updateInventory(inventory);
+            }
         });
 
-        return root;
-    }
+        inventoryViewModel.getMessageText().observe(getViewLifecycleOwner(), inventoryText::setText);
 
-    @Override
-    public void onDestroyView() {
-        super.onDestroyView();
-        binding = null; // Clean up the binding
-    }
-
-    private void openCamera() {
-        Intent intent = new Intent(requireContext(), CameraActivity.class);
-        startActivity(intent);
+        return view;
     }
 }
