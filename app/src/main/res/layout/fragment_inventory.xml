@@ -8,6 +8,7 @@
     android:background="?attr/colorPrimary"
     tools:context=".ui.inventory.InventoryFragment" >
 
+    <!-- TextView for inventory message -->
     <TextView
         android:id="@+id/text_inventory"
         android:layout_width="match_parent"
@@ -21,26 +22,27 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintBottom_toTopOf="@id/inventory_recycler_view" />
+        app:layout_constraintBottom_toTopOf="@id/toCamera" />
 
+    <!-- Button to open camera -->
     <Button
         android:id="@+id/toCamera"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/Scan"
-        app:layout_constraintBottom_toTopOf="@id/text_inventory"
+        app:layout_constraintBottom_toTopOf="@id/inventory_recycler_view"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toBottomOf="@id/text_inventory" />
 
-    <!-- RecyclerView for inventory -->
+    <!-- RecyclerView for inventory items -->
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/inventory_recycler_view"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_marginTop="16dp"
-        app:layout_constraintTop_toBottomOf="@id/text_inventory"
-        app:layout_constraintBottom_toTopOf="@id/toCamera"
+        app:layout_constraintTop_toBottomOf="@id/toCamera"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
 
