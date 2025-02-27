@@ -4,10 +4,14 @@ import static android.content.ContentValues.TAG;
 
 import android.util.Log;
 
+import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class SearchDB {
     FirebaseFirestore db = FirebaseFirestore.getInstance(); // initialise database
@@ -147,4 +151,27 @@ public class SearchDB {
                     }
                 });
     }
+
+    public interface IngredientsCallback{
+        public void onIngredientsLoaded(ArrayList<Object> ingredients);
+    }
+    //TODO next: this isn't working, so maybe try with callback interface
+    public void getIngredients(IngredientsCallback ingreedients_callback){
+
+        CollectionReference ingreedients_ref = db.collection("ingredients");
+        ingreedients_ref.get().addOnSuccessListener(ingredients_snapshot -> {
+            ArrayList<Object> ingredients_list = new ArrayList<>();
+            for (DocumentSnapshot ingredient : ingredients_snapshot.getDocuments()) {
+                String ingredient_name = ingredient.getString("name");
+                ingredients_list.add(ingredient_name);
+            }
+            Log.d("getting ingredients", ingredients_list.toString());
+            ingreedients_callback.onIngredientsLoaded(ingredients_list);
+                        //return ingredients_list.toArray();
+        }).addOnFailureListener(e -> {
+            Log.e("Firestore", "Error fetching ingredients", e);
+            ingreedients_callback.onIngredientsLoaded(new ArrayList<Object>());
+        });
+
+    };
 }
