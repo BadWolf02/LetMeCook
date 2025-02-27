@@ -58,11 +58,25 @@
             app:layout_constraintEnd_toEndOf="parent"/>
 
         <LinearLayout
-            android:id="@+id/filterButtonLayout"
+            android:id="@+id/ingredientsLayout"
             style="?android:attr/buttonBarStyle"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             app:layout_constraintTop_toBottomOf="@id/showMenuButton"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            android:orientation="horizontal"
+            android:padding="16dp">
+
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/filterButtonLayout"
+            style="?android:attr/buttonBarStyle"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            app:layout_constraintTop_toBottomOf="@id/ingredientsLayout"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             android:orientation="horizontal"
@@ -78,6 +92,7 @@
                 android:backgroundTint="?attr/colorSecondaryVariant"
                 app:layout_constraintStart_toStartOf="parent"
                 />
+
             <Button
                 android:id="@+id/searchButton"
                 style="?android:attr/buttonBarButtonStyle"

@@ -1,5 +1,6 @@
 package com.example.letmecook.ui.home;
 
+import android.graphics.Color;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -7,7 +8,9 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.ListPopupWindow;
+import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
@@ -28,10 +31,11 @@ private FragmentHomeBinding binding;
     private final SearchDB searchDB = new SearchDB();
     private RecipeSearchAdapter recipeAdapter;
 
-    private Button showMenuButton, resetButton, searchButton, prevPageButton, nextPageButton;
+    private Button prevPageButton, nextPageButton;
+    private LinearLayout filteredIngredientsLayout;
 
-    private ArrayList<String> ingredients = new ArrayList<>();
-    private ArrayList<String> filteredIngredients = new ArrayList<>();
+    private final ArrayList<String> ingredients = new ArrayList<>();
+    private final ArrayList<String> filteredIngredients = new ArrayList<>();
 
 
     public View onCreateView(@NonNull LayoutInflater inflater,
@@ -44,29 +48,28 @@ private FragmentHomeBinding binding;
         RecyclerView recyclerView = binding.recyclerView;
         EditText nameBar = binding.nameBar;
         EditText authorBar = binding.authorBar;
+        filteredIngredientsLayout = binding.ingredientsLayout;
 
-        showMenuButton = binding.showMenuButton;
-        resetButton = binding.resetButton;
-        searchButton = binding.searchButton;
+        Button showMenuButton = binding.showMenuButton;
+        Button resetButton = binding.resetButton;
+        Button searchButton = binding.searchButton;
         prevPageButton = binding.prevButton;
         nextPageButton = binding.nextButton;
 
         ListPopupWindow listPopupWindow = new ListPopupWindow(requireContext());
-        listPopupWindow.setAnchorView(showMenuButton); // Set the view to anchor the popup
+        listPopupWindow.setAnchorView(showMenuButton); // Anchor view to menu button
 
         // Create an adapter with the menu items
-
         searchDB.getIngredients(foundIngredients -> {
             ingredients.clear();
             ingredients.addAll(foundIngredients);
 
-            // Create an adapter and set it to ListPopupWindow
+            // Create an adapter to hold all ingredients in dropdown
             ArrayAdapter<String> menuAdapter = new ArrayAdapter<>(requireContext(),
                     R.layout.ingredient_dropdown_item, ingredients);
             listPopupWindow.setAdapter(menuAdapter);
         });
 
-        // Set item click listener
         // https://m2.material.io/components/menus/android#dropdown-menus
         // TODO fix bug where some items cannot be clicked
         listPopupWindow.setOnItemClickListener((parent, view, position, id) -> {
@@ -74,9 +77,8 @@ private FragmentHomeBinding binding;
             String selectedItem = ingredients.get(position);
             if (!filteredIngredients.contains(selectedItem)) {
                 filteredIngredients.add(selectedItem);
-                showMenuButton.setText(selectedItem); // Update button text with last selection
+                addIngredient();
             }
-            // Perform actions based on the selected item
             listPopupWindow.dismiss(); // Dismiss the popup after selection
         });
 
@@ -87,11 +89,8 @@ private FragmentHomeBinding binding;
             }
         });
 
-        // Show the ListPopupWindow when the button is clicked
-        resetButton.setOnClickListener(v -> {
-            recipeAdapter.resetFilters(()->{});
-            changePage(0);
-        });
+        // Reset all filters
+        resetButton.setOnClickListener(v -> resetFilters());
 
         // Searches based on filters
         searchButton.setOnClickListener(view -> {
@@ -131,6 +130,7 @@ private FragmentHomeBinding binding;
         changePage(0);
     }
 
+    // Handle pagination logic to hide/display page buttons
     private void changePage(int direction) {
         recipeAdapter.changePage(direction, () -> {
             if (recipeAdapter.page == 1) {
@@ -145,6 +145,31 @@ private FragmentHomeBinding binding;
                 nextPageButton.setVisibility(View.VISIBLE);
             }
         });
+    }
+
+    // Resets all filter and displays default
+    private void resetFilters() {
+        recipeAdapter.resetFilters(()->{});
+        changePage(0);
+        filteredIngredientsLayout.removeAllViews();
+    }
+
+    // Handle displaying ingredients that are selected for filter
+    private void addIngredient() {
+        filteredIngredientsLayout.removeAllViews();
+        for (String ingredient : filteredIngredients) {
+            TextView ingredientView = new TextView(requireContext());
+            ingredientView.setText(ingredient);
+            ingredientView.setTextSize(14);
+            ingredientView.setPadding(8,8,8,8);
+            ingredientView.setTextColor(Color.BLACK);
+
+            LinearLayout listItemLayout = new LinearLayout(requireContext());
+            listItemLayout.setOrientation(LinearLayout.HORIZONTAL);
+            listItemLayout.addView(ingredientView);
+            filteredIngredientsLayout.addView(listItemLayout);
+        }
+
     }
 }
 
