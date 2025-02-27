@@ -6,8 +6,11 @@ import android.util.Log;
 
 import com.google.android.gms.tasks.Task;
 import com.google.android.gms.tasks.Tasks;
+import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.firestore.Query;
 
 import java.util.ArrayList;
@@ -18,8 +21,7 @@ public class SearchDB {
     FirebaseFirestore db = FirebaseFirestore.getInstance(); // initialise database
 
     // Constructor
-    public SearchDB() {
-    }
+    public SearchDB() {}
 
     // Methods
 
@@ -179,13 +181,13 @@ public class SearchDB {
 
     public void getUserHouseholdID(String uid, OnStringRetrievedListener listener) {
         getUserDocumentByID(uid, userDocument -> {
-            if (userDocument != null) {
-                String hid = (String) userDocument.get("householdID");
-                Log.d(TAG, "User household: " + hid);
-                listener.onStringRetrieved(hid);
-            } else {
-                listener.onStringRetrieved(null);
-            }
+           if (userDocument != null) {
+               String hid = (String) userDocument.get("householdID");
+               Log.d(TAG, "User household: " + hid);
+               listener.onStringRetrieved(hid);
+           } else {
+               listener.onStringRetrieved(null);
+           }
         });
     }
 
@@ -228,7 +230,7 @@ public class SearchDB {
             } else {
                 listener.onStringArrayRetrieved(new ArrayList<>());
             }
-        });
+            });
     }
 
     public void getHouseholdMembers(String hid, OnStringArrayRetrievedListener listener) {
@@ -242,6 +244,23 @@ public class SearchDB {
                 listener.onStringArrayRetrieved(new ArrayList<>());
             }
         });
+    }
+
+    // Get snapshot for household by householdID
+    public void getHouseholdDocumentByID(String hid, OnDocumentRetrievedListener listener) {
+        db.collection("households")
+                .document(hid)
+                .get()
+                .addOnSuccessListener(documentSnapshot -> {
+                    if (documentSnapshot.exists()) {
+                        // Household found, retrieve the first matching document
+                        Log.d(TAG, "Household found");
+                        listener.onDocumentRetrieved(documentSnapshot);
+                    } else {
+                        Log.e(TAG, "Household not found");
+                        listener.onDocumentRetrieved(null);
+                    }
+                });
     }
 
     // User
@@ -303,22 +322,22 @@ public class SearchDB {
                 });
     }
 
-    // Get snapshot for household by householdID
-    public void getHouseholdDocumentByID(String hid, OnDocumentRetrievedListener listener) {
-        db.collection("households")
-                .document(hid)
-                .get()
-                .addOnSuccessListener(documentSnapshot -> {
-                    if (documentSnapshot.exists()) {
-                        // Household found, retrieve the first matching document
-                        Log.d(TAG, "Household found");
-                        listener.onDocumentRetrieved(documentSnapshot);
-                    } else {
-                        Log.e(TAG, "Household not found");
-                        listener.onDocumentRetrieved(null);
-                    }
-                });
-    }
+//    // Get snapshot for household by householdID
+//    public void getHouseholdDocumentByID(String hid, OnDocumentRetrievedListener listener) {
+//        db.collection("households")
+//                .document(hid)
+//                .get()
+//                .addOnSuccessListener(documentSnapshot -> {
+//                    if (documentSnapshot.exists()) {
+//                        // Household found, retrieve the first matching document
+//                        Log.d(TAG, "Household found");
+//                        listener.onDocumentRetrieved(documentSnapshot);
+//                    } else {
+//                        Log.e(TAG, "Household not found");
+//                        listener.onDocumentRetrieved(null);
+//                    }
+//                });
+//    }
 
     public void updateHouseholdInventory(String householdID, Map<String, Object> updatedInventory, OnUpdateListener listener) {
         db.collection("households").document(householdID)

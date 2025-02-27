@@ -19,11 +19,13 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.MultiAutoCompleteTextView;
 import android.widget.NumberPicker;
 import android.widget.ScrollView;
 import android.widget.Spinner;
 import android.widget.TextView;
 import androidx.annotation.NonNull; //Arguments or return values that cannot be null
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.Fragment; //base class for the fragment
 import androidx.lifecycle.ViewModelProvider; //managing ViewModelProvide
@@ -32,13 +34,17 @@ import com.example.letmecook.R;
 import com.example.letmecook.Recipe;
 import com.example.letmecook.WebScrapingActivity;
 import com.example.letmecook.databinding.FragmentRecipesBinding;
+import com.example.letmecook.db_tools.SearchDB;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class RecipesFragment extends Fragment {
 
     private FragmentRecipesBinding binding; // binding object allows interaction with views
     public Recipe recipe = new Recipe();
+
+ //   private SearchDB db = new SearchDB();
 
     private ArrayList<Object> steps = new ArrayList();
 
@@ -140,6 +146,28 @@ public class RecipesFragment extends Fragment {
 
         // }
 
+//
+//        // add allergens //TODO contionue here next, its not working properly
+//        Log.e("ingredients", "reached on create");
+//        MultiAutoCompleteTextView add_ingredients = binding.addIngreedientsMultiAtotComplete;
+//        ArrayList<Object> ingredientsList = new ArrayList<>();
+//        db.getIngredients(new SearchDB.IngredientsCallback() {
+//            @Override
+//            public void onIngredientsLoaded(Object[] ingredients) {
+//                ingredientsList.clear();
+//                ingredientsList.addAll();
+//                ingredients_adapter.notifyDataSetChanged();
+//            }
+//        });
+//        add_ingredients.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                Log.d("ingredients", ingredientsList.toString());
+//                ArrayAdapter<Object> ingredients_adapter = new ArrayAdapter<>(requireContext(), android.R.layout.simple_dropdown_item_1line, ingredientsList);
+//                add_ingredients.setAdapter(ingredients_adapter);
+//                add_ingredients.setTokenizer(new MultiAutoCompleteTextView.CommaTokenizer());
+//            }
+//        });
 
 
         // get cusine from selection and set it as cusine of the recipe
@@ -210,10 +238,6 @@ public class RecipesFragment extends Fragment {
             AlertDialog meal_type_dropdown = meal_type_dropdown_builder.create();
             meal_type_dropdown.show();
 
-
-
-
-
             return true;
         });
 
@@ -282,6 +306,25 @@ public class RecipesFragment extends Fragment {
         return root;
     }
 
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceStates){
+        super.onViewCreated(view, savedInstanceStates);
+        Log.e("ingredients", "reached on create");
+        MultiAutoCompleteTextView add_ingredients = binding.addIngreedientsMultiAtotComplete;
+        SearchDB db = new SearchDB();
+        // String[] ingredientsList =
+        db.getIngredients(new SearchDB.IngredientsCallback() {
+        @Override
+            public void onIngredientsLoaded(ArrayList ingredients){
+                if (!ingredients.isEmpty()){
+                    ArrayAdapter<String> ingredients_adapter = new ArrayAdapter<>(requireContext(), android.R.layout.simple_dropdown_item_1line, ingredients);
+                    add_ingredients.setAdapter(ingredients_adapter);
+                    add_ingredients.setTokenizer(new MultiAutoCompleteTextView.CommaTokenizer());
+                }
+        }
+        });
+
+    }
   //  add recipe step
    //  :( this won't work if there has been nothing entered and I try to do a toString it causes a null pointer exception
     // nvm causes a null pointer exception anyway
