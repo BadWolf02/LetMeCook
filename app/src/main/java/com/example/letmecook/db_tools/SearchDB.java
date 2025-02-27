@@ -111,6 +111,27 @@ public class SearchDB {
                 });
     }
 
+
+    // Ingredients
+
+    public void getIngredients(OnStringArrayRetrievedListener listener) {
+        db.collection("ingredients")
+                .get()
+                .addOnSuccessListener(queryDocumentSnapshots -> {
+                    if (queryDocumentSnapshots != null && !queryDocumentSnapshots.isEmpty()) {
+                        List<String> ingredients = new ArrayList<>();
+                        for (DocumentSnapshot document : queryDocumentSnapshots.getDocuments()) {
+                            ingredients.add((String) document.getId());
+                        }
+                        Log.d(TAG, "Ingredients found: " + ingredients);
+                        listener.onStringArrayRetrieved(ingredients);
+
+                    } else {
+                        listener.onStringArrayRetrieved(new ArrayList<>());
+                    }
+                });
+    }
+
     // Households
 
 

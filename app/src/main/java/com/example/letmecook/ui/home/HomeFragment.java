@@ -1,21 +1,24 @@
 package com.example.letmecook.ui.home;
 
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
+import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.SearchView;
-import android.widget.TextView;
+
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
-import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.letmecook.R;
 import com.example.letmecook.adapters.RecipeSearchAdapter;
 import com.example.letmecook.databinding.FragmentHomeBinding;
+import com.example.letmecook.db_tools.SearchDB;
 
 import java.util.ArrayList;
 
@@ -23,8 +26,14 @@ public class HomeFragment extends Fragment {
 
 private FragmentHomeBinding binding;
 
+    private SearchDB searchDB = new SearchDB();
     private RecipeSearchAdapter adapter;
-    private Button prevPageButton, nextPageButton;
+
+    private Button searchButton, prevPageButton, nextPageButton;
+
+    private ArrayList<String> ingredients = new ArrayList<>();
+    private ArrayList<String> filteredIngredients = new ArrayList<>();
+    private ArrayAdapter<String> ingredientAdapter;
 
     public View onCreateView(@NonNull LayoutInflater inflater,
             ViewGroup container, Bundle savedInstanceState) {
@@ -34,36 +43,30 @@ private FragmentHomeBinding binding;
 
         // Initialize UI components
         RecyclerView recyclerView = binding.recyclerView;
-        SearchView searchBar = binding.searchBar;
+        EditText nameBar = binding.nameBar;
+        EditText authorBar = binding.authorBar;
+
+        searchButton = binding.searchButton;
         prevPageButton = binding.prevButton;
         nextPageButton = binding.nextButton;
 
-        // Set up RecyclerView
+        // Searches based on filters
+        searchButton.setOnClickListener(view -> {
+            filterRecipes(
+                    nameBar.getText().toString(),
+                    authorBar.getText().toString(),
+                    null,
+                    filteredIngredients);
+        });
+
+        // Set up RecyclerView for recipes
         recyclerView.setLayoutManager(new LinearLayoutManager(requireContext()));
         adapter = new RecipeSearchAdapter(requireContext()); // Initialize adapter
         recyclerView.setAdapter(adapter);
         filterRecipes(null, null, null, null);
 
-        searchBar.setIconified(false);
-        searchBar.clearFocus();
 
-        searchBar.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
-            @Override
-            public boolean onQueryTextSubmit(String query) {
-                filterRecipes(null, query, null, null);
-                return true;
-            }
-
-            @Override
-            public boolean onQueryTextChange(String newText) {
-                if (newText.isEmpty()) {
-                    filterRecipes(null, newText, null, null);
-                    return true;
-                }
-                return false;
-            }
-        });
-
+        // Changes pages
         prevPageButton.setOnClickListener(view -> changePage(-1));
         nextPageButton.setOnClickListener(view -> changePage(1));
 
