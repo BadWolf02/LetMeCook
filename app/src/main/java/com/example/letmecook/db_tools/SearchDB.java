@@ -108,7 +108,8 @@ public class SearchDB {
                         Log.e(TAG, "No recipes found");
                         listener.onDocumentArrayRetrieved(new ArrayList<>());
                     }
-                });
+                })
+                .addOnFailureListener(queryDocumentSnapshots -> {listener.onDocumentArrayRetrieved(new ArrayList<>());});
     }
 
 
