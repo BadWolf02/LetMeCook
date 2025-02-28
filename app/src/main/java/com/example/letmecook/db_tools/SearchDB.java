@@ -4,6 +4,8 @@ import static android.content.ContentValues.TAG;
 
 import android.util.Log;
 
+import com.google.android.gms.tasks.Task;
+import com.google.android.gms.tasks.Tasks;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
@@ -110,6 +112,23 @@ public class SearchDB {
                     }
                 })
                 .addOnFailureListener(queryDocumentSnapshots -> {listener.onDocumentArrayRetrieved(new ArrayList<>());});
+    }
+
+    public void getRecipeDocumentByID(String recipeID, OnDocumentRetrievedListener listener) {
+        db.collection("recipes")
+                .document(recipeID)
+                .get()
+                .addOnSuccessListener(documentSnapshot -> {
+                    if (documentSnapshot.exists()) {
+                        // Recipe found, retrieve the first matching document
+                        Log.d(TAG, "Recipe found by ID");
+                        listener.onDocumentRetrieved(documentSnapshot);
+                    } else {
+                        Log.e(TAG, "Recipe not found");
+                        listener.onDocumentRetrieved(null);
+                    }
+                })
+                .addOnFailureListener(e -> Log.e(TAG, "Firestore fetch failed: ", e));;
     }
 
 
@@ -242,6 +261,29 @@ public class SearchDB {
     }
 
     // User
+
+    public void getFavouriteRecipes(String uid, OnDocumentArrayRetrievedListener listener) {
+        getUserDocumentByID(uid, userDocument -> {
+           List<String> favouriteRecipesIDs = (List<String>) userDocument.get("favourite_recipes");
+           if (favouriteRecipesIDs != null) {
+               List<DocumentSnapshot> favouriteRecipes = new ArrayList<>();
+
+               List<Task<DocumentSnapshot>> tasks = new ArrayList<>();
+               for (String recipeID : favouriteRecipesIDs) {
+                   tasks.add(db.collection("recipes").document(recipeID).get());
+               }
+               Tasks.whenAllSuccess(tasks).addOnSuccessListener(results -> {
+                   for (Object recipeDocument : results) {
+                       favouriteRecipes.add((DocumentSnapshot) recipeDocument);
+                   }
+                   listener.onDocumentArrayRetrieved(favouriteRecipes);
+               });
+           } else {
+               listener.onDocumentArrayRetrieved(new ArrayList<>());
+           }
+        });
+    }
+
 
     // Get snapshot for user by uid
     public void getUserDocumentByID(String uid, OnDocumentRetrievedListener listener) {

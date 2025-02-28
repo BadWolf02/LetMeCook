@@ -45,6 +45,14 @@
         android:textColor="?attr/colorOnSecondary"
         app:layout_constraintTop_toBottomOf="@id/householdButton"/>
 
+    <Button
+        android:id="@+id/favouriteButton"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:backgroundTint="?attr/colorSecondaryVariant"
+        android:text="@string/view_favourite_recipes"
+        android:textColor="?attr/colorOnSecondary"
+        app:layout_constraintTop_toBottomOf="@id/inviteButton"/>
 
     <Button
         android:id="@+id/sign_out"
@@ -53,7 +61,7 @@
         android:layout_marginHorizontal="50dp"
         android:layout_marginTop="20dp"
         android:layout_marginBottom="64dp"
-        android:backgroundTint="?attr/colorSecondaryVariant"
+        android:backgroundTint="?attr/colorAccent"
         android:text="@string/sign_out"
         android:textColor="?attr/colorOnSecondary"
         app:layout_constraintBottom_toBottomOf="parent"

@@ -10,6 +10,7 @@ import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.example.letmecook.db_tools.SearchDB;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -20,6 +21,7 @@ public class RecipeViewActivity extends AppCompatActivity {
     private TextView nameTextView, authorTextView, cuisineTextView, ingredientsTextView, stepsTextView;
     private final FirebaseAuth mAuth = FirebaseAuth.getInstance();
     private final FirebaseFirestore db = FirebaseFirestore.getInstance();
+    private final SearchDB searchDB = new SearchDB();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -63,19 +65,14 @@ public class RecipeViewActivity extends AppCompatActivity {
     // Method to store recipe data in TextViews
     @SuppressLint("SetTextI18n")
     private void fetchRecipeData(String recipeID) {
-        db.collection("recipes")
-                .document(recipeID)
-                .get()
-                .addOnSuccessListener(documentSnapshot -> {
-                   if (documentSnapshot.exists()) {
-                       // Pass UI data to TextViews
-                       nameTextView.setText(documentSnapshot.getString("r_name"));
-                       authorTextView.setText("By: " + documentSnapshot.getString("author"));
-                       cuisineTextView.setText("Cuisine: " + documentSnapshot.getString("cuisine"));
-                       ingredientsTextView.setText(formatList("Ingredients", (List<String>) documentSnapshot.get("ingredients")));
-                       stepsTextView.setText(formatList("Steps", (List<String>) documentSnapshot.get("steps")));
-                   }
-                });
+        searchDB.getRecipeDocumentByID(recipeID, documentSnapshot -> {
+            // Pass UI data to TextViews
+            nameTextView.setText(documentSnapshot.getString("r_name"));
+            authorTextView.setText("By: " + documentSnapshot.getString("author"));
+            cuisineTextView.setText("Cuisine: " + documentSnapshot.getString("cuisine"));
+            ingredientsTextView.setText(formatList("Ingredients", (List<String>) documentSnapshot.get("ingredients")));
+            stepsTextView.setText(formatList("Steps", (List<String>) documentSnapshot.get("steps")));
+        });
     }
 
     private void addRecipeToFavourites(String recipeID) {
