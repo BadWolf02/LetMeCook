@@ -5,16 +5,20 @@ import static android.content.ContentValues.TAG;
 import android.annotation.SuppressLint;
 import android.os.Bundle;
 import android.util.Log;
+import android.widget.Button;
 import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.util.List;
 
 public class RecipeViewActivity extends AppCompatActivity {
     private TextView nameTextView, authorTextView, cuisineTextView, ingredientsTextView, stepsTextView;
+    private final FirebaseAuth mAuth = FirebaseAuth.getInstance();
     private final FirebaseFirestore db = FirebaseFirestore.getInstance();
 
     @Override
@@ -35,6 +39,11 @@ public class RecipeViewActivity extends AppCompatActivity {
         } else {
             Log.e(TAG, "Error loading recipe");
         }
+
+        Button favouriteButton = findViewById(R.id.favouriteButton);
+        favouriteButton.setOnClickListener(view -> {
+            addRecipeToFavourites(recipeID);
+        });
 
     }
 
@@ -67,5 +76,11 @@ public class RecipeViewActivity extends AppCompatActivity {
                        stepsTextView.setText(formatList("Steps", (List<String>) documentSnapshot.get("steps")));
                    }
                 });
+    }
+
+    private void addRecipeToFavourites(String recipeID) {
+        db.collection("users")
+                .document(mAuth.getCurrentUser().getUid())
+                .update("favourite_recipes", FieldValue.arrayUnion(recipeID));
     }
 }
