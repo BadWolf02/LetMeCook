@@ -43,9 +43,7 @@ public class RecipeViewActivity extends AppCompatActivity {
         }
 
         Button favouriteButton = findViewById(R.id.favouriteButton);
-        favouriteButton.setOnClickListener(view -> {
-            addRecipeToFavourites(recipeID);
-        });
+        favouriteButton.setOnClickListener(view -> addRecipeToFavourites(recipeID));
 
     }
 

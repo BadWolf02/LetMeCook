@@ -27,8 +27,6 @@ import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 
-import org.w3c.dom.Document;
-
 // https://developer.android.com/develop/ui/views/layout/recyclerview#java
 
 public class FavouriteRecipeAdapter extends RecyclerView.Adapter<FavouriteRecipeAdapter.ViewHolder> {
@@ -116,9 +114,7 @@ public class FavouriteRecipeAdapter extends RecyclerView.Adapter<FavouriteRecipe
                                     .error(R.drawable.placeholder_24dp)
                                     .into(imageView);
                         })
-                        .addOnFailureListener(exception -> {
-                            Log.e(TAG, "Image failed to load");
-                        });
+                        .addOnFailureListener(exception -> Log.e(TAG, "Image failed to load"));
             } else {
                 imageView.setImageResource(R.drawable.placeholder_24dp);
             }

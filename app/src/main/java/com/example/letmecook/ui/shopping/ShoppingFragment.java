@@ -14,7 +14,6 @@ import android.widget.SearchView;
 import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
-import androidx.lifecycle.ViewModelProvider;
 
 import com.example.letmecook.R;
 import com.example.letmecook.databinding.FragmentShoppingBinding;
@@ -31,7 +30,6 @@ public class ShoppingFragment extends Fragment {
     private FragmentShoppingBinding binding;
 
     private final FirebaseAuth mAuth = FirebaseAuth.getInstance();
-    private final FirebaseFirestore db = FirebaseFirestore.getInstance();
     private final SearchDB searchDB = new SearchDB();
 
     private LinearLayout shoppingListLayout;
@@ -150,14 +148,14 @@ public class ShoppingFragment extends Fragment {
     }
 
     private void addToShoppingList(String ingredient) {
-        searchDB.getUserHouseholdDocument(mAuth.getUid(), householdDocument -> {
-            householdDocument.getReference().update("shopping-list", FieldValue.arrayUnion(ingredient));
-        });
+        searchDB.getUserHouseholdDocument(mAuth.getUid(), householdDocument ->
+                householdDocument.getReference().update("shopping-list", FieldValue.arrayUnion(ingredient))
+        );
     }
 
     private void removeFromShoppingList(String ingredient) {
-        searchDB.getUserHouseholdDocument(mAuth.getUid(), householdDocument -> {
-            householdDocument.getReference().update("shopping-list", FieldValue.arrayRemove(ingredient));
-        });
+        searchDB.getUserHouseholdDocument(mAuth.getUid(), householdDocument ->
+                householdDocument.getReference().update("shopping-list", FieldValue.arrayRemove(ingredient))
+        );
     }
 }

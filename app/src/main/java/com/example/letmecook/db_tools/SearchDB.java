@@ -12,7 +12,6 @@ import com.google.firebase.firestore.Query;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 
 public class SearchDB {
     FirebaseFirestore db = FirebaseFirestore.getInstance(); // initialise database
@@ -111,7 +110,7 @@ public class SearchDB {
                         listener.onDocumentArrayRetrieved(new ArrayList<>());
                     }
                 })
-                .addOnFailureListener(queryDocumentSnapshots -> {listener.onDocumentArrayRetrieved(new ArrayList<>());});
+                .addOnFailureListener(queryDocumentSnapshots -> listener.onDocumentArrayRetrieved(new ArrayList<>()));
     }
 
     public void getRecipeDocumentByID(String recipeID, OnDocumentRetrievedListener listener) {
@@ -128,7 +127,7 @@ public class SearchDB {
                         listener.onDocumentRetrieved(null);
                     }
                 })
-                .addOnFailureListener(e -> Log.e(TAG, "Firestore fetch failed: ", e));;
+                .addOnFailureListener(e -> Log.e(TAG, "Firestore fetch failed: ", e));
     }
 
 
@@ -141,7 +140,7 @@ public class SearchDB {
                     if (queryDocumentSnapshots != null && !queryDocumentSnapshots.isEmpty()) {
                         List<String> ingredients = new ArrayList<>();
                         for (DocumentSnapshot document : queryDocumentSnapshots.getDocuments()) {
-                            ingredients.add((String) document.getId());
+                            ingredients.add(document.getId());
                         }
                         Log.d(TAG, "Ingredients found: " + ingredients);
                         listener.onStringArrayRetrieved(ingredients);

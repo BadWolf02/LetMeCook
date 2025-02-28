@@ -1,15 +1,6 @@
 package com.example.letmecook;
 
-import static android.content.ContentValues.TAG;
-import static android.content.Intent.getIntent;
-
-import static androidx.databinding.DataBindingUtil.setContentView;
-
-import android.annotation.SuppressLint;
 import android.os.Bundle;
-import android.util.Log;
-import android.widget.Button;
-import android.widget.LinearLayout;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -19,8 +10,6 @@ import com.example.letmecook.adapters.FavouriteRecipeAdapter;
 import com.example.letmecook.db_tools.SearchDB;
 import com.google.firebase.auth.FirebaseAuth;
 
-import java.util.ArrayList;
-import java.util.List;
 
 public class FavouriteViewActivity extends AppCompatActivity {
 
