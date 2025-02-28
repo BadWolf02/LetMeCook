@@ -135,6 +135,28 @@ public class SearchDB {
 
     // Households
 
+    public void getUserShoppingList(String uid, OnStringArrayRetrievedListener listener) {
+        getUserHouseholdDocument(uid, householdDocument -> {
+            if (householdDocument != null) {
+                List<String> shoppingList = (List<String>) householdDocument.get("shopping-list");
+                Log.d(TAG, "Shopping list: " + shoppingList);
+                listener.onStringArrayRetrieved(shoppingList);
+            } else {
+                listener.onStringArrayRetrieved(new ArrayList<>());
+            }
+        });
+    }
+
+    public void getUserHouseholdDocument(String uid, OnDocumentRetrievedListener listener) {
+        getUserHouseholdID(uid, hid -> {
+            if (hid != null) {
+                getHouseholdDocumentByID(hid, listener);
+            } else {
+                listener.onDocumentRetrieved(null);
+            }
+        });
+    }
+
     public void getUserHouseholdID(String uid, OnStringRetrievedListener listener) {
         getUserDocumentByID(uid, userDocument -> {
            if (userDocument != null) {

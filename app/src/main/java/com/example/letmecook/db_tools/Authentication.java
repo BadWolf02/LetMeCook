@@ -110,7 +110,6 @@ public class Authentication {
 
         String householdID = UUID.randomUUID().toString();
         // Create user details in Firestore
-        // user.put("uid", uid);
         user.put("username", username);
         user.put("email", email);
         user.put("householdID", householdID);
@@ -122,13 +121,13 @@ public class Authentication {
                 .addOnSuccessListener(documentReference -> Log.d(TAG, "DocumentSnapshot added with ID: " + uid))
                 .addOnFailureListener(e -> Log.w(TAG, "Error adding document", e));// Create new Household
         // Create household details in Firestore
-        // household.put("householdID", householdID);
         household.put("householdName", username + "'s Household");
         ArrayList<String> members = new ArrayList<>();
         members.add(mAuth.getCurrentUser().getUid());
         household.put("members", members);
         household.put("invited", new ArrayList<>());
         household.put("inventory", new HashMap<String, Integer>());
+        household.put("shopping-list", new ArrayList<>());
         db.collection("households")
                 .document(householdID)
                 .set(household)
