@@ -9,11 +9,13 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.bumptech.glide.Glide;
 import com.example.letmecook.R;
 
 import java.util.ArrayList;
@@ -22,6 +24,10 @@ import java.util.List;
 import com.example.letmecook.RecipeViewActivity;
 import com.example.letmecook.db_tools.SearchDB;
 import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
+
+import org.w3c.dom.Document;
 
 // https://developer.android.com/develop/ui/views/layout/recyclerview#java
 
@@ -100,22 +106,44 @@ public class RecipeSearchAdapter extends RecyclerView.Adapter<RecipeSearchAdapte
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
         private final TextView textView;
+        private final ImageView imageView;
 
         public ViewHolder(View view) {
             super(view);
             // Define click listener for the ViewHolder's View
             textView = view.findViewById(R.id.recipeName);
+            imageView = view.findViewById(R.id.recipeImage);
         }
 
         public void bind(DocumentSnapshot recipe, Context context) {
             String recipeName = recipe.getString("r_name");
+            String imgSrc = recipe.getString("img");
             if (recipeName != null && !recipeName.isEmpty()) {
                 textView.setText(recipeName);
             } else {
                 textView.setText("No name found"); // DEBUGGING
             }
 
-            //
+            if (imgSrc != null && !imgSrc.isEmpty()) {
+                FirebaseStorage storage = FirebaseStorage.getInstance();
+                StorageReference storageReference = storage.getReferenceFromUrl(imgSrc);
+                storageReference.getDownloadUrl()
+                    .addOnSuccessListener(uri -> {
+                        Log.d(TAG, "Image URI: " + uri.toString());
+                        Glide.with(context)
+                                .load(uri.toString())
+                                .placeholder(R.drawable.placeholder_24dp)
+                                .error(R.drawable.placeholder_24dp)
+                                .into(imageView);
+                    })
+                    .addOnFailureListener(exception -> {
+                        Log.e(TAG, "Image failed to load");
+                    });
+            } else {
+                imageView.setImageResource(R.drawable.placeholder_24dp);
+            }
+
+            // Start intent for viewing recipe
             itemView.setOnClickListener(view -> {
                 Intent intent = new Intent(context, RecipeViewActivity.class);
                 intent.putExtra("recipeID", recipe.getId());
@@ -141,7 +169,15 @@ public class RecipeSearchAdapter extends RecyclerView.Adapter<RecipeSearchAdapte
         // Get element from your dataset at this position and replace the
         // contents of the view with that element
         if (position < recipesList.size()) {
-            viewHolder.bind(recipesList.get(position), context);
+            DocumentSnapshot recipe = recipesList.get(position);
+            viewHolder.bind(recipe, context);
+
+            Glide
+                .with(context)
+                .load(recipe.getString("img"))
+                .placeholder(R.drawable.placeholder_24dp)
+                .error(R.drawable.placeholder_24dp)
+                .into(viewHolder.imageView);
         }
     }
 

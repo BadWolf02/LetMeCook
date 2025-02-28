@@ -127,6 +127,8 @@
             android:layout_height="match_parent"
             android:layout_marginVertical="8dp"
             app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
             android:scrollbars="vertical" />
 
     </androidx.cardview.widget.CardView>

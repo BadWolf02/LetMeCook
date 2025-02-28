@@ -51,11 +51,16 @@ dependencies {
     implementation(platform(libs.firebase.bom))
     implementation(libs.firebase.firestore)
     implementation(libs.firebase.ui.auth)
+    implementation libs.firebase.storage
 
 
     testImplementation libs.junit
     androidTestImplementation libs.ext.junit
     androidTestImplementation libs.espresso.core
+
+    // dependency for image rendering
+    implementation libs.glide
+    annotationProcessor libs.compiler
 
     // dependency for barcode scanner
 //    implementation libs.play.services.code.scanner
