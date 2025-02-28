@@ -37,12 +37,25 @@
                 android:textStyle="bold"
                 android:textColor="?attr/colorOnPrimary" />
 
+            <LinearLayout
+                android:id="@+id/no_invites_layout"
+                style="?android:attr/buttonBarStyle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:layout_constraintTop_toBottomOf="@id/textInvites"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                android:orientation="horizontal"
+                android:padding="8dp"
+                android:background="?attr/colorPrimary">
+            </LinearLayout>
+
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/recycler_view"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="24dp"
-                app:layout_constraintTop_toBottomOf="@id/inviteCard"
+                app:layout_constraintTop_toTopOf="@id/parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintEnd_toEndOf="parent" >
 

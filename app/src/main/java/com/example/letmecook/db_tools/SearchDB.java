@@ -133,10 +133,7 @@ public class SearchDB {
                 });
     }
 
-    // Used for if there is one household allowed
-    public interface OnHouseholdRetrievedListener {
-        void onHouseholdRetrieved(String hid);
-    }
+    // Households
 
     public void getUserHouseholdID(String uid, OnStringRetrievedListener listener) {
         getUserDocumentByID(uid, userDocument -> {
@@ -148,10 +145,6 @@ public class SearchDB {
                listener.onStringRetrieved(null);
            }
         });
-    }
-
-    public interface OnHouseholdNameRetrievedListener {
-        void onHouseholdNameRetrieved(String householdName);
     }
 
     public void getUserHouseholdName(String uid, OnStringRetrievedListener listener) {
@@ -209,7 +202,24 @@ public class SearchDB {
         });
     }
 
+    // Get snapshot for household by householdID
+    public void getHouseholdDocumentByID(String hid, OnDocumentRetrievedListener listener) {
+        db.collection("households")
+                .document(hid)
+                .get()
+                .addOnSuccessListener(documentSnapshot -> {
+                    if (documentSnapshot.exists()) {
+                        // Household found, retrieve the first matching document
+                        Log.d(TAG, "Household found");
+                        listener.onDocumentRetrieved(documentSnapshot);
+                    } else {
+                        Log.e(TAG, "Household not found");
+                        listener.onDocumentRetrieved(null);
+                    }
+                });
+    }
 
+    // User
 
     // Get snapshot for user by uid
     public void getUserDocumentByID(String uid, OnDocumentRetrievedListener listener) {
@@ -240,23 +250,6 @@ public class SearchDB {
                         listener.onDocumentRetrieved(queryDocumentSnapshots.getDocuments().get(0));
                     } else {
                         Log.e(TAG, "User not found");
-                        listener.onDocumentRetrieved(null);
-                    }
-                });
-    }
-
-    // Get snapshot for household by householdID
-    public void getHouseholdDocumentByID(String hid, OnDocumentRetrievedListener listener) {
-        db.collection("households")
-                .document(hid)
-                .get()
-                .addOnSuccessListener(documentSnapshot -> {
-                    if (documentSnapshot.exists()) {
-                        // Household found, retrieve the first matching document
-                        Log.d(TAG, "Household found");
-                        listener.onDocumentRetrieved(documentSnapshot);
-                    } else {
-                        Log.e(TAG, "Household not found");
                         listener.onDocumentRetrieved(null);
                     }
                 });

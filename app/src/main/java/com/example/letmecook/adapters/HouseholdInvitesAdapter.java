@@ -22,7 +22,7 @@ import com.google.firebase.auth.*;
 // https://developer.android.com/develop/ui/views/layout/recyclerview#java
 
 public class HouseholdInvitesAdapter extends RecyclerView.Adapter<HouseholdInvitesAdapter.ViewHolder> {
-    private final ArrayList<String> myInvites = new ArrayList<>();
+    public final ArrayList<String> myInvites = new ArrayList<>();
     private final SearchDB searchDB = new SearchDB();
     private final FirebaseAuth mAuth = FirebaseAuth.getInstance();
     private final OnInviteActionListener inviteActionListener;
