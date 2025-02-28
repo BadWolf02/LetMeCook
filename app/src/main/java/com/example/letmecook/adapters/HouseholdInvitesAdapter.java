@@ -2,6 +2,7 @@ package com.example.letmecook.adapters;
 
 import static android.content.ContentValues.TAG;
 
+import android.annotation.SuppressLint;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -41,6 +42,7 @@ public class HouseholdInvitesAdapter extends RecyclerView.Adapter<HouseholdInvit
         fetchHouseholds();
     }
 
+    @SuppressLint("NotifyDataSetChanged")
     private void fetchHouseholds() {
         searchDB.getUserInvites(mAuth.getCurrentUser().getUid(), invites -> {
             if (invites != null) {
@@ -88,7 +90,7 @@ public class HouseholdInvitesAdapter extends RecyclerView.Adapter<HouseholdInvit
     public ViewHolder onCreateViewHolder(ViewGroup viewGroup, int viewType) {
         // Create a new view, which defines the UI of the list item
         View view = LayoutInflater.from(viewGroup.getContext())
-                .inflate(R.layout.text_row_button, viewGroup, false);
+                .inflate(R.layout.invite_row_item, viewGroup, false);
 
         return new ViewHolder(view);
     }
