@@ -32,7 +32,9 @@ import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
+import com.example.letmecook.db_tools.SearchDB;
 import com.google.common.util.concurrent.ListenableFuture;
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.mlkit.vision.barcode.BarcodeScanner;
@@ -60,7 +62,9 @@ public class CameraActivity extends AppCompatActivity {
     private ImageAnalysis imageAnalysis;
 
     private FirebaseFirestore db;
-    private String householdId = "63c9b8a1-7ebb-45af-8c7d-295f0bbe5a0e"; // currently only adds to "Perchoc's Household"
+    private SearchDB searchDB;
+    private String householdId;
+    private String uid;
     private String product_name;
     private String kcal_energy;
     private String allergens_info;
@@ -76,6 +80,21 @@ public class CameraActivity extends AppCompatActivity {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
         });
+
+        uid = FirebaseAuth.getInstance().getCurrentUser().getUid();
+
+        // dynamically get householdId
+        searchDB = new SearchDB();
+        searchDB.getUserHouseholdID(uid, retrievedHouseholdID -> {
+            if (retrievedHouseholdID != null) {
+                householdId = retrievedHouseholdID; // Store household ID
+                Log.d("CameraActivity", "Household ID retrieved: " + householdId);
+            } else {
+                Log.e("CameraActivity", "Failed to retrieve Household ID");
+                Toast.makeText(CameraActivity.this, "Error retrieving household ID!", Toast.LENGTH_SHORT).show();
+            }
+        });
+
 
         Button sendToInventoryButton = findViewById(R.id.SendToInventory);
         db = FirebaseFirestore.getInstance();
