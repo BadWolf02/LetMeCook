@@ -10,6 +10,7 @@ import android.os.Looper;
 import android.provider.MediaStore;
 import android.util.Log;
 import android.view.View;
+import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -32,6 +33,8 @@ import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
 import com.google.common.util.concurrent.ListenableFuture;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.mlkit.vision.barcode.BarcodeScanner;
 import com.google.mlkit.vision.barcode.BarcodeScanning;
 import com.google.mlkit.vision.barcode.common.Barcode;
@@ -41,6 +44,8 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.concurrent.ExecutionException;
 
 import okhttp3.Call;
@@ -53,6 +58,14 @@ public class CameraActivity extends AppCompatActivity {
     ProcessCameraProvider cameraProvider;
     private ImageCapture imageCapture;
     private ImageAnalysis imageAnalysis;
+
+    private FirebaseFirestore db;
+    private String householdId = "63c9b8a1-7ebb-45af-8c7d-295f0bbe5a0e"; // currently only adds to "Perchoc's Household"
+    private String product_name;
+    private String kcal_energy;
+    private String allergens_info;
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -63,6 +76,13 @@ public class CameraActivity extends AppCompatActivity {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
         });
+
+        Button sendToInventoryButton = findViewById(R.id.SendToInventory);
+        db = FirebaseFirestore.getInstance();
+        sendToInventoryButton.setOnClickListener(v -> {
+            sendProductToInventory(product_name, kcal_energy, allergens_info);
+        });
+
 
         // listener to start takePhoto method
         findViewById(R.id.TakePhoto).setOnClickListener(new View.OnClickListener() {
@@ -89,6 +109,22 @@ public class CameraActivity extends AppCompatActivity {
         }, ContextCompat.getMainExecutor(this));
 
 
+    }
+
+    private void sendProductToInventory(String product_name, String kcal_energy, String allergens_info){
+        DocumentReference householdRef = db.collection("households").document(householdId);
+        Map<String, Object> productData = new HashMap<>();
+        productData.put("name", product_name);
+        productData.put("energy", kcal_energy);
+        productData.put("allergens", allergens_info);
+
+        householdRef.update("inventory." + product_name, productData)
+                .addOnSuccessListener(aVoid -> {
+                    System.out.println("Product added successfully!");
+                })
+                .addOnFailureListener(e -> {
+                    System.err.println("Error adding product: " + e.getMessage());
+                });
     }
 
     public void fetchProductInfo(String barcode) {
@@ -121,6 +157,12 @@ public class CameraActivity extends AppCompatActivity {
                     JSONObject nutriments = product.optJSONObject("nutriments");
 
                     String energy = nutriments != null ? nutriments.optString("energy-kcal_100g", "No Data") + " kcal" : "No Data";
+
+                    // Gather Allergy Info
+                    String allergens = product.optString("allergens", "No Allergen Info");
+                    product_name = productName;
+                    kcal_energy = energy;
+                    allergens_info = allergens;
 
                     // Update UI on the main thread
                     new Handler(Looper.getMainLooper()).post(() -> {
