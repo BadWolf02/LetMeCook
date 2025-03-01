@@ -9,7 +9,10 @@ import android.widget.Button;
 import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.letmecook.adapters.ReviewAdapter;
 import com.example.letmecook.db_tools.SearchDB;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.FieldValue;
@@ -19,9 +22,12 @@ import java.util.List;
 
 public class RecipeViewActivity extends AppCompatActivity {
     private TextView nameTextView, authorTextView, cuisineTextView, ingredientsTextView, stepsTextView;
+
     private final FirebaseAuth mAuth = FirebaseAuth.getInstance();
     private final FirebaseFirestore db = FirebaseFirestore.getInstance();
     private final SearchDB searchDB = new SearchDB();
+
+    private String recipeID;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -34,16 +40,25 @@ public class RecipeViewActivity extends AppCompatActivity {
         ingredientsTextView = findViewById(R.id.recipeIngredients);
         stepsTextView = findViewById(R.id.recipeSteps);
 
+        Button reviewButton = findViewById(R.id.reviewButton);
+
         // Collect data from intent when button is pressed
-        String recipeID = getIntent().getStringExtra("recipeID");
+        recipeID = getIntent().getStringExtra("recipeID");
         if (recipeID != null) {
             fetchRecipeData(recipeID);
         } else {
             Log.e(TAG, "Error loading recipe");
         }
 
+        RecyclerView recyclerView = findViewById(R.id.recyclerView);
+        recyclerView.setLayoutManager(new LinearLayoutManager(this));
+        ReviewAdapter reviewAdapter = new ReviewAdapter(recipeID); // Initialize adapter
+        recyclerView.setAdapter(reviewAdapter);
+
         Button favouriteButton = findViewById(R.id.favouriteButton);
         favouriteButton.setOnClickListener(view -> addRecipeToFavourites(recipeID));
+
+        // reviewButton.setOnClickListener(view -> ???);
 
     }
 
