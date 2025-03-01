@@ -1,9 +1,11 @@
 package com.example.letmecook.ui.inventory;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -13,6 +15,7 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.letmecook.CameraActivity;
 import com.example.letmecook.R;
 import com.example.letmecook.adapters.InventoryAdapter;
 
@@ -40,6 +43,13 @@ public class InventoryFragment extends Fragment {
             } else {
                 inventoryAdapter.updateInventory(inventory);
             }
+        });
+
+        // launch camera activity
+        Button toCameraButton = view.findViewById(R.id.toCamera);
+        toCameraButton.setOnClickListener(v -> {
+            Intent intent = new Intent(getActivity(), CameraActivity.class);
+            startActivity(intent);
         });
 
         inventoryViewModel.getMessageText().observe(getViewLifecycleOwner(), inventoryText::setText);
