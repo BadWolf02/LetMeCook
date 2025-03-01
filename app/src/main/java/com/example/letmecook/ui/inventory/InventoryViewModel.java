@@ -86,6 +86,25 @@ public class InventoryViewModel extends ViewModel {
         });
     }
 
+    public void addIngredient(String ingredient, int quantity) {
+        Map<String, Integer> currentInventory = inventoryLiveData.getValue();
+        if (currentInventory == null) {
+            currentInventory = new HashMap<>();
+        }
+
+        int newQuantity = currentInventory.getOrDefault(ingredient, 0) + quantity;
+        currentInventory.put(ingredient, newQuantity);
+
+        updateInventory(currentInventory);
+        messageText.setValue(ingredient + " added (" + quantity + ")");
+    }
+
+    public void setMessage(String message) {
+        messageText.setValue(message);
+    }
+
+
+
     public void updateInventory(Map<String, Integer> updatedInventory) {
         if (householdID != null) {
             searchDB.updateHouseholdInventory(householdID, updatedInventory, success -> {
