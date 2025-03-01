@@ -53,17 +53,43 @@
                 android:textColor="@color/black"
                 tools:listitem="choose meal type" />
 
-            <EditText
-                android:id="@+id/text_view_recipe_name"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:hint="enter recipe name" />
+
 
             <MultiAutoCompleteTextView
                 android:id="@+id/add_ingreedients_multiAtotComplete"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:hint="add ingreedients" />
+
+            <FrameLayout
+                android:id="@+id/ingredient_layout"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:visibility="gone">
+
+                <TextView
+                    android:id="@+id/ingredient_name"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"></TextView>
+
+                <EditText
+                    android:id="@+id/text_view_recipe_name"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="enter recipe name" />
+
+                <Spinner
+                    android:id="@+id/amount_type_selector"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="vertical"
+                    android:gravity="center">
+
+                </Spinner>
+
+            </FrameLayout>
+
+
 
             <EditText
                 android:id="@+id/EditText_add_step1"
@@ -91,6 +117,7 @@
                 android:text="total_time_spent_on_this_dish" />
 
             <LinearLayout
+                android:id="@+id/total_time"
                 android:layout_width="399dp"
                 android:layout_height="match_parent"
                 android:orientation="horizontal">
@@ -214,8 +241,6 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="TextView" />
-
-
         </LinearLayout>
 
     </ScrollView>
