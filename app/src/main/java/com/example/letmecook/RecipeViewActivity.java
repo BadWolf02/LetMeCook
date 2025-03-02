@@ -15,6 +15,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.letmecook.adapters.ReviewAdapter;
+import com.example.letmecook.db_tools.Recipes;
 import com.example.letmecook.db_tools.SearchDB;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.FieldValue;
@@ -32,6 +33,7 @@ public class RecipeViewActivity extends AppCompatActivity {
     private final FirebaseAuth mAuth = FirebaseAuth.getInstance();
     private final FirebaseFirestore db = FirebaseFirestore.getInstance();
     private final SearchDB searchDB = new SearchDB();
+    private final Recipes recipes = new Recipes(this);
 
     private String recipeID;
     private ReviewAdapter reviewAdapter;
@@ -65,7 +67,7 @@ public class RecipeViewActivity extends AppCompatActivity {
         recyclerView.setAdapter(reviewAdapter);
 
         Button favouriteButton = findViewById(R.id.favouriteButton);
-        favouriteButton.setOnClickListener(view -> addRecipeToFavourites(recipeID));
+        favouriteButton.setOnClickListener(view -> recipes.addRecipeToFavourites(recipeID));
 
         reviewButton.setOnClickListener(view -> addReview(recipeID, (int) ratingBar.getRating(), reviewBox.getText().toString()));
 
@@ -97,25 +99,9 @@ public class RecipeViewActivity extends AppCompatActivity {
         });
     }
 
-    private void addRecipeToFavourites(String recipeID) {
-        db.collection("users")
-                .document(mAuth.getCurrentUser().getUid())
-                .update("favourite_recipes", FieldValue.arrayUnion(recipeID));
-    }
-
-    // TODO fix bug where username not found
-    // TODO prevent same user creating multiple reviews
-    // TODO move to own class?
+    // TODO fix bug where, it doesnt refresh when leaving review
     private void addReview(String recipeID, int rating, String comment) {
-        Map<Object, Object> review = new HashMap<>();
-        searchDB.getUserDocumentByID(mAuth.getCurrentUser().getUid(), userDoc -> {
-            review.put("comment", comment);
-            review.put("rating", rating);
-            review.put("user", userDoc.getString("username"));
-            db.collection("recipes")
-                    .document(recipeID)
-                    .update("reviews", FieldValue.arrayUnion(review));
-        });
+        recipes.addReview(mAuth.getCurrentUser().getUid(), recipeID, rating, comment);
         reviewAdapter.notifyDataSetChanged();
     }
 }
