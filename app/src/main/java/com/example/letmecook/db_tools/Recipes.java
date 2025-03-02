@@ -36,15 +36,17 @@ public class Recipes {
             // Get recipe doc to check if user has already commented
             searchDB.getRecipeDocumentByID(recipeID, recipeDoc -> {
                 List<Map<Object, Object>> allReviews = (List<Map<Object, Object>>) recipeDoc.get("reviews");
+                Long totalRating = 0L;
+                int numRatings = allReviews.size();
                 if (allReviews != null) {
                     for (Map<Object, Object> review : allReviews) {
+                        totalRating = totalRating + (Long) review.get("rating");
                         if (review.get("username").equals(userDoc.getString("username"))) {
                             Toast.makeText(context, "You have already commented on this recipe", Toast.LENGTH_SHORT).show();
                             return;
                         }
                     }
                 }
-
                 // Add to reviews array
                 newReview.put("comment", comment);
                 newReview.put("rating", rating);
@@ -52,6 +54,15 @@ public class Recipes {
                 db.collection("recipes")
                         .document(recipeID)
                         .update("reviews", FieldValue.arrayUnion(newReview));
+
+                // Update recipe's average rating
+                totalRating = totalRating + rating;
+                numRatings++;
+                float averageRating = (float) totalRating / numRatings; // Get average rating
+                averageRating = (float) (Math.round(averageRating * 2) / 2.0); // Round to nearest 0.5
+                db.collection("recipes")
+                        .document(recipeID)
+                        .update("avgRating", averageRating);
             });
         });
     }
