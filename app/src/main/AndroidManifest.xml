@@ -2,18 +2,15 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools" >
 
-    <uses-permission android:name="android.permission.INTERNET" />
-
-    <!-- google API key config-->
+    <uses-permission android:name="android.permission.INTERNET" /> <!-- google API key config -->
     <meta-data
         android:name="com.google.android.geo.API_KEY"
-        android:value="YOUR_API_KEY"/>
-
-
-    <!--    cameraX Permissions-->
+        android:value="YOUR_API_KEY" /> <!-- cameraX Permissions -->
     <uses-feature android:name="android.hardware.camera.any" />
+
     <uses-permission android:name="android.permission.CAMERA" />
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"
+    <uses-permission
+        android:name="android.permission.WRITE_EXTERNAL_STORAGE"
         android:maxSdkVersion="28" />
 
     <application
@@ -26,30 +23,29 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.LetMeCook"
         tools:targetApi="31">
+        <activity
+            android:name=".WebScrapingActivity"
+            android:exported="false" />
 
         <activity
             android:name=".CameraActivity"
-            android:exported="true">
-
-        </activity>
+            android:exported="true"></activity>
         <activity
             android:name=".ScanActivity"
-            android:exported="true" >
-        </activity>
+            android:exported="true"></activity> <!-- auto download barcode scanning to device -->
         <!-- auto download barcode scanning to device -->
         <meta-data
             android:name="com.google.mlkit.vision.DEPENDENCIES"
-            android:value="barcode" />
+            android:value="barcode" /> <!-- To use multiple models: android:value="barcode,model2,model3" -->
         <!-- To use multiple models: android:value="barcode,model2,model3" -->
         <activity
             android:name=".AddRecipe"
-            android:exported="false" />
+            android:exported="false" /> <!-- may not ending up needing this if we don't use addRecipie.java anymore -->
         <activity
             android:name=".LoginActivity"
             android:exported="true" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
@@ -58,8 +54,7 @@
             android:exported="true" />
         <activity
             android:name=".MainActivity"
-            android:exported="true">
-        </activity>
+            android:exported="true"></activity>
         <activity
             android:name=".HouseholdManageActivity"
             android:exported="true" />

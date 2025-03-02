@@ -2,6 +2,7 @@ package com.example.letmecook.ui.recipes;
 
 import static android.content.ContentValues.TAG;
 
+import android.content.Intent;
 import android.nfc.Tag;
 import android.os.Bundle; //Passes data to the fragment and restores its state after config changes
 import android.text.Editable;
@@ -29,6 +30,7 @@ import androidx.lifecycle.ViewModelProvider; //managing ViewModelProvide
 
 import com.example.letmecook.R;
 import com.example.letmecook.Recipe;
+import com.example.letmecook.WebScrapingActivity;
 import com.example.letmecook.databinding.FragmentRecipesBinding;
 
 import java.util.ArrayList;
@@ -54,6 +56,8 @@ public class RecipesFragment extends Fragment {
 
 
     View root = binding.getRoot();
+
+    binding.scrapeRecipesButton.setOnClickListener(v -> scrapeRecipes());
 
 
         recipesViewModel = new ViewModelProvider(this).get(RecipesViewModel.class);
@@ -291,5 +295,10 @@ public class RecipesFragment extends Fragment {
     public void onDestroyView() {
         super.onDestroyView();
         binding = null;
+    }
+
+    private void scrapeRecipes(){
+        Intent intent = new Intent(requireContext(), WebScrapingActivity.class);
+        startActivity(intent);
     }
 }
