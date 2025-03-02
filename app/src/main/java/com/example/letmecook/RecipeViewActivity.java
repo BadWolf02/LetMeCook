@@ -6,6 +6,8 @@ import android.annotation.SuppressLint;
 import android.os.Bundle;
 import android.util.Log;
 import android.widget.Button;
+import android.widget.EditText;
+import android.widget.RatingBar;
 import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -18,7 +20,11 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+
+// TODO aggregate rating from all reviews into an average
 
 public class RecipeViewActivity extends AppCompatActivity {
     private TextView nameTextView, authorTextView, cuisineTextView, ingredientsTextView, stepsTextView;
@@ -28,6 +34,7 @@ public class RecipeViewActivity extends AppCompatActivity {
     private final SearchDB searchDB = new SearchDB();
 
     private String recipeID;
+    private ReviewAdapter reviewAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -40,6 +47,8 @@ public class RecipeViewActivity extends AppCompatActivity {
         ingredientsTextView = findViewById(R.id.recipeIngredients);
         stepsTextView = findViewById(R.id.recipeSteps);
 
+        EditText reviewBox = findViewById(R.id.reviewBox);
+        RatingBar ratingBar = findViewById(R.id.ratingBar);
         Button reviewButton = findViewById(R.id.reviewButton);
 
         // Collect data from intent when button is pressed
@@ -52,13 +61,13 @@ public class RecipeViewActivity extends AppCompatActivity {
 
         RecyclerView recyclerView = findViewById(R.id.recyclerView);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
-        ReviewAdapter reviewAdapter = new ReviewAdapter(recipeID); // Initialize adapter
+        reviewAdapter = new ReviewAdapter(recipeID); // Initialize adapter
         recyclerView.setAdapter(reviewAdapter);
 
         Button favouriteButton = findViewById(R.id.favouriteButton);
         favouriteButton.setOnClickListener(view -> addRecipeToFavourites(recipeID));
 
-        // reviewButton.setOnClickListener(view -> ???);
+        reviewButton.setOnClickListener(view -> addReview(recipeID, (int) ratingBar.getRating(), reviewBox.getText().toString()));
 
     }
 
@@ -92,5 +101,21 @@ public class RecipeViewActivity extends AppCompatActivity {
         db.collection("users")
                 .document(mAuth.getCurrentUser().getUid())
                 .update("favourite_recipes", FieldValue.arrayUnion(recipeID));
+    }
+
+    // TODO fix bug where username not found
+    // TODO prevent same user creating multiple reviews
+    // TODO move to own class?
+    private void addReview(String recipeID, int rating, String comment) {
+        Map<Object, Object> review = new HashMap<>();
+        searchDB.getUserDocumentByID(mAuth.getCurrentUser().getUid(), userDoc -> {
+            review.put("comment", comment);
+            review.put("rating", rating);
+            review.put("user", userDoc.getString("username"));
+            db.collection("recipes")
+                    .document(recipeID)
+                    .update("reviews", FieldValue.arrayUnion(review));
+        });
+        reviewAdapter.notifyDataSetChanged();
     }
 }
