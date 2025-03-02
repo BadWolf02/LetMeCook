@@ -18,20 +18,15 @@ import com.example.letmecook.adapters.ReviewAdapter;
 import com.example.letmecook.db_tools.Recipes;
 import com.example.letmecook.db_tools.SearchDB;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.firestore.FieldValue;
-import com.google.firebase.firestore.FirebaseFirestore;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
-// TODO aggregate rating from all reviews into an average
+// TODO deleting reviews ???
 
 public class RecipeViewActivity extends AppCompatActivity {
     private TextView ratingTextView, nameTextView, authorTextView, cuisineTextView, ingredientsTextView, stepsTextView;
 
     private final FirebaseAuth mAuth = FirebaseAuth.getInstance();
-    private final FirebaseFirestore db = FirebaseFirestore.getInstance();
     private final SearchDB searchDB = new SearchDB();
     private final Recipes recipes = new Recipes(this);
 
@@ -101,7 +96,7 @@ public class RecipeViewActivity extends AppCompatActivity {
         });
     }
 
-    // TODO fix bug where, it doesnt refresh when leaving review
+    // TODO fix bug where, it doesn't refresh when leaving review
     private void addReview(String recipeID, int rating, String comment) {
         recipes.addReview(mAuth.getCurrentUser().getUid(), recipeID, rating, comment);
         reviewAdapter.notifyDataSetChanged();

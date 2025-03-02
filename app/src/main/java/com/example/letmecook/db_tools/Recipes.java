@@ -7,10 +7,10 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 public class Recipes {
     private final FirebaseAuth mAuth = FirebaseAuth.getInstance();
@@ -36,15 +36,13 @@ public class Recipes {
             // Get recipe doc to check if user has already commented
             searchDB.getRecipeDocumentByID(recipeID, recipeDoc -> {
                 List<Map<Object, Object>> allReviews = (List<Map<Object, Object>>) recipeDoc.get("reviews");
-                Long totalRating = 0L;
+                long totalRating = 0L;
                 int numRatings = allReviews.size();
-                if (allReviews != null) {
-                    for (Map<Object, Object> review : allReviews) {
-                        totalRating = totalRating + (Long) review.get("rating");
-                        if (review.get("username").equals(userDoc.getString("username"))) {
-                            Toast.makeText(context, "You have already commented on this recipe", Toast.LENGTH_SHORT).show();
-                            return;
-                        }
+                for (Map<Object, Object> review : allReviews) {
+                    totalRating = totalRating + (Long) review.get("rating");
+                    if (Objects.equals(review.get("username"), userDoc.getString("username"))) {
+                        Toast.makeText(context, "You have already commented on this recipe", Toast.LENGTH_SHORT).show();
+                        return;
                     }
                 }
                 // Add to reviews array
