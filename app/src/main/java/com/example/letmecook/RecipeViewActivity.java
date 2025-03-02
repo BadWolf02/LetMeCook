@@ -28,7 +28,7 @@ import java.util.Map;
 // TODO aggregate rating from all reviews into an average
 
 public class RecipeViewActivity extends AppCompatActivity {
-    private TextView nameTextView, authorTextView, cuisineTextView, ingredientsTextView, stepsTextView;
+    private TextView ratingTextView, nameTextView, authorTextView, cuisineTextView, ingredientsTextView, stepsTextView;
 
     private final FirebaseAuth mAuth = FirebaseAuth.getInstance();
     private final FirebaseFirestore db = FirebaseFirestore.getInstance();
@@ -43,6 +43,7 @@ public class RecipeViewActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_recipe_view);
 
+        ratingTextView = findViewById(R.id.rating);
         nameTextView = findViewById(R.id.recipeName);
         authorTextView = findViewById(R.id.recipeAuthor);
         cuisineTextView = findViewById(R.id.recipeCuisine);
@@ -91,6 +92,7 @@ public class RecipeViewActivity extends AppCompatActivity {
     private void fetchRecipeData(String recipeID) {
         searchDB.getRecipeDocumentByID(recipeID, documentSnapshot -> {
             // Pass UI data to TextViews
+            ratingTextView.setText("Rating: " + documentSnapshot.getDouble("avgRating").toString() + "/5");
             nameTextView.setText(documentSnapshot.getString("r_name"));
             authorTextView.setText("By: " + documentSnapshot.getString("author"));
             cuisineTextView.setText("Cuisine: " + documentSnapshot.getString("cuisine"));
