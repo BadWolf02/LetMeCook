@@ -77,4 +77,7 @@ dependencies {
 
 //    Dependencies for accessing API
     implementation 'com.squareup.okhttp3:okhttp:4.9.3'
+
+//    web scraping dependency
+    implementation 'org.jsoup:jsoup:1.15.3'  // Latest stable version
 }
