@@ -99,7 +99,7 @@ public class CameraActivity extends AppCompatActivity {
         Button sendToInventoryButton = findViewById(R.id.SendToInventory);
         db = FirebaseFirestore.getInstance();
         sendToInventoryButton.setOnClickListener(v -> {
-            sendProductToInventory(product_name, kcal_energy, allergens_info);
+            sendProductToInventory(product_name, 1);
         });
 
 
@@ -129,22 +129,33 @@ public class CameraActivity extends AppCompatActivity {
 
 
     }
+private void sendProductToInventory(String product_name, int quantity) {
+    DocumentReference householdRef = db.collection("households").document(householdId);
 
-    private void sendProductToInventory(String product_name, String kcal_energy, String allergens_info){
-        DocumentReference householdRef = db.collection("households").document(householdId);
-        Map<String, Object> productData = new HashMap<>();
-        productData.put("name", product_name);
-        productData.put("energy", kcal_energy);
-        productData.put("allergens", allergens_info);
+    householdRef.get().addOnSuccessListener(documentSnapshot -> {
+        if (documentSnapshot.exists()) {
+            // Retrieve existing inventory
+            Map<String, Object> inventory = (Map<String, Object>) documentSnapshot.get("inventory");
+            if (inventory == null) {
+                inventory = new HashMap<>();
+            }
 
-        householdRef.update("inventory." + product_name, productData)
-                .addOnSuccessListener(aVoid -> {
-                    System.out.println("Product added successfully!");
-                })
-                .addOnFailureListener(e -> {
-                    System.err.println("Error adding product: " + e.getMessage());
-                });
-    }
+            // Update the quantity (increment if exists)
+            if (inventory.containsKey(product_name)) {
+                int currentQuantity = ((Number) inventory.get(product_name)).intValue();
+                inventory.put(product_name, currentQuantity + quantity);
+            } else {
+                inventory.put(product_name, quantity);
+            }
+
+            // Save back to Firestore
+            householdRef.update("inventory", inventory)
+                    .addOnSuccessListener(aVoid -> System.out.println("Product added successfully!"))
+                    .addOnFailureListener(e -> System.err.println("Error adding product: " + e.getMessage()));
+        }
+    }).addOnFailureListener(e -> System.err.println("Error retrieving inventory: " + e.getMessage()));
+}
+
 
     public void fetchProductInfo(String barcode) {
         OkHttpClient client = new OkHttpClient();
