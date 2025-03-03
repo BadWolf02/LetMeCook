@@ -46,7 +46,10 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ExecutionException;
 
@@ -99,7 +102,28 @@ public class CameraActivity extends AppCompatActivity {
         Button sendToInventoryButton = findViewById(R.id.SendToInventory);
         db = FirebaseFirestore.getInstance();
         sendToInventoryButton.setOnClickListener(v -> {
-            sendProductToInventory(product_name, 1);
+            if (product_name == null || product_name.isEmpty()) {
+                Toast.makeText(CameraActivity.this, "No product scanned!", Toast.LENGTH_SHORT).show();
+                return;
+            }
+
+            sendProductToInventory(product_name, 1); // Keep inventory logic unchanged
+
+            // Safely parse calories, defaulting to 0 if invalid
+            int caloriesValue = 0;
+            try {
+                caloriesValue = Integer.parseInt(kcal_energy.replaceAll("[^0-9]", ""));
+            } catch (NumberFormatException e) {
+                Log.e("CameraActivity", "Error parsing calories: " + kcal_energy, e);
+            }
+
+            // Ensure allergens is a valid list
+            List<String> allergensList = new ArrayList<>();
+            if (allergens_info != null && !allergens_info.equalsIgnoreCase("No Allergen Info")) {
+                allergensList = Arrays.asList(allergens_info.split(","));
+            }
+
+            sendProductToIngredients(product_name, caloriesValue, allergensList);
         });
 
 
@@ -128,6 +152,23 @@ public class CameraActivity extends AppCompatActivity {
         }, ContextCompat.getMainExecutor(this));
 
 
+    }
+    private void sendProductToIngredients(String product_name, int kcal_energy, List<String> allergens_info) {
+        DocumentReference ingredientRef = db.collection("ingredients").document(product_name);
+
+        // Create ingredient data with the correct structure
+        Map<String, Object> ingredientData = new HashMap<>();
+        ingredientData.put("name", product_name);
+        ingredientData.put("calories", kcal_energy);
+        ingredientData.put("category", 0); // Placeholder, update if needed
+        ingredientData.put("id", 0); // Placeholder, update if needed
+        ingredientData.put("serving_size", "100g"); // Default serving size
+        ingredientData.put("allergens", allergens_info);
+
+        // Save to Firestore
+        ingredientRef.set(ingredientData)
+                .addOnSuccessListener(aVoid -> Log.d("CameraActivity", "Ingredient added to collection successfully!"))
+                .addOnFailureListener(e -> Log.e("CameraActivity", "Error adding ingredient: " + e.getMessage()));
     }
 private void sendProductToInventory(String product_name, int quantity) {
     DocumentReference householdRef = db.collection("households").document(householdId);
@@ -197,7 +238,7 @@ private void sendProductToInventory(String product_name, int quantity) {
                     // Update UI on the main thread
                     new Handler(Looper.getMainLooper()).post(() -> {
                         TextView barcodeResult = findViewById(R.id.BarcodeResult);
-                        barcodeResult.setText("Product: " + productName + "\nCalories (per 100g): " + energy);
+                        barcodeResult.setText("Product: " + productName + "\nCalories (per 100g): " + energy + "\nAllergen info: " + allergens);
                     });
 
                 } catch (JSONException e) {
