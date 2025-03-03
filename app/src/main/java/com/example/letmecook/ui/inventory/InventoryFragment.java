@@ -36,6 +36,12 @@ public class InventoryFragment extends Fragment {
         TextView inventoryText = view.findViewById(R.id.text_inventory);
         RecyclerView recyclerView = view.findViewById(R.id.inventory_recycler_view);
         Button addIngredientButton = view.findViewById(R.id.add_ingredient_button);
+        Button toCameraButton = view.findViewById(R.id.toCamera);
+
+        toCameraButton.setOnClickListener(v -> {
+            Intent intent = new Intent(getActivity(), CameraActivity.class);
+            startActivity(intent);
+        });
 
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         inventoryViewModel = new ViewModelProvider(this).get(InventoryViewModel.class);
