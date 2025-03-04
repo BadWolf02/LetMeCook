@@ -207,12 +207,12 @@ public class RecipesFragment extends Fragment {
 
 
         // dropdown for meal Type
-        ListView meal_type_dropdown_trigger = binding.mealTypeDropdownTrigger;
+        Spinner meal_type_dropdown_trigger = binding.mealTypeDropdownTrigger;
         //TODO add list and selectiontracker
-        String[] meal_types = {"breackfast", "lunch", "dinner", "warm meal", "snack", "cold meal", "starter", "desert", "salad", "soup"}; //list of meal types
+        String[] meal_types = {"breakfast", "lunch", "dinner", "warm meal", "snack", "cold meal", "starter", "desert", "salad", "soup"}; //list of meal types
         boolean[] selected_meal_type_tracker = new boolean[meal_types.length]; //track which items are selected
         ArrayList<String> selected_meal_types = new ArrayList<>();
-        selected_meal_types.add("none");
+        selected_meal_types.add("please select meal type");
         //add onClickListener and handle event
         ArrayAdapter meal_type_adapter = new ArrayAdapter(requireContext(), android.R.layout.simple_spinner_item, selected_meal_types);
         meal_type_dropdown_trigger.setAdapter(meal_type_adapter);

@@ -43,11 +43,11 @@
                 android:layout_height="wrap_content"
                 android:hint="enter recipe name" />
 
-            <ListView
+            <Spinner
                 android:id="@+id/meal_type_dropdown_trigger"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:background="@color/white"
+                android:background="?attr/colorPrimary"
                 android:minHeight="48dp"
                 android:text="meal type"
                 android:textColor="@color/black"
