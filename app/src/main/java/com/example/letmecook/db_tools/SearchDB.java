@@ -161,26 +161,6 @@ public class SearchDB {
     public interface OnUpdateListener {
         void onUpdate(boolean success);
     }
-
-    public void getAllIngredients(OnIngredientsFetchedListener listener) {
-        db.collection("ingredients")
-                .get()
-                .addOnSuccessListener(queryDocumentSnapshots -> {
-                    Map<String, String> ingredientMap = new HashMap<>();
-                    for (DocumentSnapshot doc : queryDocumentSnapshots) {
-                        String ingredientName = doc.getString("name");
-                        if (ingredientName != null) {
-                            ingredientMap.put(ingredientName, doc.getId());
-                        }
-                    }
-                    listener.onIngredientsFetched(ingredientMap);
-                })
-                .addOnFailureListener(e -> {
-                    Log.e(TAG, "Failed to fetch ingredients", e);
-                    listener.onIngredientsFetched(new HashMap<>());
-                });
-    }
-
     public interface OnIngredientsFetchedListener {
         void onIngredientsFetched(Map<String, String> ingredients);
     }

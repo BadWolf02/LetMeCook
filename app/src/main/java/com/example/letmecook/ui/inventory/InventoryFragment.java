@@ -45,18 +45,6 @@ public class InventoryFragment extends Fragment {
             startActivity(intent);
         });
 
-        chooseFromDatabaseButton.setOnClickListener(v -> {
-            inventoryViewModel.fetchIngredientsFromDatabase(ingredients -> {
-                if (ingredients == null || ingredients.isEmpty()) {
-                    Toast.makeText(getContext(), "No ingredients found in the database", Toast.LENGTH_SHORT).show();
-                } else {
-                    showIngredientSelectionDialog(ingredients);
-                }
-            });
-        });
-
-
-
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         inventoryViewModel = new ViewModelProvider(this).get(InventoryViewModel.class);
 
@@ -109,49 +97,6 @@ public class InventoryFragment extends Fragment {
         });
 
         builder.setNegativeButton("Cancel", (dialog, which) -> dialog.cancel());
-
-        builder.show();
-    }
-    private void showIngredientSelectionDialog(Map<String, String> ingredients) {
-        String[] ingredientNames = ingredients.keySet().toArray(new String[0]);
-
-        new android.app.AlertDialog.Builder(getContext())
-                .setTitle("Choose an Ingredient")
-                .setItems(ingredientNames, (dialog, which) -> {
-                    String chosenIngredient = ingredientNames[which];
-                    showQuantityDialog(chosenIngredient);
-                })
-                .setNegativeButton("Cancel", null)
-                .show();
-    }
-
-
-    private void showQuantityDialog(String ingredientName) {
-        android.app.AlertDialog.Builder builder = new android.app.AlertDialog.Builder(getContext());
-        builder.setTitle("Enter Quantity for " + ingredientName);
-
-        final EditText input = new EditText(getContext());
-        input.setInputType(android.text.InputType.TYPE_CLASS_NUMBER);
-        builder.setView(input);
-
-        builder.setPositiveButton("Add", (dialog, which) -> {
-            String quantityStr = input.getText().toString();
-            if (!quantityStr.isEmpty()) {
-                int quantity = Integer.parseInt(quantityStr);
-                if (quantity > 0) {
-                    Map<String, Integer> updatedInventory = new HashMap<>();
-                    updatedInventory.put(ingredientName, quantity);
-                    inventoryViewModel.updateInventory(updatedInventory);
-                } else {
-                    Toast.makeText(getContext(), "Quantity must be greater than 0", Toast.LENGTH_SHORT).show();
-                }
-            } else {
-                Toast.makeText(getContext(), "Quantity cannot be empty", Toast.LENGTH_SHORT).show();
-            }
-        });
-
-        builder.setNegativeButton("Cancel", (dialog, which) -> dialog.dismiss());
-
         builder.show();
     }
 

@@ -117,7 +117,4 @@ public class InventoryViewModel extends ViewModel {
             });
         }
     }
-    public void fetchIngredientsFromDatabase(SearchDB.OnIngredientsFetchedListener listener) {
-        searchDB.getAllIngredients(listener);
-    }
 }
