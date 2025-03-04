@@ -2,8 +2,10 @@ package com.example.letmecook.ui.recipes;
 
 import static android.content.ContentValues.TAG;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.net.Uri;
 import android.nfc.Tag;
 import android.os.Bundle; //Passes data to the fragment and restores its state after config changes
 import android.text.Editable;
@@ -20,6 +22,7 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.FrameLayout;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.MultiAutoCompleteTextView;
@@ -27,6 +30,14 @@ import android.widget.NumberPicker;
 import android.widget.ScrollView;
 import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.Toast;
+
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.fragment.app.Fragment;
+
 import androidx.annotation.NonNull; //Arguments or return values that cannot be null
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
@@ -62,6 +73,26 @@ public class RecipesFragment extends Fragment {
 
     private int next_step_index = 5; // TODO change this to be fetched dynamically
 
+    private ImageView recipeImageView;
+
+
+
+    private ActivityResultLauncher<Intent> imagePickerLauncher =
+            registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), result -> {
+                if (result.getResultCode() == Activity.RESULT_OK && result.getData() != null) {
+                    Uri imageUri = result.getData().getData();
+                    if (imageUri != null) {
+                        if (recipeImageView != null) {
+                            recipeImageView.setImageURI(imageUri);
+                        } else {
+                            Toast.makeText(getContext(), "Error: ImageView not initialized!", Toast.LENGTH_SHORT).show();
+                        }
+                    } else {
+                        Toast.makeText(getContext(), "Failed to select image", Toast.LENGTH_SHORT).show();
+                    }
+                }
+            });
+
 
     public View onCreateView(@NonNull LayoutInflater inflater,
             ViewGroup container, Bundle savedInstanceState) {
@@ -75,10 +106,26 @@ public class RecipesFragment extends Fragment {
         // add the default first edit text box id to the list of step ids
         // steps_list.add("EditText_add_step1");
 
-    View root = binding.getRoot();
+        recipeImageView = binding.recipeImageView;
+
+        imagePickerLauncher = registerForActivityResult(
+                new ActivityResultContracts.StartActivityForResult(),
+                result -> {
+                    if (result.getResultCode() == Activity.RESULT_OK && result.getData() != null) {
+                        Uri imageUri = result.getData().getData();
+                        if (imageUri != null) {
+                            recipeImageView.setImageURI(imageUri);
+                        } else {
+                            Toast.makeText(getContext(), "Failed to select image", Toast.LENGTH_SHORT).show();
+                        }
+                    }
+                    recipeImageView.setVisibility(View.VISIBLE);
+                });
+
+        View root = binding.getRoot();
 
     binding.scrapeRecipesButton.setOnClickListener(v -> scrapeRecipes());
-
+    binding.selectImageButton.setOnClickListener(v -> openGallery());
 
         recipesViewModel = new ViewModelProvider(this).get(RecipesViewModel.class);
 
@@ -318,6 +365,12 @@ public class RecipesFragment extends Fragment {
 
 
         return root;
+    }
+
+    private void openGallery() {
+        Intent intent = new Intent(Intent.ACTION_PICK);
+        intent.setType("image/*");
+        imagePickerLauncher.launch(intent);
     }
 
     @Override
