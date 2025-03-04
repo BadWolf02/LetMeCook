@@ -8,13 +8,15 @@ import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Map;
 
 public class SearchDB {
     FirebaseFirestore db = FirebaseFirestore.getInstance(); // initialise database
 
     // Constructor
-    public SearchDB() {}
+    public SearchDB() {
+    }
 
     // Methods
     public interface OnStringArrayRetrievedListener {
@@ -28,13 +30,13 @@ public class SearchDB {
 
     public void getUserHouseholdID(String uid, OnStringRetrievedListener listener) {
         getUserDocumentByID(uid, userDocument -> {
-           if (userDocument != null) {
-               String hid = (String) userDocument.get("householdID");
-               Log.d(TAG, "User household: " + hid);
-               listener.onStringRetrieved(hid);
-           } else {
-               listener.onStringRetrieved(null);
-           }
+            if (userDocument != null) {
+                String hid = (String) userDocument.get("householdID");
+                Log.d(TAG, "User household: " + hid);
+                listener.onStringRetrieved(hid);
+            } else {
+                listener.onStringRetrieved(null);
+            }
         });
     }
 
@@ -77,7 +79,7 @@ public class SearchDB {
             } else {
                 listener.onStringArrayRetrieved(new ArrayList<>());
             }
-            });
+        });
     }
 
     public void getHouseholdMembers(String hid, OnStringArrayRetrievedListener listener) {
@@ -158,5 +160,28 @@ public class SearchDB {
 
     public interface OnUpdateListener {
         void onUpdate(boolean success);
+    }
+
+    public void getAllIngredients(OnIngredientsFetchedListener listener) {
+        db.collection("ingredients")
+                .get()
+                .addOnSuccessListener(queryDocumentSnapshots -> {
+                    Map<String, String> ingredientMap = new HashMap<>();
+                    for (DocumentSnapshot doc : queryDocumentSnapshots) {
+                        String ingredientName = doc.getString("name");
+                        if (ingredientName != null) {
+                            ingredientMap.put(ingredientName, doc.getId());
+                        }
+                    }
+                    listener.onIngredientsFetched(ingredientMap);
+                })
+                .addOnFailureListener(e -> {
+                    Log.e(TAG, "Failed to fetch ingredients", e);
+                    listener.onIngredientsFetched(new HashMap<>());
+                });
+    }
+
+    public interface OnIngredientsFetchedListener {
+        void onIngredientsFetched(Map<String, String> ingredients);
     }
 }
