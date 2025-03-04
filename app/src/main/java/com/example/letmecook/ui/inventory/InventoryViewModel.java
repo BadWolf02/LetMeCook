@@ -10,7 +10,7 @@ public class InventoryViewModel extends ViewModel {
 
     public InventoryViewModel() {
         mText = new MutableLiveData<>();
-        mText.setValue("This is inventory fragment");
+        mText.setValue("My Inventory");
     }
 
     public LiveData<String> getText() {
