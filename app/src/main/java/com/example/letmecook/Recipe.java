@@ -8,8 +8,10 @@ import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 //import com.example.letmecook.tools.Firebase;
+import com.example.letmecook.db_tools.SearchDB;
 import com.google.firebase.firestore.*;
 
 
@@ -30,14 +32,16 @@ public class Recipe {
     public Integer total_time_min;
     HashMap<String, Integer> timings = new HashMap<>();
     // public Integer  prep_time;
-    public ArrayList<String> ingredients;
+    public HashMap<String, Object> ingredients = new HashMap<>();
 
     public ArrayList<String> mealType;
 
-    public Integer allergens;
+    public List<String> allergens = new ArrayList<String>();
 
     public HashMap<String, String> steps = new HashMap<>(); //TODO make sure to initialize all the other variables too in order to be able to use them in the methods without causing null pointer exceptions
     private int stepsAmount;
+
+    SearchDB search_db = new SearchDB();
 
     FirebaseFirestore db = FirebaseFirestore.getInstance();
 
@@ -133,14 +137,26 @@ public class Recipe {
 
     //TODO maybe add a meal type (cold/ warm/ breakfast/ lunch/dinner/ sallad/ snacks/ light meal)
 
-    public void addIngredient(String r_name, Integer allergens){
-        // TODO check ingredient for allergen
-        this.ingredients.add(r_name);
-        this.updateAllergens(allergens);
+    public void addIngredient(String i_name, HashMap details){
+        Log.d("ingredients in recipe class", i_name + details.toString());
+        this.ingredients.put(i_name, details);
+
+        search_db.getIngredientDocumentByName( i_name, i_allergens -> {
+            Log.d("ferched allergens for "+i_name, i_allergens.toString());
+            if (!i_allergens.isEmpty() && i_allergens!= null){
+                updateAllergens(i_allergens);
+            }
+});
+        //TODO fetch allergens and update it here, still have to change add allergens
+        //this.updateAllergens(allergen);
     }
 
-    private void updateAllergens(Integer allergens){
-        this.allergens = this.allergens | allergens;
+    private void updateAllergens(List<String> i_allergens) {
+        for (String allergen : i_allergens) {
+            if (!this.allergens.contains(allergen)) {
+                this.allergens.add(allergen);
+            }
+        }
     }
 
     public void addStep(Integer id, String text){
@@ -192,13 +208,7 @@ public class Recipe {
             recipe.put("ingredienets", this.ingredients);
             recipe.put("steps", this.steps);
             // recipe.put("r_type", this.r_type);
-            // recipe.put("allergens", this.allergens);
-//            if (this.cooking_time!=null) {
-//                recipe.put("cooking_time", this.cooking_time);
-//            }
-//            if (this.total_time!=null){
-//                recipe.put("total_time", this.total_time);
-//            }
+            recipe.put("allergens", this.allergens);
         
             if (this.cusine!=null){
                 recipe.put("cusine", this.cusine);

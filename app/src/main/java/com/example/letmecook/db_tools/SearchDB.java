@@ -345,6 +345,8 @@ public class SearchDB {
                 .addOnSuccessListener(aVoid -> listener.onUpdate(true))
                 .addOnFailureListener(e -> listener.onUpdate(false));
     }
+    //TODO next: this isn't working, so maybe try with callback interface
+    public void getIngredients(IngredientsCallback ingreedients_callback){
 
     public void getAllIngredients(OnStringArrayRetrievedListener listener) {
         db.collection("ingredients")

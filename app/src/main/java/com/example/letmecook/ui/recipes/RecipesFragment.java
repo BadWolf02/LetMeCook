@@ -39,7 +39,9 @@ import com.example.letmecook.WebScrapingActivity;
 import com.example.letmecook.databinding.FragmentRecipesBinding;
 import com.example.letmecook.db_tools.SearchDB;
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 
@@ -54,7 +56,7 @@ public class RecipesFragment extends Fragment {
 
     private ArrayList<Integer> steps_list = new ArrayList();
 
-    HashMap<String, ArrayList<?>> ingredients_names_list = new HashMap();
+    HashMap<String, HashMap<String, String>> ingredients_names_list = new HashMap();
 
     private ViewGroup ingredient_view;
 
@@ -304,7 +306,7 @@ public class RecipesFragment extends Fragment {
         create_recipe_btn.setOnClickListener(v -> {
             Log.d("adding step", "about to add lastep");
             add_steps_to_recipe();
-           // add_ingredients_to_recipe();
+            add_ingredients_to_recipe();
            recipe.create();
         });
 
@@ -340,9 +342,79 @@ public class RecipesFragment extends Fragment {
 
         // detecting when new item has been clicked (and thus selected to list of ingredients)
         add_ingredients.setOnItemClickListener((AdapterView<?> parent, View clicked, int index, long id) -> {
-            String selcected_item = (String) parent.getItemAtPosition(index);
-            add_ingredients_details(selcected_item);
+            String selected_item = (String) parent.getItemAtPosition(index);
+            AlertDialog.Builder ingredient_details_builder = new AlertDialog.Builder(requireContext());
+            ingredient_details_builder.setTitle(selected_item + " details:");
+
+
+            //TODO create view to hold what is displayed in alert dialog
+            LinearLayout ingredient_details_layout = new LinearLayout(requireContext());
+            ingredient_details_layout.setOrientation(LinearLayout.VERTICAL);
+
+//            //create Textview detailing ingredient
+//            TextView ingredient_name = new TextView(requireContext());
+//            ingredient_name.setText(selected_item);
+//            //add textView to layout
+//            ingredient_details_layout.addView(ingredient_name);
+
+
+            //create EditText to enter ingredient amount
+            EditText ingredient_amount = new EditText(requireContext());
+            ingredient_amount.setHint("enter amount of " + selected_item);
+            ingredient_amount.setInputType(InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_FLAG_DECIMAL);
+            // add Edit text to layout
+            ingredient_details_layout.addView(ingredient_amount);
+
+            //TODO add spinner for amount type and delete the functions that used to do that
+            Spinner amount_type = new Spinner(requireContext());
+            final String[] amount = new String[1];
+            amount_type.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener(){
+                @Override
+                public void onItemSelected(AdapterView<?> parent, View view, int pos, long id){
+                    amount[0] = parent.getItemAtPosition(pos).toString();
+                }
+                @Override
+                public void onNothingSelected(AdapterView<?> parent){
+                    amount_type.setPrompt("amount");
+                    amount[0] ="grams";
+                }
+            });
+
+            Log.d("ingredients", "1");
+            String[] amount_types_list = {"grams", "kilograms", "ml", "liters", "tsp", "Tbsp", "cups", "ounces", "pounds", "piece"};
+            ArrayAdapter<String> amount_adapter = new ArrayAdapter<>(requireContext(), androidx.appcompat.R.layout.support_simple_spinner_dropdown_item, amount_types_list);
+            amount_adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+            amount_type.setAdapter(amount_adapter);
+            amount_type.setLayoutParams(new LinearLayout.LayoutParams(
+                    LinearLayout.LayoutParams.MATCH_PARENT,
+                    LinearLayout.LayoutParams.WRAP_CONTENT));
+            ingredient_details_layout.addView(amount_type);
+            // put view in alert dialog
+
+            ingredient_details_builder.setView(ingredient_details_layout);
+
+            ingredient_details_builder.setPositiveButton("Confirm", (dialog, which) -> {
+                HashMap<String, String> details = new HashMap<>();
+                details.put("amount", ingredient_amount.getText().toString());
+                details.put("amount_type", amount[0].toString());
+                Log.d("ingredient",  ingredient_amount.getText().toString());
+                Log.d("details", amount[0].toString());
+                ingredients_names_list.put(selected_item, details);
+            });
+            //  ingredient_details_builder.setNegativeButton("Cancel", )
+
+            AlertDialog ingredients_dialog = ingredient_details_builder.create();
+            ingredient_details_builder.show();
+
+            Log.d("ingredients", "2");
+            ingredients_dialog.getWindow().setLayout(
+                    ViewGroup.LayoutParams.MATCH_PARENT,  // Full width
+                    ViewGroup.LayoutParams.WRAP_CONTENT  // Adjust height based on content
+            );
+            Log.d("ingredients", "reached call for add ingredients method");
+
         });
+
         //TODO still need to add to db
         //TODO need to update recipe allergens depending on this
         //TODO this technically also lets u type stuff that isn't in our ingredients
@@ -364,86 +436,117 @@ public class RecipesFragment extends Fragment {
         }
     }
 
-    public void add_ingredients_details(String ingredient_name){
-        AlertDialog.Builder add_ingreedient_builder =  new AlertDialog.Builder(requireContext());
-        LayoutInflater ingredients_inflater = requireActivity().getLayoutInflater();
-        //View ingredient_view_layout = ingredients_inflater.inflate(R.id.contain_ingredient_view);
-        LayoutInflater inflater = requireActivity().getLayoutInflater();
-        View ingredient_view = inflater.inflate(R.layout.fragment_recipes, null);
-        create_ingredient_amount_selector(ingredient_name, ingredient_view);
-        AlertDialog.Builder ingredinet_dialog_builder = new AlertDialog.Builder(requireContext());
-        //set on close details are fetched and saved to list
-        ingredinet_dialog_builder.setPositiveButton("confirm", (dialog, which) -> {
-            //TODO handle saving name, amount and type to HashMap
-            dialog.dismiss();
-        });
-        ingredinet_dialog_builder.setNegativeButton("reset", (dialog, which) ->{
-            dialog.dismiss();
-        });
-        ingredinet_dialog_builder.setView(ingredient_view);
+    public void add_ingredients_to_recipe(){
+        List<String> current_ingredients_list =  Arrays.asList(binding.addIngreedientsMultiAtotComplete.getText().toString().split(", "));
+    //    Log.d("ingredients currently selected", current_ingredients.getClass().toString());
+    //    String[] current_ingredients_list = current_ingredients.replaceAll(",$", "").split(",\\s*");
+        Log.d("ingredients currently selected", current_ingredients_list.toString());
+        for (String ingredient : current_ingredients_list){
+            Log.d("ingredients individula", ingredient);
+            HashMap<String, String> details = this.ingredients_names_list.get(ingredient); //TODO causeing crash
+            Log.d("ingredients details", this.ingredients_names_list.get(ingredient).toString()); // details.toString());
+            Log.d("adding ingredient for ", ingredient.toString());
+            recipe.addIngredient(ingredient, details);
+        }
 
-
-        EditText ingredient_amount = new EditText((requireContext()));
-        ingredient_amount.setInputType(InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_FLAG_DECIMAL); // restructs amount to only allow numbers
-        ingredient_amount.setHint("create_ingredient_amount_selectorenter amount in numbers");
-
-
-        AlertDialog ingredient_details_alert = ingredinet_dialog_builder.create();
-
-        create_ingredient_amount_selector(ingredient_name, ingredient_view);
-        ingredient_details_alert.setTitle("");
-
-        ingredient_details_alert.show(); //this causes error as the child already has a parent which needs to be removed before calling
-                //TODO add adding that ingredient to list on confirm button and clearing it fo
-
+        //TODO here next: check what the format is and turn to array
     }
+//
+//    public void add_ingredients_details(String ingredient_name, FragmentRecipesBinding binding){
+//        AlertDialog.Builder add_ingreedient_builder =  new AlertDialog.Builder(requireContext());
+//        LayoutInflater ingredients_inflater = requireActivity().getLayoutInflater();
+//        //View ingredient_view_layout = ingredients_inflater.inflate(R.id.contain_ingredient_view);
+//        // LayoutInflater inflater = requireActivity().getLayoutInflater();
+//        FragmentRecipesBinding ingredient_view = binding.inflate(R.id.ingredient_layout);
+//        // create_ingredient_amount_selector(ingredient_name, ingredient_view); //TODO get this up into the same function
+//        AlertDialog.Builder ingredinet_dialog_builder = new AlertDialog.Builder(requireContext());
+//        //set on close details are fetched and saved to list
+//        ingredinet_dialog_builder.setPositiveButton("confirm", (dialog, which) -> {
+//            //TODO handle saving name, amount and type to HashMap
+//            dialog.dismiss();
+//        });
+//        ingredinet_dialog_builder.setNegativeButton("reset", (dialog, which) ->{
+//            dialog.dismiss();
+//        });
+//        ingredient_view.addView(ingredient_view);
+//
+//
+//        EditText ingredient_amount = new EditText((requireContext()));
+//        ingredient_amount.setInputType(InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_FLAG_DECIMAL); // restructs amount to only allow numbers
+//        ingredient_amount.setHint("create_ingredient_amount_selectorenter amount in numbers");
+//        ingredinet_dialog_builder.setView(ingredient_amount);
+//
+//        TextView display_ingredient_name= new TextView((requireContext()));
+//        display_ingredient_name.setText(ingredient_name);
+//        display_ingredient_name.setPadding(8,8,8,8);
+//        display_ingredient_name.setTextColor((int) Long.parseLong("FF000000".substring(1), 16));
+//        display_ingredient_name.setBackgroundColor((int) Long.parseLong("#FEFAE0".substring(1), 16));
+//        ingredinet_dialog_builder.setView(display_ingredient_name);
+//
+//        Spinner amount_type_selector = new Spinner(requireContext());
+//        String[] amount_types_list = {"grams", "kilograms", "ml", "liters", "tsp", "Tbsp", "cups", "ounces", "pounds"};
+//        ArrayAdapter amount_types_adapter = new ArrayAdapter(requireContext(), androidx.appcompat.R.layout.support_simple_spinner_dropdown_item, amount_types_list);
+//        amount_type_selector.setAdapter(amount_types_adapter);
+//        AlertDialog.Builder amount_types_dropdown_builder = new AlertDialog.Builder(requireContext());
+//        amount_types_dropdown_builder.setView(amount_type_selector);
+//        amount_types_dropdown_builder.setTitle("select unit of amount of" + ingredient_name);
+//
+//        AlertDialog ingredient_details_alert = ingredinet_dialog_builder.create();
+//
+//        create_ingredient_amount_selector(ingredient_name, ingredient_view);
+//        ingredient_details_alert.setTitle("");
+//
+//        ingredient_details_alert.show(); //this causes error as the child already has a parent which needs to be removed before calling
+//                //TODO add adding that ingredient to list on confirm button and clearing it fo
+//
+//    }
 
-    private void create_ingredient_amount_selector(String ingredient_name, View ingredient_view_container){ //TODO changed the background colour here last
-       // ingredient_view.removeAllViews();
-        // add the name of the ingredinet
-        ViewGroup ingredient_view = getView().findViewById(R.id.ingredient_layout);
-        FrameLayout layout = ingredient_view_container.findViewById(R.id.ingredient_layout);
-        layout.removeAllViews();
-        TextView display_ingredient_name= new TextView((requireContext()));
-        display_ingredient_name.setText(ingredient_name);
-        display_ingredient_name.setPadding(8,8,8,8);
-        display_ingredient_name.setTextColor((int) Long.parseLong("FF000000".substring(1), 16));
-        display_ingredient_name.setBackgroundColor((int) Long.parseLong("#FEFAE0".substring(1), 16));
-        TextView display_ingredient_TextView = getView().findViewById(R.id.ingredient_name);
-        // add the edit text for the amount of the ingredient
-        EditText ingredient_amount = new EditText((requireContext()));
-        ingredient_amount.setInputType(InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_FLAG_DECIMAL); // restructs amount to only allow numbers
-        ingredient_amount.setHint("create_ingredient_amount_selectorenter amount in numbers");
-
-        Spinner amount_type_selector = new Spinner(requireContext()); //getView().findViewById(R.id.amount_type_selector);
-        // add spinner for choosing the metric of the ingredient amount
-        //
-        // Spinner amount_type_selector = new Spinner(requireContext());
-
-
-        // istView amount_types = binding.amountType
-        String[] amount_types_list = {"grams", "kilograms", "ml", "liters", "tsp", "Tbsp", "cups", "ounces", "pounds"};
-        ArrayAdapter amount_types_adapter = new ArrayAdapter(requireContext(), androidx.appcompat.R.layout.support_simple_spinner_dropdown_item, amount_types_list);
-        amount_type_selector.setAdapter(amount_types_adapter);
-        AlertDialog.Builder amount_types_dropdown_builder = new AlertDialog.Builder(requireContext());
-        // amount_types_dropdown_builder.setView(ingredient_view);
-        amount_types_dropdown_builder.setView(amount_type_selector);
-        amount_types_dropdown_builder.setTitle("select unit of amount of" + ingredient_name);
-        amount_type_selector.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener(){
-            @Override
-            public void onItemSelected(AdapterView<?> parent, View view, int selected_type_index, long id) {
-                Log.d("ingredient selected: ", view.toString());
-                String amount_type = parent.getItemAtPosition(selected_type_index).toString();
-            };
-            @Override
-           public void onNothingSelected(AdapterView<?> parent){
-                Log.d("setting type for the ingredient amount", "no amount type selected");
-            }
-        });
-       // ingredient_view.addView(amount_type_selector);
-        amount_type_selector.setVisibility(View.VISIBLE);
-        ingredient_view.setVisibility(View.VISIBLE);
-    }
+//    private void create_ingredient_amount_selector(String ingredient_name, View ingredient_view_container){ //TODO changed the background colour here last
+//       // ingredient_view.removeAllViews();
+//        // add the name of the ingredinet
+//        ViewGroup ingredient_view = getView().findViewById(R.id.ingredient_layout);
+//        FrameLayout layout = ingredient_view_container.findViewById(R.id.ingredient_layout);
+//        layout.removeAllViews();
+//        TextView display_ingredient_name= new TextView((requireContext()));
+//        display_ingredient_name.setText(ingredient_name);
+//        display_ingredient_name.setPadding(8,8,8,8);
+//        display_ingredient_name.setTextColor((int) Long.parseLong("FF000000".substring(1), 16));
+//        display_ingredient_name.setBackgroundColor((int) Long.parseLong("#FEFAE0".substring(1), 16));
+//        TextView display_ingredient_TextView = getView().findViewById(R.id.ingredient_name);
+//        // add the edit text for the amount of the ingredient
+//        EditText ingredient_amount = new EditText((requireContext()));
+//        ingredient_amount.setInputType(InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_FLAG_DECIMAL); // restructs amount to only allow numbers
+//        ingredient_amount.setHint("create_ingredient_amount_selectorenter amount in numbers");
+//
+//        Spinner amount_type_selector = new Spinner(requireContext()); //getView().findViewById(R.id.amount_type_selector);
+//        // add spinner for choosing the metric of the ingredient amount
+//        //
+//        // Spinner amount_type_selector = new Spinner(requireContext());
+//
+//
+//        // istView amount_types = binding.amountType
+//        String[] amount_types_list = {"grams", "kilograms", "ml", "liters", "tsp", "Tbsp", "cups", "ounces", "pounds"};
+//        ArrayAdapter amount_types_adapter = new ArrayAdapter(requireContext(), androidx.appcompat.R.layout.support_simple_spinner_dropdown_item, amount_types_list);
+//        amount_type_selector.setAdapter(amount_types_adapter);
+//        AlertDialog.Builder amount_types_dropdown_builder = new AlertDialog.Builder(requireContext());
+//        // amount_types_dropdown_builder.setView(ingredient_view);
+//        amount_types_dropdown_builder.setView(amount_type_selector);
+//        amount_types_dropdown_builder.setTitle("select unit of amount of" + ingredient_name);
+//        amount_type_selector.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener(){
+//            @Override
+//            public void onItemSelected(AdapterView<?> parent, View view, int selected_type_index, long id) {
+//                Log.d("ingredient selected: ", view.toString());
+//                String amount_type = parent.getItemAtPosition(selected_type_index).toString();
+//            };
+//            @Override
+//           public void onNothingSelected(AdapterView<?> parent){
+//                Log.d("setting type for the ingredient amount", "no amount type selected");
+//            }
+//        });
+//       // ingredient_view.addView(amount_type_selector);
+//        amount_type_selector.setVisibility(View.VISIBLE);
+//        ingredient_view.setVisibility(View.VISIBLE);
+//    }
 
 //TODO next: so basically if I create the view of the alert dialog and add that to the layout from my xml and then I use the alert dialog view and add spinner view to that
 
