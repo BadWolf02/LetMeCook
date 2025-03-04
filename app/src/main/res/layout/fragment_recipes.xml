@@ -10,15 +10,6 @@
     tools:context=".ui.recipes.RecipesFragment">
 
     <!-- New Button to Launch Web Scraping Activity -->
-    <Button
-        android:id="@+id/scrapeRecipesButton"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Scrape Recipes"
-        android:layout_marginBottom="10dp"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent" />
 
     <ScrollView
         android:id="@+id/scrollView"
@@ -217,28 +208,6 @@
 
             </LinearLayout>
 
-            <com.google.android.material.chip.ChipGroup
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:spinnerMode="dialog"
-                android:text="meal type">
-
-                <com.google.android.material.chip.Chip
-                    android:id="@+id/chip4"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content" />
-
-                <com.google.android.material.chip.Chip
-                    android:id="@+id/chip5"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content" />
-
-                <com.google.android.material.chip.Chip
-                    android:id="@+id/chip6"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content" />
-            </com.google.android.material.chip.ChipGroup>
-
             <EditText
                 android:id="@+id/textRecipes"
                 android:layout_width="wrap_content"
@@ -250,6 +219,14 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="add recipe" />
+
+            <Button
+                android:id="@+id/scrapeRecipesButton"
+                android:layout_width="match_parent"
+                android:layout_height="47dp"
+                android:layout_marginTop="8dp"
+                android:text="Scrape Recipes"
+                app:layout_constraintTop_toBottomOf="@+id/add_recipe_btn"/>
         </LinearLayout>
 
     </ScrollView>
