@@ -38,7 +38,7 @@
             tools:layout_editor_absoluteX="1dp">
 
             <EditText
-                android:id="@+id/text_view_recipie_name"
+                android:id="@+id/edit_text_recipie_name"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:hint="enter recipe name" />
@@ -72,11 +72,11 @@
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"></TextView>
 
-                <EditText
-                    android:id="@+id/text_view_recipe_name"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:hint="enter recipe name" />
+<!--                <EditText-->
+<!--                    android:id="@+id/text_view_recipe_name"-->
+<!--                    android:layout_width="match_parent"-->
+<!--                    android:layout_height="wrap_content"-->
+<!--                    android:hint="enter recipe name" />-->
 
                 <Spinner
                     android:id="@+id/amount_type_selector"
@@ -158,7 +158,9 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:text="clear" />
+                    android:text="clear"
+                    android:visibility="invisible"/>
+
             </LinearLayout>
 
             <TextView
@@ -210,7 +212,8 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:text="clear" />
+                    android:text="clear"
+                    android:visibility="invisible"/>
 
             </LinearLayout>
 

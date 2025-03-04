@@ -85,7 +85,8 @@ public class RecipesFragment extends Fragment {
         /**
          * handle user entering recipe name
          */
-        EditText edit_r_name = binding.textViewRecipeName;
+        Log.d("on Create View", "reached part before edit text");
+        EditText edit_r_name = binding.editTextRecipieName;
         edit_r_name.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -100,6 +101,8 @@ public class RecipesFragment extends Fragment {
             @Override
             public void afterTextChanged(Editable s) {
                 Log.d("recipe name", "name is "+s.toString());
+                String name = edit_r_name.getText().toString();
+                Log.d("recipe name", "name is "+ name);
                 recipe.setR_name(s.toString());
 
             }

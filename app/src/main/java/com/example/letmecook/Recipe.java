@@ -36,7 +36,7 @@ public class Recipe {
 
     public ArrayList<String> mealType;
 
-    public List<String> allergens = new ArrayList<String>();
+    public ArrayList<String> allergens = new ArrayList<String>();
 
     public HashMap<String, String> steps = new HashMap<>(); //TODO make sure to initialize all the other variables too in order to be able to use them in the methods without causing null pointer exceptions
     private int stepsAmount;
@@ -155,6 +155,7 @@ public class Recipe {
         for (String allergen : i_allergens) {
             if (!this.allergens.contains(allergen)) {
                 this.allergens.add(allergen);
+                Log.d("allergens list: ", this.allergens.toString());
             }
         }
     }
@@ -206,9 +207,10 @@ public class Recipe {
             recipe.put("r_name", this.r_name);
             // recipe.put("author", this.author);
             recipe.put("ingredienets", this.ingredients);
+            Log.d("adding allergens to hashmap for recipies", this.allergens.toString()); //  this is currently a empty list
+            recipe.put("allergens", this.allergens);
             recipe.put("steps", this.steps);
             // recipe.put("r_type", this.r_type);
-            recipe.put("allergens", this.allergens);
         
             if (this.cusine!=null){
                 recipe.put("cusine", this.cusine);
