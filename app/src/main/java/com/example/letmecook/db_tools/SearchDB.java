@@ -172,6 +172,36 @@ public class SearchDB {
             Log.e("Firestore", "Error fetching ingredients", e);
             ingreedients_callback.onIngredientsLoaded(new ArrayList<Object>());
         });
-
     };
+
+
+    public interface OnAllergensRetrievedListener {
+        void onAllergensRetrieved(List<String> i_allergens);
+    }
+    public void getIngredientDocumentByName(String i_name, OnAllergensRetrievedListener listener) {
+         db.collection("ingredients")
+               .whereEqualTo("name", i_name)
+               .get()
+               .addOnSuccessListener(queryDocumentSnapshots -> {
+                   if (queryDocumentSnapshots != null && !queryDocumentSnapshots.isEmpty()) {
+                       DocumentSnapshot document = queryDocumentSnapshots.getDocuments().get(0);
+//                       Log.d(TAG, "not found");
+//                       listener.onAllergensRetrieved(queryDocumentSnapshots.getDocuments().get(0));
+//                       DocumentSnapshot document = queryDocumentSnapshots.getDocuments().get(0);
+                       if (document.contains("allergens")) {
+                           List<String> i_allergens = (List<String>) document.get("allergens");
+                           listener.onAllergensRetrieved(i_allergens);
+                   } else {
+                       Log.e(TAG, "User not found");
+                       listener.onAllergensRetrieved(null);
+                   }
+               }}).addOnFailureListener(e -> {
+                     Log.e(TAG, "Error retrieving allergens", e);
+                     listener.onAllergensRetrieved(null);
+               });
+    }
+
+
+
+
 }
