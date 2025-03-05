@@ -16,9 +16,16 @@ public class InventoryAdapter extends RecyclerView.Adapter<InventoryAdapter.Inve
 
     private List<Ingredient> ingredientList;
 
-    public InventoryAdapter(List<Ingredient> ingredientList) {
+    private OnDeleteClickListener deleteClickListener;
+
+    public InventoryAdapter(List<Ingredient> ingredientList, OnDeleteClickListener deleteClickListener) {
         this.ingredientList = ingredientList;
+        this.deleteClickListener = deleteClickListener;
     }
+    public interface OnDeleteClickListener {
+        void onDeleteClick(String ingredientName);
+    }
+
 
     public static class InventoryViewHolder extends RecyclerView.ViewHolder {
         TextView nameTextView;
@@ -54,6 +61,13 @@ public class InventoryAdapter extends RecyclerView.Adapter<InventoryAdapter.Inve
             notifyItemRemoved(position);
             notifyItemRangeChanged(position, ingredientList.size());
         });
+
+        holder.deleteButton.setOnClickListener(v -> {
+            if (deleteClickListener != null) {
+                deleteClickListener.onDeleteClick(ingredient.getName());
+            }
+        });
+
 
         // Shopping cart button (TODO: Implement function)
         holder.cartButton.setOnClickListener(v -> {

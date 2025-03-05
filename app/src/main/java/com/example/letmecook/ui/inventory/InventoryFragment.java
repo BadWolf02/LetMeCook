@@ -1,36 +1,42 @@
 package com.example.letmecook.ui.inventory;
 
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageButton;
-import android.widget.TextView;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.Spinner;
+import android.widget.ImageButton;
+import android.widget.TextView;
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
-import androidx.appcompat.app.AlertDialog;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+
 import com.example.letmecook.R;
-import com.example.letmecook.databinding.FragmentInventoryBinding;
-import java.util.ArrayList;
-import java.util.List;
-import com.example.letmecook.models.Ingredient;
 import com.example.letmecook.adapters.InventoryAdapter;
+import com.example.letmecook.databinding.FragmentInventoryBinding;
+import com.example.letmecook.db_tools.SearchDB;
+import com.example.letmecook.models.Ingredient;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public class InventoryFragment extends Fragment {
 
-    private FragmentInventoryBinding binding; // binding object allows interaction with views
-    private ImageButton addButton;
-
+    private FragmentInventoryBinding binding;
     private RecyclerView recyclerView;
     private InventoryAdapter inventoryAdapter;
     private List<Ingredient> ingredientList = new ArrayList<>();
+    private SearchDB searchDB;
+    private String householdID;
+    private ImageButton addButton;
+    private static final String TAG = "InventoryFragment";
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
@@ -41,20 +47,94 @@ public class InventoryFragment extends Fragment {
         View root = binding.getRoot();
 
         final TextView titleTextView = binding.titleInventory;
-        final TextView itemCountTextView = binding.itemCount; // Correct ID from XML
+        final TextView itemCountTextView = binding.itemCount;
 
         inventoryViewModel.getText().observe(getViewLifecycleOwner(), titleTextView::setText);
 
         recyclerView = root.findViewById(R.id.recycler_view_inventory);
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
 
-        inventoryAdapter = new InventoryAdapter(ingredientList);
+        inventoryAdapter = new InventoryAdapter(ingredientList, this::deleteIngredient);
         recyclerView.setAdapter(inventoryAdapter);
 
         addButton = root.findViewById(R.id.add_button);
         addButton.setOnClickListener(v -> showAddIngredientDialog());
 
+        searchDB = new SearchDB();
+
+        // Fetch and display inventory
+        String userID = "Exb0LIB0vIMVYJN2kAKHO0zd1mD2"; // Set your actual user ID
+        loadUserInventory(userID);
+
         return root;
+    }
+
+    private void loadUserInventory(String userID) {
+        if (userID == null || userID.isEmpty()) {
+            Log.e(TAG, "User ID is null or empty.");
+            return;
+        }
+        Log.d(TAG, "Fetching household ID for user: " + userID);
+        searchDB.getUserHouseholdID(userID, hid -> {
+            if (hid != null) {
+                Log.d(TAG, "Household ID found: " + hid);
+                householdID = hid;
+                fetchHouseholdInventory();
+            } else {
+                Log.e(TAG, "Household ID not found for user.");
+            }
+        });
+    }
+
+    private void fetchHouseholdInventory() {
+        Log.d(TAG, "Fetching inventory for household ID: " + householdID);
+        searchDB.getHouseholdDocumentByID(householdID, documentSnapshot -> {
+            if (documentSnapshot != null && documentSnapshot.exists()) {
+                Log.d(TAG, "Household document found.");
+                Map<String, Object> inventory = (Map<String, Object>) documentSnapshot.get("inventory");
+                if (inventory != null) {
+                    ingredientList.clear();
+
+                    for (Map.Entry<String, Object> entry : inventory.entrySet()) {
+                        String ingredientName = entry.getKey();
+                        String amount = entry.getValue() != null ? entry.getValue().toString() + "g" : "0g";
+                        ingredientList.add(new Ingredient(ingredientName, amount));
+                    }
+
+                    inventoryAdapter.notifyDataSetChanged();
+                    Log.d(TAG, "Inventory loaded and displayed.");
+                } else {
+                    Log.d(TAG, "Inventory is empty.");
+                }
+            } else {
+                Log.e(TAG, "Household document not found.");
+            }
+        });
+    }
+
+    public void deleteIngredient(String ingredientName) {
+        Log.d(TAG, "Deleting ingredient: " + ingredientName);
+
+        // Remove from the local list
+        ingredientList.removeIf(ingredient -> ingredient.getName().equals(ingredientName));
+        inventoryAdapter.notifyDataSetChanged();
+
+        // Remove from Firestore
+        searchDB.getHouseholdDocumentByID(householdID, documentSnapshot -> {
+            if (documentSnapshot != null && documentSnapshot.exists()) {
+                Map<String, Object> inventory = (Map<String, Object>) documentSnapshot.get("inventory");
+                if (inventory != null && inventory.containsKey(ingredientName)) {
+                    inventory.remove(ingredientName);
+                    searchDB.updateHouseholdInventory(householdID, inventory, success -> {
+                        if (success) {
+                            Log.d(TAG, "Ingredient deleted from Firestore.");
+                        } else {
+                            Log.e(TAG, "Failed to delete ingredient from Firestore.");
+                        }
+                    });
+                }
+            }
+        });
     }
 
     private void showAddIngredientDialog() {
@@ -65,61 +145,26 @@ public class InventoryFragment extends Fragment {
 
         AlertDialog dialog = builder.create();
         dialog.show();
-        // Making background transparent to show rounded corners
         dialog.getWindow().setBackgroundDrawableResource(android.R.color.transparent);
 
-        // Dialog view references
         EditText nameInput = dialogView.findViewById(R.id.ingredient_name);
-        EditText caloriesInput = dialogView.findViewById(R.id.ingredient_calories);
         EditText gramsInput = dialogView.findViewById(R.id.ingredient_grams);
-        Spinner allergensSpinner = dialogView.findViewById(R.id.allergens_spinner);
-        Spinner categoriesSpinner = dialogView.findViewById(R.id.categories_spinner);
-        Button cancelButton = dialogView.findViewById(R.id.cancel_button);
         Button addButton = dialogView.findViewById(R.id.add_button);
+        Button cancelButton = dialogView.findViewById(R.id.cancel_button);
 
-        // Allergens Spinner
-        // TODO: Change to multi-selection?
-        // TODO: Replace with actual allergens in the db
-        String[] allergens = {"None", "Peanuts", "Dairy", "Gluten", "Eggs"};
-        ArrayAdapter<String> allergensAdapter = new ArrayAdapter<>(requireContext(),
-                android.R.layout.simple_spinner_dropdown_item, allergens);
-        allergensSpinner.setAdapter(allergensAdapter);
-
-        // Categories Spinner
-        // TODO: Change to multi-selection?
-        // TODO: Replace with actual categories in db
-        String[] categories = {"None", "Vegetables", "Fruits", "Dairy", "Meat", "Seafood"};
-        ArrayAdapter<String> categoriesAdapter = new ArrayAdapter<>(requireContext(),
-                android.R.layout.simple_spinner_dropdown_item, categories);
-        categoriesSpinner.setAdapter(categoriesAdapter);
-
-        // Close Dialog
         cancelButton.setOnClickListener(v -> dialog.dismiss());
 
-        // Add Button Click Event
-        // TODO: Handle adding to the database
-        // TODO: Save ingredient to the inventory
         addButton.setOnClickListener(v -> {
             String name = nameInput.getText().toString().trim();
-            String calories = caloriesInput.getText().toString().trim();
             String grams = gramsInput.getText().toString().trim();
-            String selectedAllergen = allergensSpinner.getSelectedItem().toString();
-            String selectedCategory = categoriesSpinner.getSelectedItem().toString();
 
-            // TODO: Add logic to save ingredient (e.g., save to ViewModel or database)
             if (!name.isEmpty() && !grams.isEmpty()) {
-                //TODO: Create the new Ingredient object
                 Ingredient newIngredient = new Ingredient(name, grams + "g");
-
-
-                // Add to list and update RecyclerView
                 ingredientList.add(newIngredient);
                 inventoryAdapter.notifyItemInserted(ingredientList.size() - 1);
+                dialog.dismiss();
             }
-
-            dialog.dismiss(); // Close dialog after adding ingredient
         });
-
     }
 
     @Override
