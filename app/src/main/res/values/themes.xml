@@ -1,22 +1,24 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
     <!-- Base application theme. -->
     <style name="Theme.LetMeCook" parent="Theme.MaterialComponents.Light.NoActionBar">
-        <!-- Splash Screen -->
-<!--        <item name="android:windowSplashScreenBackground">@color/b4</item>-->
-<!--        <item name="android:windowSplashScreenAnimatedIcon">@drawable/splash_logo</item>-->
 
         <!-- Primary brand color. -->
         <item name="colorPrimary">@color/cream</item>
         <item name="colorPrimaryVariant">@color/peach</item>
         <item name="colorOnPrimary">@color/black</item>
         <!-- Secondary brand color. -->
-        <item name="colorSecondary">@color/light_green</item>
-        <item name="colorSecondaryVariant">@color/green</item>
+        <item name="colorSecondary">@color/b3</item>
+        <item name="colorSecondaryVariant">@color/p1</item>
         <item name="colorOnSecondary">@color/black</item>
         <!-- Extra -->
-        <item name="colorAccent">@color/orange</item>
+        <item name="colorAccent">@color/p1</item>
         <!-- Status bar color. -->
         <item name="android:statusBarColor">?attr/colorAccent</item>
         <!-- Customize your theme here. -->
     </style>
+
+    <!-- Splash screen -->
+<!--    <style name="Theme.LetMeCook.Splash" parent="Theme.SplashScreen">-->
+<!--        <item name="android:windowSplashScreenBackground">@drawable/app_background</item>-->
+<!--    </style>-->
 </resources>
