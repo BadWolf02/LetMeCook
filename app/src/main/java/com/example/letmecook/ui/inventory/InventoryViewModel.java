@@ -117,4 +117,9 @@ public class InventoryViewModel extends ViewModel {
             });
         }
     }
+
+    public void refreshInventory() {
+        // Fetch latest inventory data from Firestore
+        loadInventory();
+    }
 }

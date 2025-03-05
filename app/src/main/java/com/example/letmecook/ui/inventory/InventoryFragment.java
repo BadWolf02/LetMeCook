@@ -39,11 +39,13 @@ public class InventoryFragment extends Fragment {
         Button addIngredientButton = view.findViewById(R.id.add_ingredient_button);
         Button toCameraButton = view.findViewById(R.id.toCamera);
         Button chooseFromDatabaseButton = view.findViewById(R.id.choose_from_database_button);
+        Button refreshInventoryButton = view.findViewById(R.id.refresh_button);
 
         toCameraButton.setOnClickListener(v -> {
             Intent intent = new Intent(getActivity(), CameraActivity.class);
             startActivity(intent);
         });
+        refreshInventoryButton.setOnClickListener(v -> refreshInventory());
 
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         inventoryViewModel = new ViewModelProvider(this).get(InventoryViewModel.class);
@@ -100,6 +102,8 @@ public class InventoryFragment extends Fragment {
         builder.show();
     }
 
-
-
+    private void refreshInventory() {
+        Toast.makeText(getContext(), "Refreshing Inventory...", Toast.LENGTH_SHORT).show();
+        inventoryViewModel.refreshInventory(); // Call ViewModel to fetch updated data
+    }
 }
