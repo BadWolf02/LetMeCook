@@ -1,6 +1,10 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
     <!-- Base application theme. -->
-    <style name="Theme.LetMeCook" parent="Theme.MaterialComponents.Light">
+    <style name="Theme.LetMeCook" parent="Theme.MaterialComponents.Light.NoActionBar">
+        <!-- Splash Screen -->
+<!--        <item name="android:windowSplashScreenBackground">@color/b4</item>-->
+<!--        <item name="android:windowSplashScreenAnimatedIcon">@drawable/splash_logo</item>-->
+
         <!-- Primary brand color. -->
         <item name="colorPrimary">@color/cream</item>
         <item name="colorPrimaryVariant">@color/peach</item>

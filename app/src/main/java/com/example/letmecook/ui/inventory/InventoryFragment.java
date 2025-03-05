@@ -1,105 +1,130 @@
 package com.example.letmecook.ui.inventory;
 
-import android.app.AlertDialog;
-import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageButton;
+import android.widget.TextView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.TextView;
-
+import android.widget.Spinner;
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
+import androidx.appcompat.app.AlertDialog;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-import android.widget.Toast;
-
-import com.example.letmecook.CameraActivity;
 import com.example.letmecook.R;
+import com.example.letmecook.databinding.FragmentInventoryBinding;
+import java.util.ArrayList;
+import java.util.List;
+import com.example.letmecook.models.Ingredient;
 import com.example.letmecook.adapters.InventoryAdapter;
-
-import java.util.HashMap;
-import java.util.Map;
 
 public class InventoryFragment extends Fragment {
 
-    private InventoryViewModel inventoryViewModel;
+    private FragmentInventoryBinding binding; // binding object allows interaction with views
+    private ImageButton addButton;
+
+    private RecyclerView recyclerView;
     private InventoryAdapter inventoryAdapter;
+    private List<Ingredient> ingredientList = new ArrayList<>();
 
-    @Override
-    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_inventory, container, false);
+    public View onCreateView(@NonNull LayoutInflater inflater,
+                             ViewGroup container, Bundle savedInstanceState) {
+        InventoryViewModel inventoryViewModel =
+                new ViewModelProvider(this).get(InventoryViewModel.class);
 
-        TextView inventoryText = view.findViewById(R.id.text_inventory);
-        RecyclerView recyclerView = view.findViewById(R.id.inventory_recycler_view);
-        Button addIngredientButton = view.findViewById(R.id.add_ingredient_button);
-        Button toCameraButton = view.findViewById(R.id.toCamera);
-        Button chooseFromDatabaseButton = view.findViewById(R.id.choose_from_database_button);
+        binding = FragmentInventoryBinding.inflate(inflater, container, false);
+        View root = binding.getRoot();
 
-        toCameraButton.setOnClickListener(v -> {
-            Intent intent = new Intent(getActivity(), CameraActivity.class);
-            startActivity(intent);
-        });
+        final TextView titleTextView = binding.titleInventory;
+        final TextView itemCountTextView = binding.itemCount; // Correct ID from XML
 
+        inventoryViewModel.getText().observe(getViewLifecycleOwner(), titleTextView::setText);
+
+        recyclerView = root.findViewById(R.id.recycler_view_inventory);
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
-        inventoryViewModel = new ViewModelProvider(this).get(InventoryViewModel.class);
 
-        inventoryViewModel.getInventoryLiveData().observe(getViewLifecycleOwner(), inventory -> {
-            if (inventoryAdapter == null) {
-                inventoryAdapter = new InventoryAdapter(getContext(), inventory, updatedInventory -> {
-                    inventoryViewModel.updateInventory(updatedInventory);
-                });
-                recyclerView.setAdapter(inventoryAdapter);
-            } else {
-                inventoryAdapter.updateInventory(inventory);
-            }
-        });
+        inventoryAdapter = new InventoryAdapter(ingredientList);
+        recyclerView.setAdapter(inventoryAdapter);
 
-        inventoryViewModel.getMessageText().observe(getViewLifecycleOwner(), inventoryText::setText);
+        addButton = root.findViewById(R.id.add_button);
+        addButton.setOnClickListener(v -> showAddIngredientDialog());
 
-        addIngredientButton.setOnClickListener(v -> showAddIngredientDialog());
-
-        return view;
+        return root;
     }
 
     private void showAddIngredientDialog() {
-        AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
-        builder.setTitle("Add Ingredient");
+        AlertDialog.Builder builder = new AlertDialog.Builder(requireContext());
+        LayoutInflater inflater = getLayoutInflater();
+        View dialogView = inflater.inflate(R.layout.dialog_add_ingredient, null);
+        builder.setView(dialogView);
 
-        View viewInflated = LayoutInflater.from(getContext()).inflate(R.layout.add_ingredient_dialog, null);
-        final EditText ingredientNameInput = viewInflated.findViewById(R.id.ingredient_name_input);
-        final EditText quantityInput = viewInflated.findViewById(R.id.quantity_input);
+        AlertDialog dialog = builder.create();
+        dialog.show();
+        // Making background transparent to show rounded corners
+        dialog.getWindow().setBackgroundDrawableResource(android.R.color.transparent);
 
-        builder.setView(viewInflated);
+        // Dialog view references
+        EditText nameInput = dialogView.findViewById(R.id.ingredient_name);
+        EditText caloriesInput = dialogView.findViewById(R.id.ingredient_calories);
+        EditText gramsInput = dialogView.findViewById(R.id.ingredient_grams);
+        Spinner allergensSpinner = dialogView.findViewById(R.id.allergens_spinner);
+        Spinner categoriesSpinner = dialogView.findViewById(R.id.categories_spinner);
+        Button cancelButton = dialogView.findViewById(R.id.cancel_button);
+        Button addButton = dialogView.findViewById(R.id.add_button);
 
-        builder.setPositiveButton("Add", (dialog, which) -> {
-            String ingredient = ingredientNameInput.getText().toString().trim();
-            String quantityStr = quantityInput.getText().toString().trim();
+        // Allergens Spinner
+        // TODO: Change to multi-selection?
+        // TODO: Replace with actual allergens in the db
+        String[] allergens = {"None", "Peanuts", "Dairy", "Gluten", "Eggs"};
+        ArrayAdapter<String> allergensAdapter = new ArrayAdapter<>(requireContext(),
+                android.R.layout.simple_spinner_dropdown_item, allergens);
+        allergensSpinner.setAdapter(allergensAdapter);
 
-            if (!ingredient.isEmpty() && !quantityStr.isEmpty()) {
-                try {
-                    int quantity = Integer.parseInt(quantityStr);
-                    if (quantity > 0) {
-                        inventoryViewModel.addIngredient(ingredient, quantity);
-                    } else {
-                        inventoryViewModel.setMessage("Quantity must be greater than 0");
-                    }
-                } catch (NumberFormatException e) {
-                    inventoryViewModel.setMessage("Invalid quantity");
-                }
-            } else {
-                inventoryViewModel.setMessage("Both fields are required");
+        // Categories Spinner
+        // TODO: Change to multi-selection?
+        // TODO: Replace with actual categories in db
+        String[] categories = {"None", "Vegetables", "Fruits", "Dairy", "Meat", "Seafood"};
+        ArrayAdapter<String> categoriesAdapter = new ArrayAdapter<>(requireContext(),
+                android.R.layout.simple_spinner_dropdown_item, categories);
+        categoriesSpinner.setAdapter(categoriesAdapter);
+
+        // Close Dialog
+        cancelButton.setOnClickListener(v -> dialog.dismiss());
+
+        // Add Button Click Event
+        // TODO: Handle adding to the database
+        // TODO: Save ingredient to the inventory
+        addButton.setOnClickListener(v -> {
+            String name = nameInput.getText().toString().trim();
+            String calories = caloriesInput.getText().toString().trim();
+            String grams = gramsInput.getText().toString().trim();
+            String selectedAllergen = allergensSpinner.getSelectedItem().toString();
+            String selectedCategory = categoriesSpinner.getSelectedItem().toString();
+
+            // TODO: Add logic to save ingredient (e.g., save to ViewModel or database)
+            if (!name.isEmpty() && !grams.isEmpty()) {
+                //TODO: Create the new Ingredient object
+                Ingredient newIngredient = new Ingredient(name, grams + "g");
+
+
+                // Add to list and update RecyclerView
+                ingredientList.add(newIngredient);
+                inventoryAdapter.notifyItemInserted(ingredientList.size() - 1);
             }
+
+            dialog.dismiss(); // Close dialog after adding ingredient
         });
 
-        builder.setNegativeButton("Cancel", (dialog, which) -> dialog.cancel());
-        builder.show();
     }
 
-
-
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        binding = null;
+    }
 }
