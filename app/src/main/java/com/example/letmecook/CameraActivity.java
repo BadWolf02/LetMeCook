@@ -122,7 +122,9 @@ public class CameraActivity extends AppCompatActivity {
                 allergensList = Arrays.asList(allergens_info.split(","));
             }
 
+            sendProductToInventory(product_name, 1);
             sendProductToIngredients(product_name, caloriesValue, allergensList);
+            Toast.makeText(this, "Sending to Inventory!", Toast.LENGTH_SHORT).show();
         });
 
 
@@ -169,32 +171,32 @@ public class CameraActivity extends AppCompatActivity {
                 .addOnSuccessListener(aVoid -> Log.d("CameraActivity", "Ingredient added to collection successfully!"))
                 .addOnFailureListener(e -> Log.e("CameraActivity", "Error adding ingredient: " + e.getMessage()));
     }
-private void sendProductToInventory(String product_name, int quantity) {
-    DocumentReference householdRef = db.collection("households").document(householdId);
+    private void sendProductToInventory(String product_name, int quantity) {
+        DocumentReference householdRef = db.collection("households").document(householdId);
 
-    householdRef.get().addOnSuccessListener(documentSnapshot -> {
-        if (documentSnapshot.exists()) {
-            // Retrieve existing inventory
-            Map<String, Object> inventory = (Map<String, Object>) documentSnapshot.get("inventory");
-            if (inventory == null) {
-                inventory = new HashMap<>();
+        householdRef.get().addOnSuccessListener(documentSnapshot -> {
+            if (documentSnapshot.exists()) {
+                // Retrieve existing inventory
+                Map<String, Object> inventory = (Map<String, Object>) documentSnapshot.get("inventory");
+                if (inventory == null) {
+                    inventory = new HashMap<>();
+                }
+
+                // Update the quantity (increment if exists)
+                if (inventory.containsKey(product_name)) {
+                    int currentQuantity = ((Number) inventory.get(product_name)).intValue();
+                    inventory.put(product_name, currentQuantity + quantity);
+                } else {
+                    inventory.put(product_name, quantity);
+                }
+
+                // Save back to Firestore
+                householdRef.update("inventory", inventory)
+                        .addOnSuccessListener(aVoid -> System.out.println("Product added successfully!"))
+                        .addOnFailureListener(e -> System.err.println("Error adding product: " + e.getMessage()));
             }
-
-            // Update the quantity (increment if exists)
-            if (inventory.containsKey(product_name)) {
-                int currentQuantity = ((Number) inventory.get(product_name)).intValue();
-                inventory.put(product_name, currentQuantity + quantity);
-            } else {
-                inventory.put(product_name, quantity);
-            }
-
-            // Save back to Firestore
-            householdRef.update("inventory", inventory)
-                    .addOnSuccessListener(aVoid -> System.out.println("Product added successfully!"))
-                    .addOnFailureListener(e -> System.err.println("Error adding product: " + e.getMessage()));
-        }
-    }).addOnFailureListener(e -> System.err.println("Error retrieving inventory: " + e.getMessage()));
-}
+        }).addOnFailureListener(e -> System.err.println("Error retrieving inventory: " + e.getMessage()));
+    }
 
 
     public void fetchProductInfo(String barcode) {
