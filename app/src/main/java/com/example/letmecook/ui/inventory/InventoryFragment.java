@@ -151,31 +151,68 @@ public class InventoryFragment extends Fragment {
     }
 
     private void showAddIngredientDialog() {
+        searchDB.getAllIngredients(ingredientNames -> {
+            if (getContext() == null || ingredientNames.isEmpty()) {
+                Toast.makeText(getContext(), "No ingredients found!", Toast.LENGTH_SHORT).show();
+                return;
+            }
+
+            AlertDialog.Builder builder = new AlertDialog.Builder(requireContext());
+            builder.setTitle("Select Ingredient");
+
+            String[] ingredientsArray = ingredientNames.toArray(new String[0]);
+            builder.setItems(ingredientsArray, (dialog, which) -> {
+                String selectedIngredient = ingredientsArray[which];
+                showQuantityDialog(selectedIngredient); // Ask for quantity after selecting
+            });
+
+            builder.setNegativeButton("Cancel", (dialog, which) -> dialog.dismiss());
+            builder.show();
+        });
+    }
+
+    private void showQuantityDialog(String ingredientName) {
         AlertDialog.Builder builder = new AlertDialog.Builder(requireContext());
-        LayoutInflater inflater = getLayoutInflater();
-        View dialogView = inflater.inflate(R.layout.dialog_add_ingredient, null);
-        builder.setView(dialogView);
+        builder.setTitle("Enter Quantity for " + ingredientName);
 
-        AlertDialog dialog = builder.create();
-        dialog.show();
-        dialog.getWindow().setBackgroundDrawableResource(android.R.color.transparent);
+        final EditText gramsInput = new EditText(requireContext());
+        gramsInput.setInputType(android.text.InputType.TYPE_CLASS_NUMBER);
+        gramsInput.setHint("Quantity in grams");
 
-        EditText nameInput = dialogView.findViewById(R.id.ingredient_name);
-        EditText gramsInput = dialogView.findViewById(R.id.ingredient_grams);
-        Button addButton = dialogView.findViewById(R.id.add_button);
-        Button cancelButton = dialogView.findViewById(R.id.cancel_button);
+        builder.setView(gramsInput);
 
-        cancelButton.setOnClickListener(v -> dialog.dismiss());
-
-        addButton.setOnClickListener(v -> {
-            String name = nameInput.getText().toString().trim();
+        builder.setPositiveButton("Add", (dialog, which) -> {
             String grams = gramsInput.getText().toString().trim();
+            if (!grams.isEmpty()) {
+                addIngredientToInventory(ingredientName, grams + "g");
+            } else {
+                Toast.makeText(getContext(), "Quantity can't be empty!", Toast.LENGTH_SHORT).show();
+            }
+        });
 
-            if (!name.isEmpty() && !grams.isEmpty()) {
-                Ingredient newIngredient = new Ingredient(name, grams + "g");
-                ingredientList.add(newIngredient);
-                inventoryAdapter.notifyItemInserted(ingredientList.size() - 1);
-                dialog.dismiss();
+        builder.setNegativeButton("Cancel", (dialog, which) -> dialog.dismiss());
+        builder.show();
+    }
+
+    private void addIngredientToInventory(String name, String amount) {
+        Ingredient newIngredient = new Ingredient(name, amount);
+        ingredientList.add(newIngredient);
+        inventoryAdapter.notifyItemInserted(ingredientList.size() - 1);
+
+        // Update Firestore
+        searchDB.getHouseholdDocumentByID(householdID, documentSnapshot -> {
+            if (documentSnapshot != null && documentSnapshot.exists()) {
+                Map<String, Object> inventory = (Map<String, Object>) documentSnapshot.get("inventory");
+                if (inventory == null) inventory = new HashMap<>();
+
+                inventory.put(name, amount.replace("g", ""));
+                searchDB.updateHouseholdInventory(householdID, inventory, success -> {
+                    if (success) {
+                        Toast.makeText(getContext(), "Ingredient added to inventory!", Toast.LENGTH_SHORT).show();
+                    } else {
+                        Toast.makeText(getContext(), "Failed to add ingredient to Firestore.", Toast.LENGTH_SHORT).show();
+                    }
+                });
             }
         });
     }

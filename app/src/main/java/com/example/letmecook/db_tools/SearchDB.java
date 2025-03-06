@@ -157,6 +157,21 @@ public class SearchDB {
                 .addOnFailureListener(e -> listener.onUpdate(false));
     }
 
+    public void getAllIngredients(OnStringArrayRetrievedListener listener) {
+        db.collection("ingredients")
+                .get()
+                .addOnSuccessListener(queryDocumentSnapshots -> {
+                    ArrayList<String> ingredientNames = new ArrayList<>();
+                    queryDocumentSnapshots.forEach(doc -> ingredientNames.add(doc.getId()));
+                    listener.onStringArrayRetrieved(ingredientNames);
+                })
+                .addOnFailureListener(e -> {
+                    Log.e(TAG, "Failed to fetch ingredients", e);
+                    listener.onStringArrayRetrieved(new ArrayList<>());
+                });
+    }
+
+
     public interface OnUpdateListener {
         void onUpdate(boolean success);
     }
