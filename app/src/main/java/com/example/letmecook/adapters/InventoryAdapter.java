@@ -84,14 +84,16 @@ public class InventoryAdapter extends RecyclerView.Adapter<InventoryAdapter.View
 
     private void handleQuantityUpdate(ViewHolder holder, Ingredient ingredient) {
         String updatedAmount = holder.ingredientAmount.getText().toString().trim();
-        if (!updatedAmount.isEmpty() && updatedAmount.matches("\\d+g")) {
-            String amountWithoutG = updatedAmount.replace("g", "").trim();
+
+        if (!updatedAmount.isEmpty() && updatedAmount.matches("\\d+[gG]?")) {
+            String amountWithoutG = updatedAmount.replaceAll("[gG]", "").trim();
 
             if (!amountWithoutG.equals(ingredient.getAmount().replace("g", "").trim())) {
                 listener.onQuantityChanged(ingredient.getName(), amountWithoutG);
             }
         }
     }
+
 
     @Override
     public int getItemCount() {

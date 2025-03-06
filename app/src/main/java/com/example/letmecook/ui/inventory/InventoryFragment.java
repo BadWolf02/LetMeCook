@@ -43,6 +43,7 @@ public class InventoryFragment extends Fragment {
     private ImageButton addButton;
     private InventoryViewModel inventoryViewModel;
     private static final String TAG = "InventoryFragment";
+    private boolean isFragmentActive = true;
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
@@ -82,6 +83,18 @@ public class InventoryFragment extends Fragment {
         return root;
     }
 
+    @Override
+    public void onStart() {
+        super.onStart();
+        isFragmentActive = true;
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        isFragmentActive = false;
+    }
+
     private void loadUserInventory(String userID) {
         if (userID == null || userID.isEmpty()) {
             Log.e(TAG, "User ID is null or empty.");
@@ -102,7 +115,7 @@ public class InventoryFragment extends Fragment {
     private void fetchHouseholdInventory() {
         Log.d(TAG, "Fetching inventory for household ID: " + householdID);
         searchDB.getHouseholdDocumentByID(householdID, documentSnapshot -> {
-            if (documentSnapshot != null && documentSnapshot.exists()) {
+            if (documentSnapshot != null && documentSnapshot.exists() && isFragmentActive) {
                 Map<String, Object> inventory = (Map<String, Object>) documentSnapshot.get("inventory");
                 if (inventory != null) {
                     ingredientList.clear();
@@ -113,8 +126,12 @@ public class InventoryFragment extends Fragment {
                         ingredientList.add(new Ingredient(ingredientName, amount));
                     }
 
-                    inventoryAdapter.notifyDataSetChanged();
-                    updateItemCount();
+                    recyclerView.post(() -> {
+                        if (isFragmentActive && recyclerView != null && inventoryAdapter != null) {
+                            inventoryAdapter.notifyDataSetChanged();
+                            updateItemCount();
+                        }
+                    });
                 }
             }
         });
