@@ -192,6 +192,8 @@ public class InventoryFragment extends Fragment {
 
         builder.setNegativeButton("Cancel", (dialog, which) -> dialog.dismiss());
         builder.show();
+        String userID = FirebaseAuth.getInstance().getUid();
+        loadUserInventory(userID);
     }
 
     private void addIngredientToInventory(String name, String amount) {
