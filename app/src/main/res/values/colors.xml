@@ -8,6 +8,7 @@
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
 
+    <color name="pfp">@color/b1</color>
     <color name="dialog">#F8DEA4</color>
     <color name="main">#F8E7D1</color>
     <color name="b1">#ba6c42</color>
