@@ -8,7 +8,6 @@ import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.Map;
 
 public class SearchDB {
@@ -151,7 +150,7 @@ public class SearchDB {
                 });
     }
 
-    public void updateHouseholdInventory(String householdID, Map<String, Integer> updatedInventory, OnUpdateListener listener) {
+    public void updateHouseholdInventory(String householdID, Map<String, Object> updatedInventory, OnUpdateListener listener) {
         db.collection("households").document(householdID)
                 .update("inventory", updatedInventory)
                 .addOnSuccessListener(aVoid -> listener.onUpdate(true))

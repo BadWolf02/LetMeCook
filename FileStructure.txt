@@ -1,0 +1,214 @@
+.
+├── ./LetMeCook
+│   ├── ./LetMeCook/app
+│   │   ├── ./LetMeCook/app/build.gradle.kts
+│   │   ├── ./LetMeCook/app/proguard-rules.pro
+│   │   └── ./LetMeCook/app/src
+│   │       ├── ./LetMeCook/app/src/androidTest
+│   │       │   └── ./LetMeCook/app/src/androidTest/java
+│   │       │       └── ./LetMeCook/app/src/androidTest/java/com
+│   │       │           └── ./LetMeCook/app/src/androidTest/java/com/example
+│   │       │               └── ./LetMeCook/app/src/androidTest/java/com/example/testapp
+│   │       │                   └── ./LetMeCook/app/src/androidTest/java/com/example/testapp/ExampleInstrumentedTest.java
+│   │       ├── ./LetMeCook/app/src/main
+│   │       │   ├── ./LetMeCook/app/src/main/AndroidManifest.xml
+│   │       │   ├── ./LetMeCook/app/src/main/java
+│   │       │   │   └── ./LetMeCook/app/src/main/java/com
+│   │       │   │       └── ./LetMeCook/app/src/main/java/com/example
+│   │       │   │           └── ./LetMeCook/app/src/main/java/com/example/testapp
+│   │       │   │               ├── ./LetMeCook/app/src/main/java/com/example/testapp/MainActivity.java
+│   │       │   │               └── ./LetMeCook/app/src/main/java/com/example/testapp/ui
+│   │       │   │                   ├── ./LetMeCook/app/src/main/java/com/example/testapp/ui/dashboard
+│   │       │   │                   │   ├── ./LetMeCook/app/src/main/java/com/example/testapp/ui/dashboard/DashboardFragment.java
+│   │       │   │                   │   └── ./LetMeCook/app/src/main/java/com/example/testapp/ui/dashboard/DashboardViewModel.java
+│   │       │   │                   ├── ./LetMeCook/app/src/main/java/com/example/testapp/ui/home
+│   │       │   │                   │   ├── ./LetMeCook/app/src/main/java/com/example/testapp/ui/home/HomeFragment.java
+│   │       │   │                   │   └── ./LetMeCook/app/src/main/java/com/example/testapp/ui/home/HomeViewModel.java
+│   │       │   │                   └── ./LetMeCook/app/src/main/java/com/example/testapp/ui/notifications
+│   │       │   │                       ├── ./LetMeCook/app/src/main/java/com/example/testapp/ui/notifications/NotificationsFragment.java
+│   │       │   │                       └── ./LetMeCook/app/src/main/java/com/example/testapp/ui/notifications/NotificationsViewModel.java
+│   │       │   └── ./LetMeCook/app/src/main/res
+│   │       │       ├── ./LetMeCook/app/src/main/res/drawable
+│   │       │       │   ├── ./LetMeCook/app/src/main/res/drawable/ic_dashboard_black_24dp.xml
+│   │       │       │   ├── ./LetMeCook/app/src/main/res/drawable/ic_home_black_24dp.xml
+│   │       │       │   ├── ./LetMeCook/app/src/main/res/drawable/ic_launcher_background.xml
+│   │       │       │   ├── ./LetMeCook/app/src/main/res/drawable/ic_launcher_foreground.xml
+│   │       │       │   └── ./LetMeCook/app/src/main/res/drawable/ic_notifications_black_24dp.xml
+│   │       │       ├── ./LetMeCook/app/src/main/res/layout
+│   │       │       │   ├── ./LetMeCook/app/src/main/res/layout/activity_main.xml
+│   │       │       │   ├── ./LetMeCook/app/src/main/res/layout/fragment_dashboard.xml
+│   │       │       │   ├── ./LetMeCook/app/src/main/res/layout/fragment_home.xml
+│   │       │       │   └── ./LetMeCook/app/src/main/res/layout/fragment_notifications.xml
+│   │       │       ├── ./LetMeCook/app/src/main/res/menu
+│   │       │       │   └── ./LetMeCook/app/src/main/res/menu/bottom_nav_menu.xml
+│   │       │       ├── ./LetMeCook/app/src/main/res/mipmap-anydpi-v26
+│   │       │       │   ├── ./LetMeCook/app/src/main/res/mipmap-anydpi-v26/ic_launcher.xml
+│   │       │       │   └── ./LetMeCook/app/src/main/res/mipmap-anydpi-v26/ic_launcher_round.xml
+│   │       │       ├── ./LetMeCook/app/src/main/res/mipmap-hdpi
+│   │       │       │   ├── ./LetMeCook/app/src/main/res/mipmap-hdpi/ic_launcher.webp
+│   │       │       │   └── ./LetMeCook/app/src/main/res/mipmap-hdpi/ic_launcher_round.webp
+│   │       │       ├── ./LetMeCook/app/src/main/res/mipmap-mdpi
+│   │       │       │   ├── ./LetMeCook/app/src/main/res/mipmap-mdpi/ic_launcher.webp
+│   │       │       │   └── ./LetMeCook/app/src/main/res/mipmap-mdpi/ic_launcher_round.webp
+│   │       │       ├── ./LetMeCook/app/src/main/res/mipmap-xhdpi
+│   │       │       │   ├── ./LetMeCook/app/src/main/res/mipmap-xhdpi/ic_launcher.webp
+│   │       │       │   └── ./LetMeCook/app/src/main/res/mipmap-xhdpi/ic_launcher_round.webp
+│   │       │       ├── ./LetMeCook/app/src/main/res/mipmap-xxhdpi
+│   │       │       │   ├── ./LetMeCook/app/src/main/res/mipmap-xxhdpi/ic_launcher.webp
+│   │       │       │   └── ./LetMeCook/app/src/main/res/mipmap-xxhdpi/ic_launcher_round.webp
+│   │       │       ├── ./LetMeCook/app/src/main/res/mipmap-xxxhdpi
+│   │       │       │   ├── ./LetMeCook/app/src/main/res/mipmap-xxxhdpi/ic_launcher.webp
+│   │       │       │   └── ./LetMeCook/app/src/main/res/mipmap-xxxhdpi/ic_launcher_round.webp
+│   │       │       ├── ./LetMeCook/app/src/main/res/navigation
+│   │       │       │   └── ./LetMeCook/app/src/main/res/navigation/mobile_navigation.xml
+│   │       │       ├── ./LetMeCook/app/src/main/res/values
+│   │       │       │   ├── ./LetMeCook/app/src/main/res/values/colors.xml
+│   │       │       │   ├── ./LetMeCook/app/src/main/res/values/dimens.xml
+│   │       │       │   ├── ./LetMeCook/app/src/main/res/values/strings.xml
+│   │       │       │   └── ./LetMeCook/app/src/main/res/values/themes.xml
+│   │       │       ├── ./LetMeCook/app/src/main/res/values-night
+│   │       │       │   └── ./LetMeCook/app/src/main/res/values-night/themes.xml
+│   │       │       └── ./LetMeCook/app/src/main/res/xml
+│   │       │           ├── ./LetMeCook/app/src/main/res/xml/backup_rules.xml
+│   │       │           └── ./LetMeCook/app/src/main/res/xml/data_extraction_rules.xml
+│   │       └── ./LetMeCook/app/src/test
+│   │           └── ./LetMeCook/app/src/test/java
+│   │               └── ./LetMeCook/app/src/test/java/com
+│   │                   └── ./LetMeCook/app/src/test/java/com/example
+│   │                       └── ./LetMeCook/app/src/test/java/com/example/testapp
+│   │                           └── ./LetMeCook/app/src/test/java/com/example/testapp/ExampleUnitTest.java
+│   ├── ./LetMeCook/build.gradle.kts
+│   ├── ./LetMeCook/gradle
+│   │   ├── ./LetMeCook/gradle/libs.versions.toml
+│   │   └── ./LetMeCook/gradle/wrapper
+│   │       ├── ./LetMeCook/gradle/wrapper/gradle-wrapper.jar
+│   │       └── ./LetMeCook/gradle/wrapper/gradle-wrapper.properties
+│   ├── ./LetMeCook/gradle.properties
+│   ├── ./LetMeCook/gradlew
+│   ├── ./LetMeCook/gradlew.bat
+│   └── ./LetMeCook/settings.gradle.kts
+├── ./app
+│   ├── ./app/build.gradle
+│   ├── ./app/google-services.json
+│   ├── ./app/proguard-rules.pro
+│   └── ./app/src
+│       ├── ./app/src/androidTest
+│       │   └── ./app/src/androidTest/java
+│       │       └── ./app/src/androidTest/java/com
+│       │           └── ./app/src/androidTest/java/com/example
+│       │               └── ./app/src/androidTest/java/com/example/letmecook
+│       │                   └── ./app/src/androidTest/java/com/example/letmecook/ExampleInstrumentedTest.java
+│       ├── ./app/src/main
+│       │   ├── ./app/src/main/AndroidManifest.xml
+│       │   ├── ./app/src/main/java
+│       │   │   └── ./app/src/main/java/com
+│       │   │       └── ./app/src/main/java/com/example
+│       │   │           └── ./app/src/main/java/com/example/letmecook
+│       │   │               ├── ./app/src/main/java/com/example/letmecook/CameraActivity.java
+│       │   │               ├── ./app/src/main/java/com/example/letmecook/HouseholdManageActivity.java
+│       │   │               ├── ./app/src/main/java/com/example/letmecook/LoginActivity.java
+│       │   │               ├── ./app/src/main/java/com/example/letmecook/MainActivity.java
+│       │   │               ├── ./app/src/main/java/com/example/letmecook/ScanActivity.java
+│       │   │               ├── ./app/src/main/java/com/example/letmecook/SignUpActivity.java
+│       │   │               ├── ./app/src/main/java/com/example/letmecook/TestActivity.java
+│       │   │               ├── ./app/src/main/java/com/example/letmecook/ViewInviteActivity.java
+│       │   │               ├── ./app/src/main/java/com/example/letmecook/adapters
+│       │   │               │   ├── ./app/src/main/java/com/example/letmecook/adapters/HouseholdInvitesAdapter.java
+│       │   │               │   ├── ./app/src/main/java/com/example/letmecook/adapters/MembersAdapter.java
+│       │   │               │   └── ./app/src/main/java/com/example/letmecook/adapters/UsersInvitedAdapter.java
+│       │   │               ├── ./app/src/main/java/com/example/letmecook/db_tools
+│       │   │               │   ├── ./app/src/main/java/com/example/letmecook/db_tools/Authentication.java
+│       │   │               │   ├── ./app/src/main/java/com/example/letmecook/db_tools/Household.java
+│       │   │               │   ├── ./app/src/main/java/com/example/letmecook/db_tools/SearchDB.java
+│       │   │               │   └── ./app/src/main/java/com/example/letmecook/db_tools/barcode_API.java
+│       │   │               └── ./app/src/main/java/com/example/letmecook/ui
+│       │   │                   ├── ./app/src/main/java/com/example/letmecook/ui/calendar
+│       │   │                   │   ├── ./app/src/main/java/com/example/letmecook/ui/calendar/CalendarFragment.java
+│       │   │                   │   └── ./app/src/main/java/com/example/letmecook/ui/calendar/CalendarViewModel.java
+│       │   │                   ├── ./app/src/main/java/com/example/letmecook/ui/home
+│       │   │                   │   ├── ./app/src/main/java/com/example/letmecook/ui/home/HomeFragment.java
+│       │   │                   │   └── ./app/src/main/java/com/example/letmecook/ui/home/HomeViewModel.java
+│       │   │                   ├── ./app/src/main/java/com/example/letmecook/ui/recipes
+│       │   │                   │   ├── ./app/src/main/java/com/example/letmecook/ui/recipes/RecipesFragment.java
+│       │   │                   │   └── ./app/src/main/java/com/example/letmecook/ui/recipes/RecipesViewModel.java
+│       │   │                   ├── ./app/src/main/java/com/example/letmecook/ui/shopping
+│       │   │                   │   ├── ./app/src/main/java/com/example/letmecook/ui/shopping/ShoppingFragment.java
+│       │   │                   │   └── ./app/src/main/java/com/example/letmecook/ui/shopping/ShoppingViewModel.java
+│       │   │                   └── ./app/src/main/java/com/example/letmecook/ui/user
+│       │   │                       ├── ./app/src/main/java/com/example/letmecook/ui/user/UserFragment.java
+│       │   │                       └── ./app/src/main/java/com/example/letmecook/ui/user/UserViewModel.java
+│       │   └── ./app/src/main/res
+│       │       ├── ./app/src/main/res/drawable
+│       │       │   ├── ./app/src/main/res/drawable/custom_edittext.xml
+│       │       │   ├── ./app/src/main/res/drawable/eg_barcode.png
+│       │       │   ├── ./app/src/main/res/drawable/ic_calendar_black_24dp.xml
+│       │       │   ├── ./app/src/main/res/drawable/ic_dashboard_black_24dp.xml
+│       │       │   ├── ./app/src/main/res/drawable/ic_home_black_24dp.xml
+│       │       │   ├── ./app/src/main/res/drawable/ic_launcher_background.xml
+│       │       │   ├── ./app/src/main/res/drawable/ic_launcher_foreground.xml
+│       │       │   ├── ./app/src/main/res/drawable/ic_notifications_black_24dp.xml
+│       │       │   ├── ./app/src/main/res/drawable/ic_person_black_24dp.xml
+│       │       │   ├── ./app/src/main/res/drawable/ic_recipes_black_24dp.xml
+│       │       │   └── ./app/src/main/res/drawable/ic_shopping_black_24dp.xml
+│       │       ├── ./app/src/main/res/layout
+│       │       │   ├── ./app/src/main/res/layout/activity_camera.xml
+│       │       │   ├── ./app/src/main/res/layout/activity_household.xml
+│       │       │   ├── ./app/src/main/res/layout/activity_invites.xml
+│       │       │   ├── ./app/src/main/res/layout/activity_login.xml
+│       │       │   ├── ./app/src/main/res/layout/activity_main.xml
+│       │       │   ├── ./app/src/main/res/layout/activity_scan.xml
+│       │       │   ├── ./app/src/main/res/layout/activity_signup.xml
+│       │       │   ├── ./app/src/main/res/layout/activity_test.xml
+│       │       │   ├── ./app/src/main/res/layout/fragment_calendar.xml
+│       │       │   ├── ./app/src/main/res/layout/fragment_home.xml
+│       │       │   ├── ./app/src/main/res/layout/fragment_recipes.xml
+│       │       │   ├── ./app/src/main/res/layout/fragment_shopping.xml
+│       │       │   ├── ./app/src/main/res/layout/fragment_user.xml
+│       │       │   ├── ./app/src/main/res/layout/text_row_button.xml
+│       │       │   └── ./app/src/main/res/layout/text_row_item.xml
+│       │       ├── ./app/src/main/res/menu
+│       │       │   └── ./app/src/main/res/menu/bottom_nav_menu.xml
+│       │       ├── ./app/src/main/res/mipmap-anydpi-v26
+│       │       │   ├── ./app/src/main/res/mipmap-anydpi-v26/ic_launcher.xml
+│       │       │   └── ./app/src/main/res/mipmap-anydpi-v26/ic_launcher_round.xml
+│       │       ├── ./app/src/main/res/mipmap-hdpi
+│       │       │   ├── ./app/src/main/res/mipmap-hdpi/ic_launcher.webp
+│       │       │   └── ./app/src/main/res/mipmap-hdpi/ic_launcher_round.webp
+│       │       ├── ./app/src/main/res/mipmap-mdpi
+│       │       │   ├── ./app/src/main/res/mipmap-mdpi/ic_launcher.webp
+│       │       │   └── ./app/src/main/res/mipmap-mdpi/ic_launcher_round.webp
+│       │       ├── ./app/src/main/res/mipmap-xhdpi
+│       │       │   ├── ./app/src/main/res/mipmap-xhdpi/ic_launcher.webp
+│       │       │   └── ./app/src/main/res/mipmap-xhdpi/ic_launcher_round.webp
+│       │       ├── ./app/src/main/res/mipmap-xxhdpi
+│       │       │   ├── ./app/src/main/res/mipmap-xxhdpi/ic_launcher.webp
+│       │       │   └── ./app/src/main/res/mipmap-xxhdpi/ic_launcher_round.webp
+│       │       ├── ./app/src/main/res/mipmap-xxxhdpi
+│       │       │   ├── ./app/src/main/res/mipmap-xxxhdpi/ic_launcher.webp
+│       │       │   └── ./app/src/main/res/mipmap-xxxhdpi/ic_launcher_round.webp
+│       │       ├── ./app/src/main/res/navigation
+│       │       │   └── ./app/src/main/res/navigation/mobile_navigation.xml
+│       │       ├── ./app/src/main/res/values
+│       │       │   ├── ./app/src/main/res/values/colors.xml
+│       │       │   ├── ./app/src/main/res/values/strings.xml
+│       │       │   └── ./app/src/main/res/values/themes.xml
+│       │       └── ./app/src/main/res/xml
+│       │           ├── ./app/src/main/res/xml/backup_rules.xml
+│       │           └── ./app/src/main/res/xml/data_extraction_rules.xml
+│       └── ./app/src/test
+│           └── ./app/src/test/java
+│               └── ./app/src/test/java/com
+│                   └── ./app/src/test/java/com/example
+│                       └── ./app/src/test/java/com/example/letmecook
+│                           └── ./app/src/test/java/com/example/letmecook/ExampleUnitTest.java
+├── ./build.gradle
+├── ./gradle
+│   ├── ./gradle/libs.versions.toml
+│   └── ./gradle/wrapper
+│       ├── ./gradle/wrapper/gradle-wrapper.jar
+│       └── ./gradle/wrapper/gradle-wrapper.properties
+├── ./gradle.properties
+├── ./gradlew
+├── ./gradlew.bat
+├── ./local.properties
+└── ./settings.gradle
