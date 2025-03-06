@@ -110,24 +110,24 @@ public class InventoryFragment extends Fragment {
     }
 
     private void filterInventory(String query) {
-        filteredList.clear();
-
         if (query.isEmpty()) {
             // 🟢 Show the full list if the search bar is empty
-            filteredList.addAll(ingredientList);
+            inventoryAdapter.updateList(new ArrayList<>(ingredientList));
         } else {
+            List<Ingredient> tempFilteredList = new ArrayList<>();
             String lowerCaseQuery = query.toLowerCase();
 
             for (Ingredient ingredient : ingredientList) {
                 if (ingredient.getName().toLowerCase().contains(lowerCaseQuery)) {
-                    filteredList.add(ingredient);
+                    tempFilteredList.add(ingredient);
                 }
             }
-        }
 
-        // 🟢 Always update the adapter, even if the list is empty
-        inventoryAdapter.updateList(filteredList);
+            // 🟢 Update the adapter with the filtered results
+            inventoryAdapter.updateList(tempFilteredList);
+        }
     }
+
 
 
     private void loadUserInventory(String userID) {
