@@ -244,23 +244,6 @@ public class SearchDB {
         });
     }
 
-    // Get snapshot for household by householdID
-    public void getHouseholdDocumentByID(String hid, OnDocumentRetrievedListener listener) {
-        db.collection("households")
-                .document(hid)
-                .get()
-                .addOnSuccessListener(documentSnapshot -> {
-                    if (documentSnapshot.exists()) {
-                        // Household found, retrieve the first matching document
-                        Log.d(TAG, "Household found");
-                        listener.onDocumentRetrieved(documentSnapshot);
-                    } else {
-                        Log.e(TAG, "Household not found");
-                        listener.onDocumentRetrieved(null);
-                    }
-                });
-    }
-
     // User
 
     public void getFavouriteRecipes(String uid, OnDocumentArrayRetrievedListener listener) {
