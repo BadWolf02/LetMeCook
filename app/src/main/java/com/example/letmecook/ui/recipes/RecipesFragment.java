@@ -151,7 +151,6 @@ public class RecipesFragment extends Fragment {
                 String name = edit_r_name.getText().toString();
                 Log.d("recipe name", "name is "+ name);
                 recipe.setR_name(s.toString());
-lambda$getRecipeDocumentByID$3
             }
         });
 
