@@ -43,6 +43,7 @@ import com.google.mlkit.vision.barcode.BarcodeScanning;
 import com.google.mlkit.vision.barcode.common.Barcode;
 import com.google.mlkit.vision.common.InputImage;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -52,6 +53,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.concurrent.ExecutionException;
 
 import okhttp3.Call;
@@ -72,6 +74,7 @@ public class CameraActivity extends AppCompatActivity {
     private String product_name;
     private String kcal_energy;
     private String allergens_info;
+    private String quantity_info;
     private InventoryFragment inventoryFragment;
 
 
@@ -110,10 +113,16 @@ public class CameraActivity extends AppCompatActivity {
             }
             // Safely parse calories, defaulting to 0 if invalid
             int caloriesValue = 0;
+            int quantityValue = 1;
             try {
                 caloriesValue = Integer.parseInt(kcal_energy.replaceAll("[^0-9]", ""));
             } catch (NumberFormatException e) {
                 Log.e("CameraActivity", "Error parsing calories: " + kcal_energy, e);
+            }
+            try {
+                quantityValue = Integer.parseInt(quantity_info.replaceAll("[^0-9]", ""));
+            } catch (NumberFormatException e){
+                Log.e("CameraActivity", "Error parsing quantity" + quantity_info, e);
             }
 
             // Ensure allergens is a valid list
@@ -122,7 +131,7 @@ public class CameraActivity extends AppCompatActivity {
                 allergensList = Arrays.asList(allergens_info.split(","));
             }
 
-            sendProductToInventory(product_name, 1);
+            sendProductToInventory(product_name, quantityValue);
             sendProductToIngredients(product_name, caloriesValue, allergensList);
             Toast.makeText(this, "Sending to Inventory!", Toast.LENGTH_SHORT).show();
         });
@@ -232,9 +241,38 @@ public class CameraActivity extends AppCompatActivity {
 
                     // Gather Allergy Info
                     String allergens = product.optString("allergens", "No Allergen Info");
+                    // Gather Quantity Info
+                    String quantity = "No Quantity Info"; // Default fallback
+
+                    try {
+                        JSONObject ecoscoreData = product.optJSONObject("ecoscore_data");
+                        if (ecoscoreData != null) {
+                            JSONObject adjustments = ecoscoreData.optJSONObject("adjustments");
+                            if (adjustments != null) {
+                                JSONObject packaging = adjustments.optJSONObject("packaging");
+                                if (packaging != null) {
+                                    JSONArray packagingsArray = packaging.optJSONArray("packagings");
+                                    if (packagingsArray != null && packagingsArray.length() > 0) {
+                                        JSONObject firstPackaging = packagingsArray.optJSONObject(0);
+                                        if (firstPackaging != null) {
+                                            quantity = firstPackaging.optString("quantity_per_unit", "No Quantity Info");
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    } catch (Exception e) {
+                        Log.e("CameraActivity", "Error extracting quantity_per_unit", e);
+                    }
+
+                    Log.d("CameraActivity", "Extracted quantity_per_unit: " + quantity);
+
+
+
                     product_name = productName;
                     kcal_energy = energy;
                     allergens_info = allergens;
+                    quantity_info = quantity;
 
                     // Update UI on the main thread
                     new Handler(Looper.getMainLooper()).post(() -> {
