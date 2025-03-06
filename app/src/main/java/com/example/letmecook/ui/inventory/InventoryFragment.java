@@ -21,6 +21,7 @@ import com.example.letmecook.adapters.InventoryAdapter;
 import com.example.letmecook.databinding.FragmentInventoryBinding;
 import com.example.letmecook.db_tools.SearchDB;
 import com.example.letmecook.models.Ingredient;
+import com.google.firebase.auth.FirebaseAuth;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -63,7 +64,7 @@ public class InventoryFragment extends Fragment {
         searchDB = new SearchDB();
 
         // Fetch and display inventory
-        String userID = "Exb0LIB0vIMVYJN2kAKHO0zd1mD2"; // Set your actual user ID
+        String userID = FirebaseAuth.getInstance().getUid(); // Set your actual user ID
         loadUserInventory(userID);
 
         return root;
