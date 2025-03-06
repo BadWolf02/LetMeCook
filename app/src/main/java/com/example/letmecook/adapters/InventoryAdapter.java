@@ -61,23 +61,36 @@ public class InventoryAdapter extends RecyclerView.Adapter<InventoryAdapter.View
         holder.ingredientName.setText(ingredient.getName());
         holder.ingredientAmount.setText(ingredient.getAmount());
 
-        // Handle quantity change
-        holder.ingredientAmount.setOnFocusChangeListener((v, hasFocus) -> {
-            if (!hasFocus) { // Only update on focus loss
-                String updatedAmount = holder.ingredientAmount.getText().toString().trim();
-                if (!updatedAmount.isEmpty() && updatedAmount.matches("\\d+g")) {
-                    String amountWithoutG = updatedAmount.replace("g", "").trim();
+        holder.ingredientAmount.setOnEditorActionListener((v, actionId, event) -> {
+            if (actionId == android.view.inputmethod.EditorInfo.IME_ACTION_DONE) {
+                handleQuantityUpdate(holder, ingredient);
+                return true;
+            }
+            return false;
+        });
 
-                    if (!amountWithoutG.equals(ingredient.getAmount().replace("g", "").trim())) { // 🟢 Avoid unnecessary updates
-                        listener.onQuantityChanged(ingredient.getName(), amountWithoutG);
-                    }
-                }
+        holder.ingredientAmount.setOnFocusChangeListener((v, hasFocus) -> {
+            if (!hasFocus) { // 🟢 Save changes on focus loss
+                handleQuantityUpdate(holder, ingredient);
             }
         });
 
 
+
+
         // Handle delete button click
         holder.deleteButton.setOnClickListener(v -> deleteListener.onDeleteIngredient(ingredient.getName()));
+    }
+
+    private void handleQuantityUpdate(ViewHolder holder, Ingredient ingredient) {
+        String updatedAmount = holder.ingredientAmount.getText().toString().trim();
+        if (!updatedAmount.isEmpty() && updatedAmount.matches("\\d+g")) {
+            String amountWithoutG = updatedAmount.replace("g", "").trim();
+
+            if (!amountWithoutG.equals(ingredient.getAmount().replace("g", "").trim())) {
+                listener.onQuantityChanged(ingredient.getName(), amountWithoutG);
+            }
+        }
     }
 
     @Override
