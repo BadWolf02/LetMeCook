@@ -1,20 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="cream">#F8E7D1</color>
-    <color name="peach">#FAEDCD</color>
-    <color name="orange">#D4A373</color>
-    <color name="light_green">#E9EDC9</color>
-    <color name="green">#CCD5AE</color>
+    <color name="cream">#FCFADC</color>
+    <color name="peach">#FFEEBD</color>
+    <color name="light_orange">#DBA979</color>
+    <color name="orange">#E39D4B</color>
+    <color name="light_green">#E8EFCF</color>
+    <color name="green">#B5DAAB</color>
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
-    <color name="light_grey">#D3D3D3</color>
 
+    <color name="pfp">@color/b1</color>
     <color name="dialog">#F8DEA4</color>
     <color name="main">#F8E7D1</color>
     <color name="b1">#ba6c42</color>
     <color name="b2">#d17d4e</color>
     <color name="b3">#e39d4b</color>
-    <color name="b4">#f2be49</color>
+    <color name="b4">#ffcc68</color>
     <color name="p1">#80535b</color>
     <color name="icons">#4A2B1A</color>
 </resources>

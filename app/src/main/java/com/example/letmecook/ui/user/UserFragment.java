@@ -6,22 +6,22 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
-import androidx.lifecycle.ViewModelProvider;
 
 import com.example.letmecook.FavouriteViewActivity;
 import com.example.letmecook.HouseholdManageActivity;
-import com.example.letmecook.EditProfileActivity;
 import com.example.letmecook.ViewInviteActivity;
 import com.example.letmecook.db_tools.Authentication;
 
 import com.example.letmecook.R;
 import com.example.letmecook.databinding.FragmentUserBinding;
-import com.example.letmecook.db_tools.Household;
 
+import androidx.lifecycle.ViewModelProvider;
+import com.example.letmecook.EditProfileActivity;
+import com.example.letmecook.db_tools.Household;
+import android.widget.Toast;
 
 public class UserFragment extends Fragment {
 
@@ -30,15 +30,16 @@ public class UserFragment extends Fragment {
 
     public View onCreateView(@NonNull LayoutInflater inflater,
             ViewGroup container, Bundle savedInstanceState) {
-        UserViewModel userViewModel =
-                new ViewModelProvider(this).get(UserViewModel.class);
+
+        userViewModel = new ViewModelProvider(this).get(UserViewModel.class);
+        Household household = new Household(requireContext());
 
         Authentication auth = new Authentication(requireContext());
-        Household household = new Household(requireContext());
 
         binding = FragmentUserBinding.inflate(inflater, container, false);
         View root = binding.getRoot();
 
+        //User profile & edit
         userViewModel.getUserData().observe(getViewLifecycleOwner(), userData -> {
             binding.userName.setText(userData.getOrDefault("username", "Username not found"));
             binding.userEmail.setText(userData.getOrDefault("email", "Email not found"));
@@ -58,6 +59,7 @@ public class UserFragment extends Fragment {
             Intent intent = new Intent(requireActivity(), EditProfileActivity.class);
             startActivity(intent);
         });
+
 
         Button householdButton = binding.getRoot().findViewById(R.id.householdButton);
         householdButton.setOnClickListener(view -> {

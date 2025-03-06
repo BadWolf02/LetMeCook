@@ -67,3 +67,4 @@ public class EditProfileActivity extends AppCompatActivity {
     }
 
 }
+
