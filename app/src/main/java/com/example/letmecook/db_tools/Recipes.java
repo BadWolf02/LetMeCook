@@ -7,6 +7,7 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -61,6 +62,42 @@ public class Recipes {
                 db.collection("recipes")
                         .document(recipeID)
                         .update("avgRating", averageRating);
+            });
+        });
+    }
+
+    public void addToShoppingList(String recipeID, String uid) {
+        searchDB.getRecipeDocumentByID(recipeID, recipeDoc -> {
+            List<String> recipeIngredients = (List<String>) recipeDoc.get("ingredients"); // list of ingredients in the recipe
+            List<String> ingredientsToAdd = new ArrayList<>(); // list of ingredients to be added to shopping list
+            searchDB.getUserHouseholdDocument(uid, householdDoc -> {
+                Map<String, Integer> inventory = (Map<String, Integer>) householdDoc.get("ingredients");
+                // If true, then user has an inventory
+                if (inventory != null && !inventory.isEmpty()) {
+                    // Check if recipe ingredients are in household ingredients
+                    for (String ingredient : recipeIngredients) {
+                      if (!inventory.keySet().contains(ingredient)) {
+                          ingredientsToAdd.add(ingredient);
+                      }
+                    }
+                } else {
+                    ingredientsToAdd.addAll(recipeIngredients);
+                }
+                List<String> householdShoppingList = (List<String>) householdDoc.get("shopping-list");
+                // Removes any items that are already in the shopping list
+                if (householdShoppingList != null && !householdShoppingList.isEmpty()) {
+                    for (String ingredient : ingredientsToAdd) {
+                        if (!householdShoppingList.contains(ingredient)) {
+                            ingredientsToAdd.remove(ingredient);
+                        }
+                    }
+                }
+                // Adds new ingredients to shopping list
+                if (!ingredientsToAdd.isEmpty()) {
+                    for (String ingredient : ingredientsToAdd) {
+                        householdDoc.getReference().update("shopping-list", FieldValue.arrayUnion(ingredient));
+                    }
+                }
             });
         });
     }

@@ -65,6 +65,9 @@ public class RecipeViewActivity extends AppCompatActivity {
         Button favouriteButton = findViewById(R.id.favouriteButton);
         favouriteButton.setOnClickListener(view -> recipes.addRecipeToFavourites(recipeID));
 
+        Button addToShoppingList = findViewById(R.id.addToShoppingList);
+        addToShoppingList.setOnClickListener(view -> recipes.addToShoppingList(recipeID, mAuth.getCurrentUser().getUid()));
+
         reviewButton.setOnClickListener(view -> addReview(recipeID, (int) ratingBar.getRating(), reviewBox.getText().toString()));
 
     }
