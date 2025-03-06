@@ -53,7 +53,7 @@ public class InventoryFragment extends Fragment {
 
         binding = FragmentInventoryBinding.inflate(inflater, container, false);
         View root = binding.getRoot();
-        Button toCameraButton = root.findViewById(R.id.toCamera);
+        ImageButton toCameraButton = root.findViewById(R.id.toCamera);
         Button refreshInventoryButton = root.findViewById(R.id.refresh_button);
 
         final TextView titleTextView = binding.titleInventory;
