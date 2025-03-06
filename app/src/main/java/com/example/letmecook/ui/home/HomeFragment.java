@@ -21,6 +21,7 @@ import com.example.letmecook.R;
 import com.example.letmecook.adapters.RecipeSearchAdapter;
 import com.example.letmecook.databinding.FragmentHomeBinding;
 import com.example.letmecook.db_tools.SearchDB;
+import com.google.firebase.auth.FirebaseAuth;
 
 import java.util.ArrayList;
 
@@ -29,12 +30,13 @@ public class HomeFragment extends Fragment {
 private FragmentHomeBinding binding;
 
     private final SearchDB searchDB = new SearchDB();
+    private final FirebaseAuth mAuth = FirebaseAuth.getInstance();
     private RecipeSearchAdapter recipeAdapter;
 
     private Button prevPageButton, nextPageButton;
     private LinearLayout filteredIngredientsLayout;
 
-    private final ArrayList<String> ingredients = new ArrayList<>();
+    // private final ArrayList<String> ingredients = new ArrayList<>();
     private final ArrayList<String> filteredIngredients = new ArrayList<>();
 
 
@@ -48,14 +50,16 @@ private FragmentHomeBinding binding;
         RecyclerView recyclerView = binding.recyclerView;
         EditText nameBar = binding.nameBar;
         EditText authorBar = binding.authorBar;
-        filteredIngredientsLayout = binding.ingredientsLayout;
+        // filteredIngredientsLayout = binding.ingredientsLayout;
 
-        Button showMenuButton = binding.showMenuButton;
+        // Button showMenuButton = binding.showMenuButton;
         Button resetButton = binding.resetButton;
         Button searchButton = binding.searchButton;
+        Button inventorySearchButton = binding.inventorySearchButton;
         prevPageButton = binding.prevButton;
         nextPageButton = binding.nextButton;
 
+        /*
         ListPopupWindow listPopupWindow = new ListPopupWindow(requireContext());
         listPopupWindow.setAnchorView(showMenuButton); // Anchor view to menu button
 
@@ -88,6 +92,7 @@ private FragmentHomeBinding binding;
                 listPopupWindow.show();
             }
         });
+         */
 
         // Reset all filters
         resetButton.setOnClickListener(v -> resetFilters());
@@ -100,6 +105,8 @@ private FragmentHomeBinding binding;
                     null,
                     filteredIngredients);
         });
+
+        inventorySearchButton.setOnClickListener(view -> recipeAdapter.whatCanICook(mAuth.getCurrentUser().getUid(), ()->{}));
 
         // Set up RecyclerView for recipes
         recyclerView.setLayoutManager(new LinearLayoutManager(requireContext()));
@@ -151,10 +158,11 @@ private FragmentHomeBinding binding;
     private void resetFilters() {
         recipeAdapter.resetFilters(()->{});
         changePage(0);
-        filteredIngredientsLayout.removeAllViews();
+        // filteredIngredientsLayout.removeAllViews();
     }
 
     // Handle displaying ingredients that are selected for filter
+    /*
     private void addIngredient() {
         filteredIngredientsLayout.removeAllViews();
         for (String ingredient : filteredIngredients) {
@@ -171,5 +179,6 @@ private FragmentHomeBinding binding;
         }
 
     }
+     */
 }
 

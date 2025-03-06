@@ -1,5 +1,6 @@
 package com.example.letmecook;
 
+import android.content.Context;
 import android.util.Log;
 
 import java.util.ArrayList;
@@ -8,6 +9,7 @@ import java.util.List;
 
 //import com.example.letmecook.tools.Firebase;
 import com.example.letmecook.db_tools.SearchDB;
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.*;
 
 
@@ -38,8 +40,8 @@ public class Recipe {
     private int stepsAmount;
 
     SearchDB search_db = new SearchDB();
-
     FirebaseFirestore db = FirebaseFirestore.getInstance();
+    FirebaseAuth mAuth = FirebaseAuth.getInstance();
 
 
     // protected Firebase db = new Firebase(Context Recipe.this); //probably wrong, want it to take the context from the add recipe or display recipe
@@ -195,47 +197,52 @@ public class Recipe {
             // the stuff to respective fielsds
             // add author and allergens too
             // access recipes collection
+            search_db.getUserDocumentByID(mAuth.getCurrentUser().getUid(), userDoc -> {
+                CollectionReference recipesRef = db.collection("recipes");
 
-            CollectionReference recipesRef = db.collection("recipes");
+                HashMap<String, Object> recipe = new HashMap<>();
+                recipe.put("r_name", this.r_name);
+                recipe.put("author", this.author);
+                recipe.put("ingredients", this.ingredients);
+                Log.d("adding allergens to hashmap for recipes", this.allergens.toString()); //  this is currently a empty list
+                recipe.put("allergens", this.allergens);
+                recipe.put("steps", this.steps);
+                recipe.put("avgRating", 0);
+                recipe.put("reviews", new ArrayList<>());
+                recipe.put("author", userDoc.getString("username"));
+                // recipe.put("r_type", this.r_type);
 
-            HashMap<String, Object> recipe = new HashMap<>();
-            recipe.put("r_name", this.r_name);
-            // recipe.put("author", this.author);
-            recipe.put("ingredients", this.ingredients);
-            Log.d("adding allergens to hashmap for recipes", this.allergens.toString()); //  this is currently a empty list
-            recipe.put("allergens", this.allergens);
-            recipe.put("steps", this.steps);
-            // recipe.put("r_type", this.r_type);
-        
-            if (this.cuisine!=null){
-                recipe.put("cuisine", this.cuisine);
-            }
-            if (getMealType()!=null){
-                recipe.put("meal type", this.mealType);
-            }
-
-            //check if the total cooking time has been set
-            if ((this.cooking_time_min != null) | (this.cooking_time_h != null) | (this.total_time_h != null) | (this.total_time_min != null)){
-
-                if (this.cooking_time_h != null) {
-                    this.timings.put("cooking_time_min", this.cooking_time_min);
+                if (this.cuisine!=null){
+                    recipe.put("cuisine", this.cuisine);
                 }
-                if(this.cooking_time_min != null){
-                    this.timings.put("cooking_time_min", this.cooking_time_min);
+                if (getMealType()!=null){
+                    recipe.put("meal type", this.mealType);
                 }
-                if (this.total_time_min != null){
-                    this.timings.put("total_time_min", this.total_time_min);
+
+                //check if the total cooking time has been set
+                if ((this.cooking_time_min != null) | (this.cooking_time_h != null) | (this.total_time_h != null) | (this.total_time_min != null)){
+
+                    if (this.cooking_time_h != null) {
+                        this.timings.put("cooking_time_min", this.cooking_time_min);
+                    }
+                    if(this.cooking_time_min != null){
+                        this.timings.put("cooking_time_min", this.cooking_time_min);
+                    }
+                    if (this.total_time_min != null){
+                        this.timings.put("total_time_min", this.total_time_min);
+                    }
+                    if (this.total_time_h != null){
+                        this.timings.put("total_time_h", this.total_time_h);
+                    }
                 }
-                if (this.total_time_h != null){
-                    this.timings.put("total_time_h", this.total_time_h);
-                }
-            }
 
 
 
-            recipesRef.add(recipe);
+                recipesRef.add(recipe);
                 //Toast.makeText(context , "recipe sucessfully saved", Toast.LENGTH_LONG) ;}).addOnFailureListener(e->{System.err.println("adding recipe failed");});
-            //TODO figure out how to get this to work, can't really have the context here
+                //TODO figure out how to get this to work, can't really have the context here
+                    });
+
     };
 
 

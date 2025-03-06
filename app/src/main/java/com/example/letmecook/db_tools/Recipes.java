@@ -68,7 +68,8 @@ public class Recipes {
 
     public void addToShoppingList(String recipeID, String uid) {
         searchDB.getRecipeDocumentByID(recipeID, recipeDoc -> {
-            List<String> recipeIngredients = (List<String>) recipeDoc.get("ingredients"); // list of ingredients in the recipe
+            Map<String, Object> ingredientMap = (Map<String, Object>) recipeDoc.get("ingredients");
+            List<String> recipeIngredients = new ArrayList<>(ingredientMap.keySet()); // list of ingredients in the recipe
             List<String> ingredientsToAdd = new ArrayList<>(); // list of ingredients to be added to shopping list
             searchDB.getUserHouseholdDocument(uid, householdDoc -> {
                 Map<String, Integer> inventory = (Map<String, Integer>) householdDoc.get("ingredients");

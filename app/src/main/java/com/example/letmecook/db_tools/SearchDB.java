@@ -16,6 +16,7 @@ import com.google.firebase.firestore.Query;
 import java.util.ArrayList;
 import java.util.Map;
 import java.util.List;
+import java.util.Map;
 
 public class SearchDB {
     FirebaseFirestore db = FirebaseFirestore.getInstance(); // initialise database
@@ -69,11 +70,16 @@ public class SearchDB {
         if (cuisine != null && !cuisine.isEmpty()) {recipeQuery = recipeQuery.whereEqualTo("cuisine", cuisine);}
 
         // Checks for match of ingredients
+        /*
         if (ingredients != null && !ingredients.isEmpty()) {
             for (String ingredient : ingredients) {
-                recipeQuery = recipeQuery.whereArrayContains("ingredients", ingredient);
+                // ChatGPT solution to searching through maps in Firestore
+                recipeQuery = recipeQuery
+                        .whereGreaterThanOrEqualTo("ingredients." + ingredient, "")
+                        .whereLessThan("ingredients." + ingredient, "\uf8ff");
             }
         }
+         */
 
         // https://firebase.google.com/docs/firestore/query-data/query-cursors
         Query finalRecipeQuery = recipeQuery;
@@ -117,6 +123,56 @@ public class SearchDB {
                 .addOnFailureListener(queryDocumentSnapshots -> listener.onDocumentArrayRetrieved(new ArrayList<>()));
     }
 
+    public void getWhatCanICook(String uid, int page, OnDocumentArrayRetrievedListener listener) {
+        getUserHouseholdDocument(uid, householdDocument -> {
+            Map<String, Integer> inventoryMap = (Map<String, Integer>) householdDocument.get("inventory"); // map of inventory items
+            List<String> inventoryItems = new ArrayList<>(inventoryMap.keySet()); // name of inventory items
+            List<DocumentSnapshot> cookableRecipes = new ArrayList<>(); // return list
+            getAllRecipeDocuments(allRecipes -> {
+                if (allRecipes != null) {
+                    // Loop through all recipes
+                    for (DocumentSnapshot recipe : allRecipes) {
+                        boolean canCook = true;
+                        Map<String, Integer> ingredientsMap = (Map<String, Integer>) recipe.get("ingredients");
+                        List<String> ingredients = new ArrayList<>(ingredientsMap.keySet());
+                        // Loop through each recipe's ingredients
+                        for (String ingredient : ingredients) {
+                            // Check inventory for recipe ingredient
+                            if (!inventoryItems.contains(ingredient)) {
+                                canCook = false;
+                                break;
+                            }
+                        }
+                        // If all ingredients present in inventory, add
+                        if (canCook) {
+                            cookableRecipes.add(recipe);
+                        }
+                    }
+                    // Pagination
+                    int pageSize = 6;
+                    int pageOffset = (page - 1) * pageSize;
+
+                    if (cookableRecipes.isEmpty()) { // Check list is not empty
+                        // Pagination, returns all recipes since no matches
+                        int startAfter = Math.min(pageOffset + pageSize, allRecipes.size());
+                        List<DocumentSnapshot> paginatedRecipes = allRecipes.subList(pageOffset, startAfter);
+                        listener.onDocumentArrayRetrieved(paginatedRecipes);
+                    } else if (pageOffset >= cookableRecipes.size()) { // Check page is not out of bounds
+                        // return empty arraylist to avoid crashes
+                        listener.onDocumentArrayRetrieved(new ArrayList<>());
+                    } else {
+                        // Pagination
+                        int startAfter = Math.min(pageOffset + pageSize, cookableRecipes.size());
+                        List<DocumentSnapshot> paginatedRecipes = cookableRecipes.subList(pageOffset, startAfter);
+                        listener.onDocumentArrayRetrieved(paginatedRecipes);
+                    }
+                } else {
+                    listener.onDocumentArrayRetrieved(new ArrayList<>());
+                }
+            });
+        });
+    }
+
     public void getRecipeDocumentByID(String recipeID, OnDocumentRetrievedListener listener) {
         db.collection("recipes")
                 .document(recipeID)
@@ -134,17 +190,34 @@ public class SearchDB {
                 .addOnFailureListener(e -> Log.e(TAG, "Firestore fetch failed: ", e));
     }
 
+    public void getAllRecipeDocuments(OnDocumentArrayRetrievedListener listener) {
+        db.collection("recipes")
+                .orderBy("r_name", Query.Direction.ASCENDING)
+                .get()
+                .addOnSuccessListener(queryDocumentSnapshots -> {
+                    if (queryDocumentSnapshots != null && !queryDocumentSnapshots.isEmpty()) {
+                        Log.d(TAG, "Recipes");
+                        listener.onDocumentArrayRetrieved(queryDocumentSnapshots.getDocuments());
+                    } else {
+                        Log.e(TAG, "No recipes not found");
+                        listener.onDocumentArrayRetrieved(null);
+                    }
+                })
+                .addOnFailureListener(e -> Log.e(TAG, "Firestore fetch failed: ", e));
+    }
+
 
     // Ingredients
 
     public void getIngredients(OnStringArrayRetrievedListener listener) {
         db.collection("ingredients")
+                .orderBy("name", Query.Direction.ASCENDING)
                 .get()
                 .addOnSuccessListener(queryDocumentSnapshots -> {
                     if (queryDocumentSnapshots != null && !queryDocumentSnapshots.isEmpty()) {
                         List<String> ingredients = new ArrayList<>();
                         for (DocumentSnapshot document : queryDocumentSnapshots.getDocuments()) {
-                            ingredients.add(document.getId());
+                            ingredients.add(document.getString("name"));
                         }
                         Log.d(TAG, "Ingredients found: " + ingredients);
                         listener.onStringArrayRetrieved(ingredients);

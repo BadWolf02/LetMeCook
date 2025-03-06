@@ -48,6 +48,7 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent" />
 
+        <!--
         <Button
             android:id="@+id/showMenuButton"
             android:layout_width="wrap_content"
@@ -71,12 +72,14 @@
 
         </LinearLayout>
 
+        -->
+
         <LinearLayout
             android:id="@+id/filterButtonLayout"
             style="?android:attr/buttonBarStyle"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            app:layout_constraintTop_toBottomOf="@id/ingredientsLayout"
+            app:layout_constraintTop_toBottomOf="@id/authorBar"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             android:orientation="horizontal"
@@ -106,6 +109,20 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 />
         </LinearLayout>
+        <Button
+            android:id="@+id/inventorySearchButton"
+            style="?android:attr/buttonBarButtonStyle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:layout_marginStart="16dp"
+            android:text="@string/what_can_i_cook"
+            android:textColor="?attr/colorOnSecondary"
+            android:backgroundTint="?attr/colorSecondaryVariant"
+            app:layout_constraintTop_toBottomOf="@id/filterButtonLayout"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"/>
+
     </androidx.constraintlayout.widget.ConstraintLayout>
 
     <androidx.cardview.widget.CardView

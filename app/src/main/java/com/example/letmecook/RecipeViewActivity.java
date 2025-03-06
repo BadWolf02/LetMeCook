@@ -19,7 +19,10 @@ import com.example.letmecook.db_tools.Recipes;
 import com.example.letmecook.db_tools.SearchDB;
 import com.google.firebase.auth.FirebaseAuth;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 // TODO deleting reviews ???
 
@@ -73,13 +76,30 @@ public class RecipeViewActivity extends AppCompatActivity {
     }
 
     // Helper method to format list data
-    private String formatList(String title, List<String> items) {
-        StringBuilder bulletPoints = new StringBuilder(title + ":\n");
+    private String formatIngredients(Map<String, Map<String, String>> items) {
+        List<String> ingredientList = new ArrayList<>(items.keySet());
+        StringBuilder bulletPoints = new StringBuilder("Ingredients" + ":\n");
+        for (int i = 0; i < items.size(); i++) {
+            String ingredient = ingredientList.get(i);
+            Map<String, String> amountMap = items.get(ingredient);
+            String amount = amountMap.get("amount");
+            String unit = amountMap.get("amount_type");
+            bulletPoints
+                    .append(i + 1) // number
+                    .append(".) ")
+                    .append(amount + " " + unit + " of " + ingredient) // text
+                    .append("\n");
+        }
+        return bulletPoints.toString();
+    }
+
+    private String formatSteps(Map<String, String> items) {
+        StringBuilder bulletPoints = new StringBuilder("Steps" + ":\n");
         for (int i = 0; i < items.size(); i++) {
             bulletPoints
                     .append(i + 1) // number
                     .append(".) ")
-                    .append(items.get(i)) // text
+                    .append(items.get(String.valueOf(i+1))) // text
                     .append("\n");
         }
         return bulletPoints.toString();
@@ -94,8 +114,8 @@ public class RecipeViewActivity extends AppCompatActivity {
             nameTextView.setText(documentSnapshot.getString("r_name"));
             authorTextView.setText("By: " + documentSnapshot.getString("author"));
             cuisineTextView.setText("Cuisine: " + documentSnapshot.getString("cuisine"));
-            ingredientsTextView.setText(formatList("Ingredients", (List<String>) documentSnapshot.get("ingredients")));
-            stepsTextView.setText(formatList("Steps", (List<String>) documentSnapshot.get("steps")));
+            ingredientsTextView.setText(formatIngredients((Map<String, Map<String, String>>) documentSnapshot.get("ingredients")));
+            stepsTextView.setText(formatSteps((Map<String, String>) documentSnapshot.get("steps")));
         });
     }
 

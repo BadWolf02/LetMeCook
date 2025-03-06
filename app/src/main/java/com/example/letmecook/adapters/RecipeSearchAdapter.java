@@ -104,6 +104,24 @@ public class RecipeSearchAdapter extends RecyclerView.Adapter<RecipeSearchAdapte
         });
     }
 
+    public void whatCanICook(String uid, Runnable onPageChanged) {
+        searchDB.getWhatCanICook(uid, this.page, recipes -> {
+            recipesList.clear();
+            if (!recipes.isEmpty()) {
+                for (DocumentSnapshot doc : recipes) {
+                    Log.d(TAG, "Recipe ID: " + doc.getId());
+                    Log.d(TAG, "Recipe name: " + doc.getString("r_name"));
+                    recipesList.add(doc);
+                }
+                hasNextPage = recipes.size() == 6;
+            } else {
+                hasNextPage = false;
+            }
+            notifyDataSetChanged();
+            onPageChanged.run();  // Call the callback after data is fetched
+        });
+    }
+
     public static class ViewHolder extends RecyclerView.ViewHolder {
         private final TextView textView;
         private final ImageView imageView;
