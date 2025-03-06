@@ -241,10 +241,7 @@ public class InventoryFragment extends Fragment {
                     inventory.put(name, newAmount);
                     searchDB.updateHouseholdInventory(householdID, inventory, success -> {
                         if (success) {
-                            Toast.makeText(getContext(), name + " updated to " + newAmount + "g!", Toast.LENGTH_SHORT).show();
                             fetchHouseholdInventory();
-                        } else {
-                            Toast.makeText(getContext(), "Failed to update " + name, Toast.LENGTH_SHORT).show();
                         }
                     });
                 }
