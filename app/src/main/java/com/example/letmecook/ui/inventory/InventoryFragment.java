@@ -13,7 +13,8 @@ import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import androidx.annotation.NonNull;import androidx.fragment.app.Fragment;
+import androidx.annotation.NonNull;
+import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -45,14 +46,12 @@ public class InventoryFragment extends Fragment {
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
-        InventoryViewModel inventoryViewModel =
-                new ViewModelProvider(this).get(InventoryViewModel.class);
+        inventoryViewModel = new ViewModelProvider(this).get(InventoryViewModel.class);
 
         binding = FragmentInventoryBinding.inflate(inflater, container, false);
         View root = binding.getRoot();
         Button toCameraButton = root.findViewById(R.id.toCamera);
         Button refreshInventoryButton = root.findViewById(R.id.refresh_button);
-        Button sendToInventoryButton = root.findViewById(R.id.SendToInventory);
 
         final TextView titleTextView = binding.titleInventory;
         final TextView itemCountTextView = binding.itemCount;
@@ -61,21 +60,14 @@ public class InventoryFragment extends Fragment {
             Intent intent = new Intent(getActivity(), CameraActivity.class);
             startActivity(intent);
         });
-
-//        sendToInventoryButton.setOnClickListener(v -> {
-//            if (product_name == null || product_name.isEmpty()) {
-//                Toast.makeText(CameraActivity.this, "No product scanned!", Toast.LENGTH_SHORT).show();
-//                return;
-//            }
-
-            refreshInventoryButton.setOnClickListener(v -> refreshInventory());
+        refreshInventoryButton.setOnClickListener(v -> refreshInventory());
 
         inventoryViewModel.getText().observe(getViewLifecycleOwner(), titleTextView::setText);
 
         recyclerView = root.findViewById(R.id.recycler_view_inventory);
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
 
-        inventoryAdapter = new InventoryAdapter(ingredientList, this::deleteIngredient);
+        inventoryAdapter = new InventoryAdapter(ingredientList, this::updateIngredientQuantity, this::deleteIngredient);
         recyclerView.setAdapter(inventoryAdapter);
 
         addButton = root.findViewById(R.id.add_button);
@@ -84,7 +76,7 @@ public class InventoryFragment extends Fragment {
         searchDB = new SearchDB();
 
         // Fetch and display inventory
-        String userID = FirebaseAuth.getInstance().getUid(); // Set your actual user ID
+        String userID = FirebaseAuth.getInstance().getUid();
         loadUserInventory(userID);
 
         return root;
@@ -106,11 +98,11 @@ public class InventoryFragment extends Fragment {
             }
         });
     }
+
     private void fetchHouseholdInventory() {
         Log.d(TAG, "Fetching inventory for household ID: " + householdID);
         searchDB.getHouseholdDocumentByID(householdID, documentSnapshot -> {
             if (documentSnapshot != null && documentSnapshot.exists()) {
-                Log.d(TAG, "Household document found.");
                 Map<String, Object> inventory = (Map<String, Object>) documentSnapshot.get("inventory");
                 if (inventory != null) {
                     ingredientList.clear();
@@ -122,36 +114,7 @@ public class InventoryFragment extends Fragment {
                     }
 
                     inventoryAdapter.notifyDataSetChanged();
-                    Log.d(TAG, "Inventory loaded and displayed.");
-                } else {
-                    Log.d(TAG, "Inventory is empty.");
-                }
-            } else {
-                Log.e(TAG, "Household document not found.");
-            }
-        });
-    }
-
-    public void deleteIngredient(String ingredientName) {
-        Log.d(TAG, "Deleting ingredient: " + ingredientName);
-
-        // Remove from the local list
-        ingredientList.removeIf(ingredient -> ingredient.getName().equals(ingredientName));
-        inventoryAdapter.notifyDataSetChanged();
-
-        // Remove from Firestore
-        searchDB.getHouseholdDocumentByID(householdID, documentSnapshot -> {
-            if (documentSnapshot != null && documentSnapshot.exists()) {
-                Map<String, Object> inventory = (Map<String, Object>) documentSnapshot.get("inventory");
-                if (inventory != null && inventory.containsKey(ingredientName)) {
-                    inventory.remove(ingredientName);
-                    searchDB.updateHouseholdInventory(householdID, inventory, success -> {
-                        if (success) {
-                            Log.d(TAG, "Ingredient deleted from Firestore.");
-                        } else {
-                            Log.e(TAG, "Failed to delete ingredient from Firestore.");
-                        }
-                    });
+                    updateItemCount();
                 }
             }
         });
@@ -170,7 +133,7 @@ public class InventoryFragment extends Fragment {
             String[] ingredientsArray = ingredientNames.toArray(new String[0]);
             builder.setItems(ingredientsArray, (dialog, which) -> {
                 String selectedIngredient = ingredientsArray[which];
-                showQuantityDialog(selectedIngredient); // Ask for quantity after selecting
+                showQuantityDialog(selectedIngredient);
             });
 
             builder.setNegativeButton("Cancel", (dialog, which) -> dialog.dismiss());
@@ -178,7 +141,7 @@ public class InventoryFragment extends Fragment {
         });
     }
 
-    public void showQuantityDialog(String ingredientName) {
+    private void showQuantityDialog(String ingredientName) {
         AlertDialog.Builder builder = new AlertDialog.Builder(requireContext());
         builder.setTitle("Enter Quantity for " + ingredientName);
 
@@ -192,68 +155,85 @@ public class InventoryFragment extends Fragment {
             String grams = gramsInput.getText().toString().trim();
             if (!grams.isEmpty()) {
                 addIngredientToInventory(ingredientName, grams + "g");
-            } else {
-                Toast.makeText(getContext(), "Quantity can't be empty!", Toast.LENGTH_SHORT).show();
             }
         });
 
         builder.setNegativeButton("Cancel", (dialog, which) -> dialog.dismiss());
         builder.show();
-        String userID = FirebaseAuth.getInstance().getUid();
-        loadUserInventory(userID);
     }
 
     private void addIngredientToInventory(String name, String amount) {
         int amountToAdd = Integer.parseInt(amount.replace("g", "").trim());
 
-        // Check if the ingredient already exists in the inventory
         searchDB.getHouseholdDocumentByID(householdID, documentSnapshot -> {
             if (documentSnapshot != null && documentSnapshot.exists()) {
                 Map<String, Object> inventory = (Map<String, Object>) documentSnapshot.get("inventory");
                 if (inventory == null) inventory = new HashMap<>();
 
-                // Calculate the new total amount
                 int currentAmount = inventory.containsKey(name) ? Integer.parseInt(inventory.get(name).toString()) : 0;
                 int newAmount = currentAmount + amountToAdd;
 
-                // Update Firestore
                 inventory.put(name, newAmount);
                 searchDB.updateHouseholdInventory(householdID, inventory, success -> {
                     if (success) {
                         Toast.makeText(getContext(), "Updated " + name + " to " + newAmount + "g!", Toast.LENGTH_SHORT).show();
-
-                        // Update local inventory
-                        boolean ingredientExists = false;
-                        for (Ingredient ingredient : ingredientList) {
-                            if (ingredient.getName().equals(name)) {
-                                ingredient.setAmount(newAmount + "g");
-                                ingredientExists = true;
-                                break;
-                            }
-                        }
-
-                        if (!ingredientExists) {
-                            ingredientList.add(new Ingredient(name, newAmount + "g"));
-                        }
-
-                        inventoryAdapter.notifyDataSetChanged();
-                    } else {
-                        Toast.makeText(getContext(), "Failed to update ingredient in Firestore.", Toast.LENGTH_SHORT).show();
+                        fetchHouseholdInventory();
                     }
                 });
             }
         });
     }
 
+    private void updateIngredientQuantity(String name, String newAmount) {
+        searchDB.getHouseholdDocumentByID(householdID, documentSnapshot -> {
+            if (documentSnapshot != null && documentSnapshot.exists()) {
+                Map<String, Object> inventory = (Map<String, Object>) documentSnapshot.get("inventory");
+                if (inventory != null && inventory.containsKey(name)) {
+                    inventory.put(name, newAmount);
+                    searchDB.updateHouseholdInventory(householdID, inventory, success -> {
+                        if (success) {
+                            Toast.makeText(getContext(), name + " updated to " + newAmount + "g!", Toast.LENGTH_SHORT).show();
+                            fetchHouseholdInventory();
+                        }
+                    });
+                }
+            }
+        });
+    }
+
+    public void deleteIngredient(String ingredientName) {
+        searchDB.getHouseholdDocumentByID(householdID, documentSnapshot -> {
+            if (documentSnapshot != null && documentSnapshot.exists()) {
+                Map<String, Object> inventory = (Map<String, Object>) documentSnapshot.get("inventory");
+                if (inventory != null && inventory.containsKey(ingredientName)) {
+                    inventory.remove(ingredientName);
+                    searchDB.updateHouseholdInventory(householdID, inventory, success -> {
+                        if (success) {
+                            Toast.makeText(getContext(), ingredientName + " removed!", Toast.LENGTH_SHORT).show();
+                            fetchHouseholdInventory();
+                        }
+                    });
+                }
+            }
+        });
+    }
+
+
+    private void updateItemCount() {
+        TextView itemCountTextView = binding.itemCount;
+        itemCountTextView.setText(ingredientList.size() + " items");
+    }
+
+    private void refreshInventory() {
+        String userID = FirebaseAuth.getInstance().getUid();
+        loadUserInventory(userID);
+        inventoryAdapter.notifyDataSetChanged();
+        updateItemCount();
+    }
 
     @Override
     public void onDestroyView() {
         super.onDestroyView();
         binding = null;
-    }
-    private void refreshInventory() {
-        Toast.makeText(getContext(), "Refreshing Inventory...", Toast.LENGTH_SHORT).show();
-        String userID = FirebaseAuth.getInstance().getUid();
-        loadUserInventory(userID);
     }
 }

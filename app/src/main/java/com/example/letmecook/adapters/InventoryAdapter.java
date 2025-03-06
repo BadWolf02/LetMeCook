@@ -6,73 +6,74 @@ import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.TextView;
+
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
+
 import com.example.letmecook.R;
 import com.example.letmecook.models.Ingredient;
+
 import java.util.List;
 
-public class InventoryAdapter extends RecyclerView.Adapter<InventoryAdapter.InventoryViewHolder> {  // ✅ Use InventoryViewHolder
+public class InventoryAdapter extends RecyclerView.Adapter<InventoryAdapter.ViewHolder> {
 
-    private List<Ingredient> ingredientList;
+    private final List<Ingredient> ingredientList;
+    private final OnQuantityChangedListener listener;
+    private final OnDeleteIngredientListener deleteListener;
 
-    private OnDeleteClickListener deleteClickListener;
+    public interface OnQuantityChangedListener {
+        void onQuantityChanged(String ingredientName, String newAmount);
+    }
 
-    public InventoryAdapter(List<Ingredient> ingredientList, OnDeleteClickListener deleteClickListener) {
+    public interface OnDeleteIngredientListener {
+        void onDeleteIngredient(String ingredientName);
+    }
+
+    public InventoryAdapter(List<Ingredient> ingredientList, OnQuantityChangedListener listener, OnDeleteIngredientListener deleteListener) {
         this.ingredientList = ingredientList;
-        this.deleteClickListener = deleteClickListener;
-    }
-    public interface OnDeleteClickListener {
-        void onDeleteClick(String ingredientName);
+        this.listener = listener;
+        this.deleteListener = deleteListener;
     }
 
+    public static class ViewHolder extends RecyclerView.ViewHolder {
+        TextView ingredientName;
+        EditText ingredientAmount;
+        ImageButton deleteButton;
 
-    public static class InventoryViewHolder extends RecyclerView.ViewHolder {
-        TextView nameTextView;
-        EditText amountEditText;
-        ImageButton deleteButton, cartButton;
-
-        public InventoryViewHolder(View itemView) {
+        public ViewHolder(View itemView) {
             super(itemView);
-            nameTextView = itemView.findViewById(R.id.ingredient_name);
-            amountEditText = itemView.findViewById(R.id.ingredient_amount);
+            ingredientName = itemView.findViewById(R.id.ingredient_name);
+            ingredientAmount = itemView.findViewById(R.id.ingredient_amount);
             deleteButton = itemView.findViewById(R.id.delete_button);
-            cartButton = itemView.findViewById(R.id.cart_button);
         }
     }
 
-
     @NonNull
     @Override
-    public InventoryViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+    public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.inventory_list_item, parent, false);
-        return new InventoryViewHolder(view);
+        return new ViewHolder(view);
     }
 
     @Override
-    public void onBindViewHolder(@NonNull InventoryViewHolder holder, int position) {
+    public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         Ingredient ingredient = ingredientList.get(position);
-        holder.nameTextView.setText(ingredient.getName());
-        holder.amountEditText.setText(ingredient.getAmount());
+        holder.ingredientName.setText(ingredient.getName());
+        holder.ingredientAmount.setText(ingredient.getAmount());
 
-        // Delete button
-        holder.deleteButton.setOnClickListener(v -> {
-            ingredientList.remove(position);
-            notifyItemRemoved(position);
-            notifyItemRangeChanged(position, ingredientList.size());
-        });
-
-        holder.deleteButton.setOnClickListener(v -> {
-            if (deleteClickListener != null) {
-                deleteClickListener.onDeleteClick(ingredient.getName());
+        // Handle quantity change
+        holder.ingredientAmount.setOnFocusChangeListener((v, hasFocus) -> {
+            if (!hasFocus) { // Only update on focus loss
+                String updatedAmount = holder.ingredientAmount.getText().toString().trim();
+                if (!updatedAmount.isEmpty() && updatedAmount.matches("\\d+g")) {
+                    String amountWithoutG = updatedAmount.replace("g", "").trim();
+                    listener.onQuantityChanged(ingredient.getName(), amountWithoutG);
+                }
             }
         });
 
-
-        // Shopping cart button (TODO: Implement function)
-        holder.cartButton.setOnClickListener(v -> {
-            // TODO: Handle shopping cart click
-        });
+        // Handle delete button click
+        holder.deleteButton.setOnClickListener(v -> deleteListener.onDeleteIngredient(ingredient.getName()));
     }
 
     @Override
