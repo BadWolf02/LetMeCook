@@ -21,12 +21,22 @@
 
         <LinearLayout
             android:id="@+id/layout"
-            android:layout_width="409dp"
+            android:layout_width="match_parent"
             android:layout_height="354dp"
             android:orientation="vertical"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             tools:layout_editor_absoluteX="1dp">
+
+<!--            <TextView-->
+<!--                android:id="@+id/custom_creation"-->
+<!--                android:layout_width="match_parent"-->
+<!--                android:layout_height="match_parent"-->
+<!--                android:layout_margin="10dp"-->
+<!--                android:text="fill in fields to custom create your recipe:"-->
+<!--                android:textColor="?attr/colorOnPrimary">-->
+<!--                android:text="fill in fields to custom create your recipe:"</TextView>-->
+
 
             <EditText
                 android:id="@+id/edit_text_recipie_name"
@@ -34,7 +44,13 @@
                 android:layout_height="wrap_content"
                 android:hint="enter recipe name"
                 android:background="@drawable/custom_edittext"
-                android:drawablePadding="8dp"/>
+                android:drawablePadding="8dp"
+                android:layout_height="50dp"
+                android:layout_margin="10dp"
+                android:padding="16dp"
+                android:inputType="text"
+                android:textColor="?attr/colorOnPrimary"
+                android:textColorHighlight="@color/cardview_dark_background" />
 
             <Spinner
                 android:id="@+id/meal_type_dropdown_trigger"
@@ -54,6 +70,13 @@
                 android:layout_height="wrap_content"
                 android:hint="add ingreedients"
                 android:background="@drawable/custom_edittext"
+                android:drawablePadding="8dp"
+                android:layout_height="50dp"
+                android:layout_margin="10dp"
+                android:padding="16dp"
+                android:inputType="text"
+                android:textColor="?attr/colorOnPrimary"
+                android:textColorHighlight="@color/cardview_dark_background" />
                 android:drawablePadding="8dp"/>
 
             <FrameLayout
@@ -67,7 +90,8 @@
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:textAlignment="center"
-                    android:textColor="?attr/colorOnPrimary">
+                    android:textColor="?attr/colorOnPrimary"
+                    android:layout_margin="10dp">
                 </TextView>
 
 <!--                <EditText-->
@@ -81,7 +105,8 @@
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:orientation="vertical"
-                    android:gravity="center">
+                    android:gravity="center"
+                    android:layout_margin="10dp">
 
                 </Spinner>
 
@@ -95,24 +120,35 @@
                 android:layout_height="wrap_content"
                 android:hint="add recipe step"
                 android:background="@drawable/custom_edittext"
-                android:drawablePadding="8dp"/>
+                android:drawablePadding="8dp"
+                android:layout_height="50dp"
+                android:layout_margin="10dp"
+                android:padding="16dp"
+                android:inputType="text"
+                android:textColor="?attr/colorOnPrimary"
+                android:textColorHighlight="@color/cardview_dark_background"/>
 
             <Button
                 android:id="@+id/add_step_btn"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_width="match_parent"
                 android:text="confirm step"
                 android:layout_marginTop="30dp"
                 android:textColor="?attr/colorOnSecondary"
                 android:backgroundTint="?attr/colorSecondaryVariant"
-                app:cornerRadius="20dp"/>
+                app:cornerRadius="20dp"
+                style="?android:attr/buttonBarButtonStyle"
+                android:layout_weight="1"
+                android:layout_margin="10dp"/>
 
             <Spinner
                 android:id="@+id/cusine_dropdown"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:spinnerMode="dropdown"
-                tools:listitem="choose cusine" />
+                tools:listitem="choose cusine"
+                android:layout_margin="10dp"/>
 
             <TextView
                 android:id="@+id/textView3"
@@ -121,17 +157,19 @@
                 android:text="total time spent on this dish"
                 android:textAlignment="center"
                 android:textColor="?attr/colorOnPrimary"
+                android:layout_margin="10dp"
                 />
 
             <LinearLayout
                 android:id="@+id/total_time"
                 android:layout_width="399dp"
                 android:layout_height="match_parent"
-                android:orientation="horizontal">
+                android:orientation="horizontal"
+                android:layout_margin="10dp">
 
                 <NumberPicker
                     android:id="@+id/total_time_min"
-                    android:layout_width="wrap_content"
+                    android:layout_width="69dp"
                     android:layout_height="50dp"
                     android:ems="10"
                     android:inputType="time"
@@ -144,7 +182,8 @@
                     android:layout_weight="1"
                     android:text="minutes"
                     android:textAlignment="center"
-                    android:textColor="?attr/colorOnPrimary"/>
+                    android:textColor="?attr/colorOnPrimary"
+                    android:layout_margin="10dp"/>
 
                 <NumberPicker
                     android:id="@+id/total_time_h"
@@ -162,7 +201,8 @@
                     android:layout_weight="1"
                     android:text="h"
                     android:textAlignment="center"
-                    android:textColor="?attr/colorOnPrimary"/>
+                    android:textColor="?attr/colorOnPrimary"
+                    android:layout_margin="10dp"/>
 
                 <Button
                     android:id="@+id/total_time_clear_btn"
@@ -174,7 +214,8 @@
                     android:layout_marginTop="30dp"
                     android:textColor="?attr/colorOnSecondary"
                     android:backgroundTint="?attr/colorSecondaryVariant"
-                    app:cornerRadius="20dp"/>
+                    app:cornerRadius="20dp"
+                    android:layout_margin="10dp"/>
 
             </LinearLayout>
 
@@ -184,18 +225,20 @@
                 android:layout_height="wrap_content"
                 android:text="enter the time activeley spent preparing this dish"
                 android:textAlignment="center"
-                android:textColor="?attr/colorOnPrimary"/>
+                android:textColor="?attr/colorOnPrimary"
+                android:layout_margin="10dp"/>
 
             <LinearLayout
                 android:id="@+id/coocking_time"
                 android:layout_width="399dp"
                 android:layout_height="match_parent"
-                android:orientation="horizontal">
+                android:orientation="horizontal"
+                android:layout_margin="10dp">
 
                 <NumberPicker
                     android:id="@+id/cooking_time_min"
                     android:layout_width="wrap_content"
-                    android:layout_height="50dp"
+                    android:layout_height="73dp"
                     android:ems="10"
                     android:hint="total time this dish takes to make"
                     android:inputType="time"
@@ -208,12 +251,13 @@
                     android:layout_weight="1"
                     android:text="minutes"
                     android:textAlignment="center"
-                    android:textColor="?attr/colorOnPrimary"/>
+                    android:textColor="?attr/colorOnPrimary"
+                    android:layout_margin="10dp"/>
 
                 <NumberPicker
                     android:id="@+id/cooking_time_h"
                     android:layout_width="wrap_content"
-                    android:layout_height="match_parent"
+                    android:layout_height="73dp"
                     android:ems="10"
                     android:hint="total time this dish takes to make"
                     android:inputType="time"
@@ -226,7 +270,8 @@
                     android:layout_weight="1"
                     android:text="h"
                     android:textAlignment="center"
-                    android:textColor="?attr/colorOnPrimary"/>
+                    android:textColor="?attr/colorOnPrimary"
+                    android:layout_margin="10dp"/>
 
                 <Button
                     android:id="@+id/cooking_time_clear_btn"
@@ -238,7 +283,10 @@
                     android:layout_marginTop="30dp"
                     android:textColor="?attr/colorOnSecondary"
                     android:backgroundTint="?attr/colorSecondaryVariant"
-                    app:cornerRadius="20dp"/>
+                    app:cornerRadius="20dp"
+                    style="?android:attr/buttonBarButtonStyle"
+                    android:layout_width="16dp"
+                    android:layout_margin="10dp"/>
 
             </LinearLayout>
 
@@ -247,27 +295,35 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="TextView"
-                android:visibility="gone"/>
+                android:visibility="gone"
+                android:layout_margin="10dp"/>
 
             <Button
                 android:id="@+id/add_recipe_btn"
+                style="?android:attr/buttonBarButtonStyle"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_margin="10dp"
+                android:layout_marginTop="30dp"
+                android:layout_weight="1"
+                android:backgroundTint="?attr/colorSecondaryVariant"
                 android:text="add recipe"
                 android:layout_marginTop="30dp"
                 android:textColor="?attr/colorOnSecondary"
-                android:backgroundTint="?attr/colorSecondaryVariant"
-                app:cornerRadius="20dp"/>
+                app:cornerRadius="20dp" />
 
             <Button
                 android:id="@+id/selectImageButton"
-                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_width="match_parent"
                 android:text="Select Image"
                 android:layout_marginTop="30dp"
                 android:textColor="?attr/colorOnSecondary"
                 android:backgroundTint="?attr/colorSecondaryVariant"
-                app:cornerRadius="20dp"/>
+                app:cornerRadius="20dp"
+                style="?android:attr/buttonBarButtonStyle"
+                android:layout_weight="1"
+                android:layout_margin="10dp"/>
 
             <ImageView
                 android:id="@+id/recipeImageView"
@@ -287,7 +343,11 @@
                 android:layout_marginTop="30dp"
                 android:textColor="?attr/colorOnSecondary"
                 android:backgroundTint="?attr/colorSecondaryVariant"
-                app:cornerRadius="20dp"/>
+                app:cornerRadius="20dp"
+                style="?android:attr/buttonBarButtonStyle"
+
+                android:layout_weight="1"
+                android:layout_margin="10dp"/>
 
             <Button
                 android:id="@+id/button2"

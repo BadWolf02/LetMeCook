@@ -381,7 +381,7 @@ public class RecipesFragment extends Fragment {
         SearchDB db = new SearchDB();
         // String[] ingredientsList =
         final ArrayList<Object>[] ingredients_list = new ArrayList[]{new ArrayList<>()};
-        db.getIngredients(new SearchDB.IngredientsCallback() {
+        db.getIngredientsList(new SearchDB.IngredientsCallback() {
         @Override
             public void onIngredientsLoaded(ArrayList ingredients){
                 if (!ingredients.isEmpty()){
