@@ -52,6 +52,7 @@ public class InventoryFragment extends Fragment {
         View root = binding.getRoot();
         Button toCameraButton = root.findViewById(R.id.toCamera);
         Button refreshInventoryButton = root.findViewById(R.id.refresh_button);
+        Button sendToInventoryButton = root.findViewById(R.id.SendToInventory);
 
         final TextView titleTextView = binding.titleInventory;
         final TextView itemCountTextView = binding.itemCount;
@@ -60,7 +61,14 @@ public class InventoryFragment extends Fragment {
             Intent intent = new Intent(getActivity(), CameraActivity.class);
             startActivity(intent);
         });
-        refreshInventoryButton.setOnClickListener(v -> refreshInventory());
+
+//        sendToInventoryButton.setOnClickListener(v -> {
+//            if (product_name == null || product_name.isEmpty()) {
+//                Toast.makeText(CameraActivity.this, "No product scanned!", Toast.LENGTH_SHORT).show();
+//                return;
+//            }
+
+            refreshInventoryButton.setOnClickListener(v -> refreshInventory());
 
         inventoryViewModel.getText().observe(getViewLifecycleOwner(), titleTextView::setText);
 
@@ -98,7 +106,6 @@ public class InventoryFragment extends Fragment {
             }
         });
     }
-
     private void fetchHouseholdInventory() {
         Log.d(TAG, "Fetching inventory for household ID: " + householdID);
         searchDB.getHouseholdDocumentByID(householdID, documentSnapshot -> {
@@ -171,7 +178,7 @@ public class InventoryFragment extends Fragment {
         });
     }
 
-    private void showQuantityDialog(String ingredientName) {
+    public void showQuantityDialog(String ingredientName) {
         AlertDialog.Builder builder = new AlertDialog.Builder(requireContext());
         builder.setTitle("Enter Quantity for " + ingredientName);
 
@@ -197,27 +204,47 @@ public class InventoryFragment extends Fragment {
     }
 
     private void addIngredientToInventory(String name, String amount) {
-        Ingredient newIngredient = new Ingredient(name, amount);
-        ingredientList.add(newIngredient);
-        inventoryAdapter.notifyItemInserted(ingredientList.size() - 1);
+        int amountToAdd = Integer.parseInt(amount.replace("g", "").trim());
 
-        // Update Firestore
+        // Check if the ingredient already exists in the inventory
         searchDB.getHouseholdDocumentByID(householdID, documentSnapshot -> {
             if (documentSnapshot != null && documentSnapshot.exists()) {
                 Map<String, Object> inventory = (Map<String, Object>) documentSnapshot.get("inventory");
                 if (inventory == null) inventory = new HashMap<>();
 
-                inventory.put(name, amount.replace("g", ""));
+                // Calculate the new total amount
+                int currentAmount = inventory.containsKey(name) ? Integer.parseInt(inventory.get(name).toString()) : 0;
+                int newAmount = currentAmount + amountToAdd;
+
+                // Update Firestore
+                inventory.put(name, newAmount);
                 searchDB.updateHouseholdInventory(householdID, inventory, success -> {
                     if (success) {
-                        Toast.makeText(getContext(), "Ingredient added to inventory!", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(getContext(), "Updated " + name + " to " + newAmount + "g!", Toast.LENGTH_SHORT).show();
+
+                        // Update local inventory
+                        boolean ingredientExists = false;
+                        for (Ingredient ingredient : ingredientList) {
+                            if (ingredient.getName().equals(name)) {
+                                ingredient.setAmount(newAmount + "g");
+                                ingredientExists = true;
+                                break;
+                            }
+                        }
+
+                        if (!ingredientExists) {
+                            ingredientList.add(new Ingredient(name, newAmount + "g"));
+                        }
+
+                        inventoryAdapter.notifyDataSetChanged();
                     } else {
-                        Toast.makeText(getContext(), "Failed to add ingredient to Firestore.", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(getContext(), "Failed to update ingredient in Firestore.", Toast.LENGTH_SHORT).show();
                     }
                 });
             }
         });
     }
+
 
     @Override
     public void onDestroyView() {

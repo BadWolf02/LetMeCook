@@ -33,6 +33,7 @@ import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
 import com.example.letmecook.db_tools.SearchDB;
+import com.example.letmecook.ui.inventory.InventoryFragment;
 import com.google.common.util.concurrent.ListenableFuture;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentReference;
@@ -71,6 +72,7 @@ public class CameraActivity extends AppCompatActivity {
     private String product_name;
     private String kcal_energy;
     private String allergens_info;
+    private InventoryFragment inventoryFragment;
 
 
     @Override
@@ -106,9 +108,6 @@ public class CameraActivity extends AppCompatActivity {
                 Toast.makeText(CameraActivity.this, "No product scanned!", Toast.LENGTH_SHORT).show();
                 return;
             }
-
-            sendProductToInventory(product_name, 1); // Keep inventory logic unchanged
-
             // Safely parse calories, defaulting to 0 if invalid
             int caloriesValue = 0;
             try {
@@ -124,6 +123,7 @@ public class CameraActivity extends AppCompatActivity {
             }
 
             sendProductToIngredients(product_name, caloriesValue, allergensList);
+            inventoryFragment.showQuantityDialog(product_name);
         });
 
 
