@@ -186,6 +186,6 @@ public class InventoryFragment extends Fragment {
     }
     private void refreshInventory() {
         Toast.makeText(getContext(), "Refreshing Inventory...", Toast.LENGTH_SHORT).show();
-        inventoryViewModel.refreshInventory(); // Call ViewModel to fetch updated data
+        inventoryViewModel.loadInventory(); // Call ViewModel to fetch updated data
     }
 }
