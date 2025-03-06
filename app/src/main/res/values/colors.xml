@@ -1,10 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="cream">#FEFAE0</color>
-    <color name="peach">#FAEDCD</color>
-    <color name="orange">#D4A373</color>
-    <color name="light_green">#E9EDC9</color>
-    <color name="green">#CCD5AE</color>
+    <color name="cream">#FCFADC</color>
+    <color name="peach">#FFEEBD</color>
+    <color name="light_orange">#DBA979</color>
+    <color name="orange">#E39D4B</color>
+    <color name="light_green">#E8EFCF</color>
+    <color name="green">#B5DAAB</color>
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
 
