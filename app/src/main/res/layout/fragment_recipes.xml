@@ -32,7 +32,9 @@
                 android:id="@+id/edit_text_recipie_name"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="enter recipe name" />
+                android:hint="enter recipe name"
+                android:background="@drawable/custom_edittext"
+                android:drawablePadding="8dp"/>
 
             <Spinner
                 android:id="@+id/meal_type_dropdown_trigger"
@@ -50,7 +52,9 @@
                 android:id="@+id/add_ingreedients_multiAtotComplete"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="add ingreedients" />
+                android:hint="add ingreedients"
+                android:background="@drawable/custom_edittext"
+                android:drawablePadding="8dp"/>
 
             <FrameLayout
                 android:id="@+id/ingredient_layout"
@@ -61,7 +65,10 @@
                 <TextView
                     android:id="@+id/ingredient_name"
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent"></TextView>
+                    android:layout_height="match_parent"
+                    android:textAlignment="center"
+                    android:textColor="?attr/colorOnPrimary">
+                </TextView>
 
 <!--                <EditText-->
 <!--                    android:id="@+id/text_view_recipe_name"-->
@@ -86,13 +93,19 @@
                 android:id="@+id/EditText_add_step1"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="add recipe step" />
+                android:hint="add recipe step"
+                android:background="@drawable/custom_edittext"
+                android:drawablePadding="8dp"/>
 
             <Button
                 android:id="@+id/add_step_btn"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="confirm step" />
+                android:text="confirm step"
+                android:layout_marginTop="30dp"
+                android:textColor="?attr/colorOnSecondary"
+                android:backgroundTint="?attr/colorSecondaryVariant"
+                app:cornerRadius="20dp"/>
 
             <Spinner
                 android:id="@+id/cusine_dropdown"
@@ -105,7 +118,10 @@
                 android:id="@+id/textView3"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="total_time_spent_on_this_dish" />
+                android:text="total time spent on this dish"
+                android:textAlignment="center"
+                android:textColor="?attr/colorOnPrimary"
+                />
 
             <LinearLayout
                 android:id="@+id/total_time"
@@ -126,7 +142,9 @@
                     android:layout_width="70dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:text="minutes" />
+                    android:text="minutes"
+                    android:textAlignment="center"
+                    android:textColor="?attr/colorOnPrimary"/>
 
                 <NumberPicker
                     android:id="@+id/total_time_h"
@@ -142,7 +160,9 @@
                     android:layout_width="54dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:text="h" />
+                    android:text="h"
+                    android:textAlignment="center"
+                    android:textColor="?attr/colorOnPrimary"/>
 
                 <Button
                     android:id="@+id/total_time_clear_btn"
@@ -150,7 +170,11 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:text="clear"
-                    android:visibility="invisible"/>
+                    android:visibility="invisible"
+                    android:layout_marginTop="30dp"
+                    android:textColor="?attr/colorOnSecondary"
+                    android:backgroundTint="?attr/colorSecondaryVariant"
+                    app:cornerRadius="20dp"/>
 
             </LinearLayout>
 
@@ -158,7 +182,9 @@
                 android:id="@+id/textView4"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="enter the time activeley spent preparing this dish" />
+                android:text="enter the time activeley spent preparing this dish"
+                android:textAlignment="center"
+                android:textColor="?attr/colorOnPrimary"/>
 
             <LinearLayout
                 android:id="@+id/coocking_time"
@@ -180,7 +206,9 @@
                     android:layout_width="70dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:text="minutes" />
+                    android:text="minutes"
+                    android:textAlignment="center"
+                    android:textColor="?attr/colorOnPrimary"/>
 
                 <NumberPicker
                     android:id="@+id/cooking_time_h"
@@ -196,7 +224,9 @@
                     android:layout_width="54dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:text="h" />
+                    android:text="h"
+                    android:textAlignment="center"
+                    android:textColor="?attr/colorOnPrimary"/>
 
                 <Button
                     android:id="@+id/cooking_time_clear_btn"
@@ -204,7 +234,11 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:text="clear"
-                    android:visibility="invisible"/>
+                    android:visibility="invisible"
+                    android:layout_marginTop="30dp"
+                    android:textColor="?attr/colorOnSecondary"
+                    android:backgroundTint="?attr/colorSecondaryVariant"
+                    app:cornerRadius="20dp"/>
 
             </LinearLayout>
 
@@ -212,19 +246,28 @@
                 android:id="@+id/textRecipes"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="TextView" />
+                android:text="TextView"
+                android:visibility="gone"/>
 
             <Button
                 android:id="@+id/add_recipe_btn"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="add recipe" />
+                android:text="add recipe"
+                android:layout_marginTop="30dp"
+                android:textColor="?attr/colorOnSecondary"
+                android:backgroundTint="?attr/colorSecondaryVariant"
+                app:cornerRadius="20dp"/>
 
             <Button
                 android:id="@+id/selectImageButton"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Select Image"/>
+                android:text="Select Image"
+                android:layout_marginTop="30dp"
+                android:textColor="?attr/colorOnSecondary"
+                android:backgroundTint="?attr/colorSecondaryVariant"
+                app:cornerRadius="20dp"/>
 
             <ImageView
                 android:id="@+id/recipeImageView"
@@ -241,7 +284,10 @@
                 android:text="Scrape Recipes"
                 app:layout_constraintTop_toBottomOf="@+id/recipeImageView"
                 android:paddingBottom="8dp"
-                />
+                android:layout_marginTop="30dp"
+                android:textColor="?attr/colorOnSecondary"
+                android:backgroundTint="?attr/colorSecondaryVariant"
+                app:cornerRadius="20dp"/>
 
             <Button
                 android:id="@+id/button2"
