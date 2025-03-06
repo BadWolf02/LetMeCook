@@ -74,6 +74,17 @@
                 android:layout_marginTop="8dp"
                 style="?android:attr/buttonStyleSmall" />
 
+            <Button
+                android:id="@+id/sign_out"
+                style="?android:attr/buttonStyleSmall"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:text="@string/sign_out"
+                android:textColor="?attr/colorOnSecondary"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@id/edit_profile" />
+
         </LinearLayout>
 
     </LinearLayout>
@@ -87,7 +98,7 @@
         android:backgroundTint="?attr/colorSecondaryVariant"
         android:text="@string/manage_your_household"
         android:textColor="?attr/colorOnSecondary"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toBottomOf="@id/profile" />
 
     <Button
         android:id="@+id/inviteButton"
@@ -106,20 +117,6 @@
         android:text="@string/view_favourite_recipes"
         android:textColor="?attr/colorOnSecondary"
         app:layout_constraintTop_toBottomOf="@id/inviteButton"/>
-
-    <Button
-        android:id="@+id/sign_out"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginHorizontal="50dp"
-        android:layout_marginTop="20dp"
-        android:layout_marginBottom="64dp"
-        android:backgroundTint="?attr/colorAccent"
-        android:text="@string/sign_out"
-        android:textColor="?attr/colorOnSecondary"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>
