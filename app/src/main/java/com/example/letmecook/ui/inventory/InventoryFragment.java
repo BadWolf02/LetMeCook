@@ -76,7 +76,7 @@ public class InventoryFragment extends Fragment {
         searchDB = new SearchDB();
 
         // Fetch and display inventory
-        String userID = FirebaseAuth.getInstance().getUid();; // Set your actual user ID
+        String userID = FirebaseAuth.getInstance().getUid(); // Set your actual user ID
         loadUserInventory(userID);
 
         return root;
@@ -187,6 +187,7 @@ public class InventoryFragment extends Fragment {
     }
     private void refreshInventory() {
         Toast.makeText(getContext(), "Refreshing Inventory...", Toast.LENGTH_SHORT).show();
-        inventoryViewModel.loadInventory(); // Call ViewModel to fetch updated data
+        String userID = FirebaseAuth.getInstance().getUid();
+        loadUserInventory(userID);
     }
 }
