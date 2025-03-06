@@ -99,4 +99,11 @@ public class InventoryAdapter extends RecyclerView.Adapter<InventoryAdapter.View
     public int getItemCount() {
         return ingredientList.size();
     }
+
+    public void updateList(List<Ingredient> newList) {
+        ingredientList.clear();
+        ingredientList.addAll(newList);
+        notifyDataSetChanged();
+    }
+
 }

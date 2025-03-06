@@ -44,6 +44,8 @@ public class InventoryFragment extends Fragment {
     private InventoryViewModel inventoryViewModel;
     private static final String TAG = "InventoryFragment";
     private boolean isFragmentActive = true;
+    private EditText searchBar;
+    private List<Ingredient> filteredList = new ArrayList<>();
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
@@ -75,7 +77,19 @@ public class InventoryFragment extends Fragment {
         addButton.setOnClickListener(v -> showAddIngredientDialog());
 
         searchDB = new SearchDB();
+        searchBar = root.findViewById(R.id.search_bar);
+        searchBar.addTextChangedListener(new android.text.TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) { }
 
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                filterInventory(s.toString());  // 🟢 Filter as user types
+            }
+
+            @Override
+            public void afterTextChanged(android.text.Editable s) { }
+        });
         // Fetch and display inventory
         String userID = FirebaseAuth.getInstance().getUid();
         loadUserInventory(userID);
@@ -93,6 +107,24 @@ public class InventoryFragment extends Fragment {
     public void onStop() {
         super.onStop();
         isFragmentActive = false;
+    }
+
+    private void filterInventory(String query) {
+        filteredList.clear();
+
+        if (query.isEmpty()) {
+            filteredList.addAll(ingredientList); // Show all items if search is empty
+        } else {
+            String lowerCaseQuery = query.toLowerCase();
+
+            for (Ingredient ingredient : ingredientList) {
+                if (ingredient.getName().toLowerCase().contains(lowerCaseQuery)) {
+                    filteredList.add(ingredient);
+                }
+            }
+        }
+
+        inventoryAdapter.updateList(filteredList);  // 🟢 Update the adapter
     }
 
     private void loadUserInventory(String userID) {
