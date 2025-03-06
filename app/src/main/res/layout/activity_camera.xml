@@ -7,12 +7,10 @@
     android:layout_height="match_parent"
     tools:context=".MainActivity">
 
-
     <androidx.camera.view.PreviewView
         android:id="@+id/preview_view"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-
         app:layout_constraintBottom_toTopOf="@id/bottomLayout"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
@@ -22,23 +20,29 @@
         android:id="@+id/bottomLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
+        android:orientation="vertical"
         android:gravity="center"
         android:padding="10dp"
         android:layout_marginBottom="50dp"
-
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent"
-        >
+        app:layout_constraintBottom_toBottomOf="parent">
+
         <androidx.appcompat.widget.AppCompatButton
             android:id="@+id/TakePhoto"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-
             android:text="@string/take_photo"
+            android:textStyle="normal"/>
+
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/SendToInventory"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Send to Inventory"
             android:textStyle="normal"
-            />
+            android:layout_marginTop="10dp"/>
+
         <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/BarcodeResult"
             android:layout_width="wrap_content"
@@ -47,8 +51,6 @@
             android:textSize="18sp"
             android:textStyle="bold"
             android:padding="8dp"/>
-
-
     </androidx.appcompat.widget.LinearLayoutCompat>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
