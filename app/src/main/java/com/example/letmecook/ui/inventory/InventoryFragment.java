@@ -194,12 +194,15 @@ public class InventoryFragment extends Fragment {
                         if (success) {
                             Toast.makeText(getContext(), name + " updated to " + newAmount + "g!", Toast.LENGTH_SHORT).show();
                             fetchHouseholdInventory();
+                        } else {
+                            Toast.makeText(getContext(), "Failed to update " + name, Toast.LENGTH_SHORT).show();
                         }
                     });
                 }
             }
         });
     }
+
 
     public void deleteIngredient(String ingredientName) {
         searchDB.getHouseholdDocumentByID(householdID, documentSnapshot -> {

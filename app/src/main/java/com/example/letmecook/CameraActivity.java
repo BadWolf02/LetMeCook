@@ -123,7 +123,6 @@ public class CameraActivity extends AppCompatActivity {
             }
 
             sendProductToIngredients(product_name, caloriesValue, allergensList);
-            inventoryFragment.showQuantityDialog(product_name);
         });
 
 

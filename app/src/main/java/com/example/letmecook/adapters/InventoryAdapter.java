@@ -67,10 +67,14 @@ public class InventoryAdapter extends RecyclerView.Adapter<InventoryAdapter.View
                 String updatedAmount = holder.ingredientAmount.getText().toString().trim();
                 if (!updatedAmount.isEmpty() && updatedAmount.matches("\\d+g")) {
                     String amountWithoutG = updatedAmount.replace("g", "").trim();
-                    listener.onQuantityChanged(ingredient.getName(), amountWithoutG);
+
+                    if (!amountWithoutG.equals(ingredient.getAmount().replace("g", "").trim())) { // 🟢 Avoid unnecessary updates
+                        listener.onQuantityChanged(ingredient.getName(), amountWithoutG);
+                    }
                 }
             }
         });
+
 
         // Handle delete button click
         holder.deleteButton.setOnClickListener(v -> deleteListener.onDeleteIngredient(ingredient.getName()));
