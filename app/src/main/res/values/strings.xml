@@ -12,6 +12,7 @@
     <string name="sign_out">Sign Out</string>
     <string name="Scan">Scan items into the inventory</string>
     <string name="email">Email</string>
+    <string name="passwordRestriction">Password must be at least 8 characters and contain a number, a lowercase letter and an uppercase letter</string>
     <string name="take_photo">Take Photo</string>
     <string name="scan_Barcode">Scan Barcode</string>
     <string name="barcode_placeholder">Scan food product barcode for nutritional information.</string>
@@ -38,31 +39,31 @@
     <string name="review">Review</string>
     <string name="reviews">Reviews</string>
     <string name="leave_a_review">Leave a Review!</string>
+    <string name="what_can_i_cook">What can I cook?</string>
     <string name="ingredient">Ingredient</string>
     <string name="remove_item">Remove Item</string>
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
-    <string name="passwordRestriction">Password must be at least 8 characters and contain a number, a lowercase letter and an uppercase character</string>
-    <string-array name="cusine_dropdown">
-        <item>select cusine type</item>
+        <string-array name="cuisine_dropdown">
+        <item>select cuisine type</item>
         <item>european</item>
-        <item>Mediteranian</item>
+        <item>Mediterranean</item>
         <item>Greek</item>
         <item>Italian</item>
         <item>Indian</item>
-        <item>african</item>
-        <item>asian</item>
-        <item>australian</item>
-        <item>caribbean</item>
-        <item>middle eastern</item>
-        <item>brazilian</item>
-        <item>french</item>
-        <item>eastern european</item>
-        <item>mexican</item>
-        <item>japanese</item>
-        <item>thai</item>
-        <item>chinese</item>
-        <item>korean</item>
+        <item>African</item>
+        <item>Asian</item>
+        <item>Australian</item>
+        <item>Caribbean</item>
+        <item>Middle eastern</item>
+        <item>Brazilian</item>
+        <item>French</item>
+        <item>Eastern european</item>
+        <item>Mexican</item>
+        <item>Japanese</item>
+        <item>Thai</item>
+        <item>Chinese</item>
+        <item>Korean</item>
     </string-array>
 
 </resources>

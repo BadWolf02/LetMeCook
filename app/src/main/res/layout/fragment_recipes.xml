@@ -16,8 +16,10 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
-        app:layout_constraintTop_toBottomOf="@id/scrapeRecipesButton"
-        tools:layout_editor_absoluteX="1dp">
+        tools:layout_editor_absoluteX="1dp"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
 
         <LinearLayout
             android:id="@+id/layout"
@@ -39,7 +41,7 @@
 
 
             <EditText
-                android:id="@+id/edit_text_recipie_name"
+                android:id="@+id/editTextRecipeName"
                 android:layout_width="match_parent"
                 android:hint="enter recipe name"
                 android:background="@drawable/custom_edittext"
@@ -66,7 +68,7 @@
             <MultiAutoCompleteTextView
                 android:id="@+id/add_ingreedients_multiAtotComplete"
                 android:layout_width="match_parent"
-                android:hint="add ingreedients"
+                android:hint="add ingredients"
                 android:background="@drawable/custom_edittext"
                 android:drawablePadding="8dp"
                 android:layout_height="50dp"
@@ -75,7 +77,6 @@
                 android:inputType="text"
                 android:textColor="?attr/colorOnPrimary"
                 android:textColorHighlight="@color/cardview_dark_background" />
-                android:drawablePadding="8dp"/>
 
             <FrameLayout
                 android:id="@+id/ingredient_layout"
@@ -139,11 +140,11 @@
                 android:layout_margin="10dp"/>
 
             <Spinner
-                android:id="@+id/cusine_dropdown"
+                android:id="@+id/cuisine_dropdown"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:spinnerMode="dropdown"
-                tools:listitem="choose cusine"
+                tools:listitem="choose cuisine"
                 android:layout_margin="10dp"/>
 
             <TextView

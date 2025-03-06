@@ -1,10 +1,6 @@
 package com.example.letmecook;
 
-import static com.firebase.ui.auth.AuthUI.getApplicationContext;
-
-import android.content.Context;
 import android.util.Log;
-import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -24,7 +20,7 @@ public class Recipe {
     public String r_id; //autogenerate by firebase db, make sure to add this to a list of IDs that the user has, so they can view their own recepies
     public String author; // username or official/ the site we scraped it from
     public String r_type; // can be public, private or official
-    public String cusine; //TODO make this similar to ingredients where you can only add valid stuff
+    public String cuisine; //TODO make this similar to ingredients where you can only add valid stuff
     public Integer cooking_time_h;
     public Integer cooking_time_min;
     public Integer total_time_h;
@@ -46,7 +42,7 @@ public class Recipe {
     FirebaseFirestore db = FirebaseFirestore.getInstance();
 
 
-    // protected Firebase db = new Firebase(Context Recipe.this); //probably worng, want it to take the context from the add recipe or display recipe
+    // protected Firebase db = new Firebase(Context Recipe.this); //probably wrong, want it to take the context from the add recipe or display recipe
 
     public Recipe() {
         stepsAmount = 0;
@@ -54,7 +50,6 @@ public class Recipe {
 
     //TODO ratings
 
-    public void create_recepie(){ }
 
     public void setMealType(ArrayList<String> mealTypes){
         this.mealType = mealTypes;
@@ -88,7 +83,7 @@ public class Recipe {
         this.author = author;
     }
 
-    public String getAutor(){
+    public String getAuthor(){
         return this.author;
     }
 
@@ -127,12 +122,12 @@ public class Recipe {
     }
 
 
-    public void setCusine(String cusine){
-        this.cusine = cusine;
+    public void setcuisine(String cuisine){
+        this.cuisine = cuisine;
     }
 
-    public String getCusine(){
-        return this.cusine;
+    public String getCuisine(){
+        return this.cuisine;
     }
 
     //TODO maybe add a meal type (cold/ warm/ breakfast/ lunch/dinner/ sallad/ snacks/ light meal)
@@ -174,7 +169,7 @@ public class Recipe {
 
     }
 
-    public void add_photo(){ //use this to add photo fo finished recepie but also to writing comments and allow for steps
+    public void add_photo(){ //use this to add photo fo finished recipe but also to writing comments and allow for steps
 
     }
 
@@ -199,21 +194,21 @@ public class Recipe {
        //  if ( this.r_name!=null && this.steps!=null && this.ingredients!=null && this.r_type!=null){
             // the stuff to respective fielsds
             // add author and allergens too
-            // access recipies collection
+            // access recipes collection
 
             CollectionReference recipesRef = db.collection("recipes");
 
             HashMap<String, Object> recipe = new HashMap<>();
             recipe.put("r_name", this.r_name);
             // recipe.put("author", this.author);
-            recipe.put("ingredienets", this.ingredients);
-            Log.d("adding allergens to hashmap for recipies", this.allergens.toString()); //  this is currently a empty list
+            recipe.put("ingredients", this.ingredients);
+            Log.d("adding allergens to hashmap for recipes", this.allergens.toString()); //  this is currently a empty list
             recipe.put("allergens", this.allergens);
             recipe.put("steps", this.steps);
             // recipe.put("r_type", this.r_type);
         
-            if (this.cusine!=null){
-                recipe.put("cusine", this.cusine);
+            if (this.cuisine!=null){
+                recipe.put("cuisine", this.cuisine);
             }
             if (getMealType()!=null){
                 recipe.put("meal type", this.mealType);
@@ -244,7 +239,7 @@ public class Recipe {
     };
 
 
-        // check if cusine has been filled in and add that
+        // check if cuisine has been filled in and add that
         // check if cook_time has been filled in and add
         // check if photos have in any steps been filled in and add that
     }

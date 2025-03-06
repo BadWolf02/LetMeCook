@@ -133,7 +133,7 @@ public class RecipesFragment extends Fragment {
          * handle user entering recipe name
          */
         Log.d("on Create View", "reached part before edit text");
-        EditText edit_r_name = binding.editTextRecipieName;
+        EditText edit_r_name = binding.editTextRecipeName;
         edit_r_name.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -178,10 +178,10 @@ public class RecipesFragment extends Fragment {
                     Log.d("empty string", add_step_text); //TODO remove this
 
 
-                    // add this to db either save straight to a map here or to the recipie cals
+                    // add this to db either save straight to a map here or to the recipe cals
                     // dynamically create another edit text
                     Integer step_id = View.generateViewId();
-                    // dynamically create new recipie step box
+                    // dynamically create new recipe step box
                     EditText add_step_box = new EditText(getContext());
                     add_step_box.setId(step_id); //TODO
                     add_step_box.setHint("add Step");
@@ -229,26 +229,26 @@ public class RecipesFragment extends Fragment {
 //        });
 
 
-        // get cusine from selection and set it as cusine of the recipe
-        Spinner cusine_spinner = binding.cusineDropdown;
-        cusine_spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener(){
+        // get cuisine from selection and set it as cuisine of the recipe
+        Spinner cuisine_spinner = binding.cuisineDropdown;
+        cuisine_spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener(){
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int pos, long id){
-                String cusine = parent.getItemAtPosition(pos).toString();
-                recipe.setCusine(cusine);
+                String cuisine = parent.getItemAtPosition(pos).toString();
+                recipe.setcuisine(cuisine);
             }
             @Override
             public void onNothingSelected(AdapterView<?> parent){
 
             }
         });
-        //set Spinner for cusine
-        ArrayAdapter<CharSequence> cusine_adapter = ArrayAdapter.createFromResource(this.requireContext(), R.array.cusine_dropdown, android.R.layout.simple_spinner_dropdown_item);
-        cusine_adapter.setDropDownViewResource(androidx.appcompat.R.layout.support_simple_spinner_dropdown_item);
+        //set Spinner for cuisine
+        ArrayAdapter<CharSequence> cuisine_adapter = ArrayAdapter.createFromResource(this.requireContext(), R.array.cuisine_dropdown, android.R.layout.simple_spinner_dropdown_item);
+        cuisine_adapter.setDropDownViewResource(androidx.appcompat.R.layout.support_simple_spinner_dropdown_item);
         Log.d("spinner", "set dropdown view");
-        // Spinner cusine_spinner = getView().findViewById(R.id.cusine_dropdown); //TODO causing error, null pointer exception, try binding instead of get view by id
+        // Spinner cuisine_spinner = getView().findViewById(R.id.cuisine_dropdown); //TODO causing error, null pointer exception, try binding instead of get view by id
         Log.d("spinner", "got spinner view by id");
-        cusine_spinner.setAdapter(cusine_adapter);
+        cuisine_spinner.setAdapter(cuisine_adapter);
         Log.d("spinner", "set up adapter");
 
 
