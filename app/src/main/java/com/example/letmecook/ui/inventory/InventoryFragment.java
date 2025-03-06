@@ -113,7 +113,8 @@ public class InventoryFragment extends Fragment {
         filteredList.clear();
 
         if (query.isEmpty()) {
-            filteredList.addAll(ingredientList); // Show all items if search is empty
+            // 🟢 Show the full list if the search bar is empty
+            filteredList.addAll(ingredientList);
         } else {
             String lowerCaseQuery = query.toLowerCase();
 
@@ -124,8 +125,10 @@ public class InventoryFragment extends Fragment {
             }
         }
 
-        inventoryAdapter.updateList(filteredList);  // 🟢 Update the adapter
+        // 🟢 Always update the adapter, even if the list is empty
+        inventoryAdapter.updateList(filteredList);
     }
+
 
     private void loadUserInventory(String userID) {
         if (userID == null || userID.isEmpty()) {
