@@ -1,5 +1,7 @@
 package com.example.letmecook.ui.inventory;
 
+import android.app.AlertDialog;
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -9,19 +11,19 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.TextView;
-import androidx.annotation.NonNull;
-import androidx.appcompat.app.AlertDialog;
-import androidx.fragment.app.Fragment;
+import android.widget.Toast;
+
+import androidx.annotation.NonNull;import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.letmecook.CameraActivity;
 import com.example.letmecook.R;
 import com.example.letmecook.adapters.InventoryAdapter;
 import com.example.letmecook.databinding.FragmentInventoryBinding;
 import com.example.letmecook.db_tools.SearchDB;
 import com.example.letmecook.models.Ingredient;
-import com.google.firebase.auth.FirebaseAuth;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -37,6 +39,7 @@ public class InventoryFragment extends Fragment {
     private SearchDB searchDB;
     private String householdID;
     private ImageButton addButton;
+    private InventoryViewModel inventoryViewModel;
     private static final String TAG = "InventoryFragment";
 
     public View onCreateView(@NonNull LayoutInflater inflater,
@@ -46,9 +49,17 @@ public class InventoryFragment extends Fragment {
 
         binding = FragmentInventoryBinding.inflate(inflater, container, false);
         View root = binding.getRoot();
+        Button toCameraButton = root.findViewById(R.id.toCamera);
+        Button refreshInventoryButton = root.findViewById(R.id.refresh_button);
 
         final TextView titleTextView = binding.titleInventory;
         final TextView itemCountTextView = binding.itemCount;
+
+        toCameraButton.setOnClickListener(v -> {
+            Intent intent = new Intent(getActivity(), CameraActivity.class);
+            startActivity(intent);
+        });
+        refreshInventoryButton.setOnClickListener(v -> refreshInventory());
 
         inventoryViewModel.getText().observe(getViewLifecycleOwner(), titleTextView::setText);
 
@@ -64,7 +75,7 @@ public class InventoryFragment extends Fragment {
         searchDB = new SearchDB();
 
         // Fetch and display inventory
-        String userID = FirebaseAuth.getInstance().getUid(); // Set your actual user ID
+        String userID = "Exb0LIB0vIMVYJN2kAKHO0zd1mD2"; // Set your actual user ID
         loadUserInventory(userID);
 
         return root;
@@ -172,5 +183,9 @@ public class InventoryFragment extends Fragment {
     public void onDestroyView() {
         super.onDestroyView();
         binding = null;
+    }
+    private void refreshInventory() {
+        Toast.makeText(getContext(), "Refreshing Inventory...", Toast.LENGTH_SHORT).show();
+        inventoryViewModel.loadInventory(); // Call ViewModel to fetch updated data
     }
 }
