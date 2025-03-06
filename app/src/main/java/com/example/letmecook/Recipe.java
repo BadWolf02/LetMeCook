@@ -141,7 +141,7 @@ public class Recipe {
         Log.d("ingredients in recipe class", i_name + details.toString());
         this.ingredients.put(i_name, details);
 
-        search_db.getIngredientDocumentByName( i_name, i_allergens -> {
+        search_db.getIngredientDocumentAllergens( i_name, i_allergens -> {
             Log.d("ferched allergens for "+i_name, i_allergens.toString());
             if (!i_allergens.isEmpty() && i_allergens!= null){
                 updateAllergens(i_allergens);

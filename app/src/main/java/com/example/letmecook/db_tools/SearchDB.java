@@ -346,7 +346,54 @@ public class SearchDB {
                 .addOnFailureListener(e -> listener.onUpdate(false));
     }
     //TODO next: this isn't working, so maybe try with callback interface
+    public interface IngredientsCallback{
+        public void onIngredientsLoaded(ArrayList<Object> ingredients);
+    }
+    //TODO next: this isn't working, so maybe try with callback interface
     public void getIngredientsList(IngredientsCallback ingreedients_callback){
+
+        CollectionReference ingreedients_ref = db.collection("ingredients");
+        ingreedients_ref.get().addOnSuccessListener(ingredients_snapshot -> {
+            ArrayList<Object> ingredients_list = new ArrayList<>();
+            for (DocumentSnapshot ingredient : ingredients_snapshot.getDocuments()) {
+                String ingredient_name = ingredient.getString("name");
+                ingredients_list.add(ingredient_name);
+            }
+            Log.d("getting ingredients", ingredients_list.toString());
+            ingreedients_callback.onIngredientsLoaded(ingredients_list);
+            //return ingredients_list.toArray();
+        }).addOnFailureListener(e -> {
+            Log.e("Firestore", "Error fetching ingredients", e);
+            ingreedients_callback.onIngredientsLoaded(new ArrayList<Object>());
+        });
+    };
+
+
+    public interface OnAllergensRetrievedListener {
+        void onAllergensRetrieved(List<String> i_allergens);
+    }
+    public void getIngredientDocumentAllergens(String i_name, OnAllergensRetrievedListener listener) {
+        db.collection("ingredients")
+                .whereEqualTo("name", i_name)
+                .get()
+                .addOnSuccessListener(queryDocumentSnapshots -> {
+                    if (queryDocumentSnapshots != null && !queryDocumentSnapshots.isEmpty()) {
+                        DocumentSnapshot document = queryDocumentSnapshots.getDocuments().get(0);
+//                       Log.d(TAG, "not found");
+//                       listener.onAllergensRetrieved(queryDocumentSnapshots.getDocuments().get(0));
+//                       DocumentSnapshot document = queryDocumentSnapshots.getDocuments().get(0);
+                        if (document.contains("allergens")) {
+                            List<String> i_allergens = (List<String>) document.get("allergens");
+                            listener.onAllergensRetrieved(i_allergens);
+                        } else {
+                            Log.e(TAG, "User not found");
+                            listener.onAllergensRetrieved(null);
+                        }
+                    }}).addOnFailureListener(e -> {
+                    Log.e(TAG, "Error retrieving allergens", e);
+                    listener.onAllergensRetrieved(null);
+                });
+    }
 
     public void getAllIngredients(OnStringArrayRetrievedListener listener) {
         db.collection("ingredients")
