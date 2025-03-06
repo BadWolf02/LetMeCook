@@ -7,4 +7,13 @@
     <color name="green">#CCD5AE</color>
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
+
+    <color name="dialog">#F8DEA4</color>
+    <color name="main">#F8E7D1</color>
+    <color name="b1">#ba6c42</color>
+    <color name="b2">#d17d4e</color>
+    <color name="b3">#e39d4b</color>
+    <color name="b4">#ffcc68</color>
+    <color name="p1">#80535b</color>
+    <color name="icons">#4A2B1A</color>
 </resources>
