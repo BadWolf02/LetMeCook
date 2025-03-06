@@ -41,7 +41,6 @@
             <EditText
                 android:id="@+id/edit_text_recipie_name"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
                 android:hint="enter recipe name"
                 android:background="@drawable/custom_edittext"
                 android:drawablePadding="8dp"
@@ -67,7 +66,6 @@
             <MultiAutoCompleteTextView
                 android:id="@+id/add_ingreedients_multiAtotComplete"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
                 android:hint="add ingreedients"
                 android:background="@drawable/custom_edittext"
                 android:drawablePadding="8dp"
@@ -117,7 +115,6 @@
             <EditText
                 android:id="@+id/EditText_add_step1"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
                 android:hint="add recipe step"
                 android:background="@drawable/custom_edittext"
                 android:drawablePadding="8dp"
@@ -132,7 +129,6 @@
                 android:id="@+id/add_step_btn"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_width="match_parent"
                 android:text="confirm step"
                 android:layout_marginTop="30dp"
                 android:textColor="?attr/colorOnSecondary"
@@ -275,7 +271,6 @@
 
                 <Button
                     android:id="@+id/cooking_time_clear_btn"
-                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:text="clear"
@@ -308,7 +303,6 @@
                 android:layout_weight="1"
                 android:backgroundTint="?attr/colorSecondaryVariant"
                 android:text="add recipe"
-                android:layout_marginTop="30dp"
                 android:textColor="?attr/colorOnSecondary"
                 app:cornerRadius="20dp" />
 
@@ -336,7 +330,6 @@
                 android:id="@+id/scrapeRecipesButton"
                 android:layout_width="match_parent"
                 android:layout_height="47dp"
-                android:layout_marginTop="8dp"
                 android:text="Scrape Recipes"
                 app:layout_constraintTop_toBottomOf="@+id/recipeImageView"
                 android:paddingBottom="8dp"
