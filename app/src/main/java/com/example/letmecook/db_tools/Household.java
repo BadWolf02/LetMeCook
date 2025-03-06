@@ -35,7 +35,7 @@ public class Household {
             searchDB.getUserDocumentByUsername(username, userDocument -> {
                 if (userDocument != null) {
                     // Checks if user is inviting themselves
-                    String foundUID = userDocument.getString("uid");
+                    String foundUID = userDocument.getId();
                     if (foundUID.equals(mAuth.getCurrentUser().getUid())) {
                         Toast.makeText(context, "You cannot invite yourself", Toast.LENGTH_SHORT).show();
                         return;
