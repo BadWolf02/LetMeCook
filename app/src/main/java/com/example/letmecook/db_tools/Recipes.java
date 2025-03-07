@@ -87,11 +87,7 @@ public class Recipes {
                 List<String> householdShoppingList = (List<String>) householdDoc.get("shopping-list");
                 // Removes any items that are already in the shopping list
                 if (householdShoppingList != null && !householdShoppingList.isEmpty()) {
-                    for (String ingredient : ingredientsToAdd) {
-                        if (!householdShoppingList.contains(ingredient)) {
-                            ingredientsToAdd.remove(ingredient);
-                        }
-                    }
+                    ingredientsToAdd.removeIf(householdShoppingList::contains);
                 }
                 // Adds new ingredients to shopping list
                 if (!ingredientsToAdd.isEmpty()) {

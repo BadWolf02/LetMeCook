@@ -76,55 +76,67 @@ public class Household {
 
     public void acceptInvite(String householdID, String uid) {
         final String[] currentHouseholdID = new String[1];
-        searchDB.getUserHouseholdID(uid, hid -> currentHouseholdID[0] =hid);
-        // Update user document
-        searchDB.getUserDocumentByID(uid, userDocument -> {
-            if (userDocument != null) {
-                userDocument.getReference().update(
-                        "invites", FieldValue.arrayRemove(householdID)
-                ).addOnSuccessListener(result -> Log.d(TAG, "Household invite removed"));
-                userDocument.getReference().update(
-                        "householdID", householdID
-                ).addOnSuccessListener(result -> Log.d(TAG, "User household changed"));
-            } else {
-                Log.e(TAG, "User not found");
-            }
+        searchDB.getUserHouseholdID(uid, hid -> {
+            currentHouseholdID[0] = hid;
+            // Update user document
+            searchDB.getUserDocumentByID(uid, userDocument -> {
+                if (userDocument != null) {
+                    String username = userDocument.getString("username");
+                    userDocument.getReference().update(
+                            "invites", FieldValue.arrayRemove(householdID)
+                    ).addOnSuccessListener(result -> Log.d(TAG, "Household invite removed"));
+                    userDocument.getReference().update(
+                            "householdID", householdID
+                    ).addOnSuccessListener(result -> Log.d(TAG, "User household changed"));
+
+                    // Update new household document
+                    searchDB.getHouseholdDocumentByID(householdID, householdDocument -> {
+                        if (householdDocument != null) {
+                            householdDocument.getReference().update(
+                                    "invited", FieldValue.arrayRemove(username)
+                            ).addOnSuccessListener(result -> Log.d(TAG, "User invite removed"));
+                            householdDocument.getReference().update(
+                                    "members", FieldValue.arrayUnion(uid)
+                            ).addOnSuccessListener(result -> Log.d(TAG, "Household member added"));
+                        } else {
+                            Log.e(TAG, "Household not found");
+                        }
+                    });
+                    // Update old household document
+                    searchDB.getHouseholdDocumentByID(currentHouseholdID[0], householdDocument -> {
+                        if (householdDocument != null) {
+                            householdDocument.getReference().update(
+                                    "members", FieldValue.arrayRemove(uid)
+                            ).addOnSuccessListener(result -> {
+                                Log.d(TAG, "Household member removed");
+                                deleteHousehold(currentHouseholdID[0]);
+                            });
+                        } else {
+                            Log.e(TAG, "Household not found");
+                        }
+                    });
+
+                } else {
+                    Log.e(TAG, "User not found");
+                }
+            });
         });
-        // Update new household document
-        searchDB.getHouseholdDocumentByID(householdID, householdDocument -> {
-            if (householdDocument != null) {
-                householdDocument.getReference().update(
-                        "invited", FieldValue.arrayRemove(uid)
-                ).addOnSuccessListener(result -> Log.d(TAG, "User invite removed"));
-                householdDocument.getReference().update(
-                        "members", FieldValue.arrayUnion(uid)
-                ).addOnSuccessListener(result -> Log.d(TAG, "Household member added"));
-            } else {
-                Log.e(TAG, "Household not found");
-            }
-        });
-        // Update old household document
-        searchDB.getHouseholdDocumentByID(currentHouseholdID[0], householdDocument -> {
-            if (householdDocument != null) {
-                householdDocument.getReference().update(
-                        "members", FieldValue.arrayRemove(uid)
-                ).addOnSuccessListener(result -> Log.d(TAG, "Household member removed"));
-            } else {
-                Log.e(TAG, "Household not found");
-            }
-        });
-        deleteHousehold(currentHouseholdID[0]);
     }
 
     public void denyInvite(String householdID, String uid) {
-        searchDB.getUserDocumentByID(uid, userDocument ->
-                userDocument.getReference().update(
-                "invites", FieldValue.arrayRemove(householdID)
-                ).addOnSuccessListener(result -> Log.d(TAG, "Household invite removed")));
-        searchDB.getHouseholdDocumentByID(householdID, householdDocument ->
-                householdDocument.getReference().update(
-                "invited", FieldValue.arrayRemove(uid)
-                ).addOnSuccessListener(result -> Log.d(TAG, "User invite removed")));
+        searchDB.getUserDocumentByID(uid, userDocument -> {
+            String username = userDocument.getString("username");
+            userDocument
+                    .getReference()
+                    .update("invites", FieldValue.arrayRemove(householdID))
+                    .addOnSuccessListener(result -> Log.d(TAG, "Household invite removed"));
+
+            searchDB.getHouseholdDocumentByID(householdID, householdDocument ->
+                householdDocument
+                    .getReference()
+                    .update("invited", FieldValue.arrayRemove(username))
+                    .addOnSuccessListener(result -> Log.d(TAG, "User invite removed")));
+        });
     }
 
     public void renameHousehold(String householdID, String newName) {
@@ -146,8 +158,8 @@ public class Household {
                     Log.d(TAG, "Household has members");
                 } else {
                     householdDocument.getReference()
-                            .delete().
-                            addOnSuccessListener(result -> Log.d(TAG, "Household deleted"));
+                            .delete()
+                            .addOnSuccessListener(result -> Log.d(TAG, "Household deleted"));
                 }
             } else {
                 Log.e(TAG, "Household not found");

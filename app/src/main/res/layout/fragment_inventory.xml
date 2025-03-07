@@ -54,7 +54,7 @@
             android:layout_height="50dp"
             android:background="@android:drawable/editbox_background"
             android:drawableStart="@android:drawable/ic_menu_search"
-            android:hint="Add ingredients"
+            android:hint="Search inventory"
             android:padding="10dp"
             android:singleLine="true"
             app:layout_constraintStart_toStartOf="parent"

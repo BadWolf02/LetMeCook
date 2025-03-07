@@ -23,22 +23,25 @@ public class ViewInviteActivity extends AppCompatActivity implements HouseholdIn
     Household household = new Household(ViewInviteActivity.this);
     FirebaseAuth mAuth = FirebaseAuth.getInstance();
     HouseholdInvitesAdapter adapter = new HouseholdInvitesAdapter(this);
-    LinearLayout noInviteLayout;
+    // LinearLayout noInviteLayout;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_invites);
 
-        noInviteLayout = findViewById(R.id.no_invites_layout);
+        // noInviteLayout = findViewById(R.id.no_invites_layout);
 
         RecyclerView recyclerView = findViewById(R.id.recycler_view);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         recyclerView.setAdapter(adapter);
 
+        /*
         if (adapter.myInvites.isEmpty()) {
             displayNoInvites();
         }
+
+         */
     }
 
     @Override
@@ -55,6 +58,7 @@ public class ViewInviteActivity extends AppCompatActivity implements HouseholdIn
         adapter.notifyDataSetChanged();
     }
 
+    /*
     public void displayNoInvites() {
         noInviteLayout.removeAllViews();
         Log.d(TAG, "No invites to display");
@@ -64,4 +68,6 @@ public class ViewInviteActivity extends AppCompatActivity implements HouseholdIn
         noInviteView.setTextColor(Color.BLACK);
         noInviteLayout.addView(noInviteView);
     }
+
+     */
 }

@@ -333,7 +333,8 @@ public class SearchDB {
                         Log.e(TAG, "Household not found");
                         listener.onDocumentRetrieved(null);
                     }
-                });
+                })
+                .addOnFailureListener(e -> Log.e(TAG, "Firestore fetch failed: ", e));
     }
 
     // User
@@ -470,10 +471,11 @@ public class SearchDB {
 
     public void getAllIngredients(OnStringArrayRetrievedListener listener) {
         db.collection("ingredients")
+                .orderBy("name", Query.Direction.ASCENDING)
                 .get()
                 .addOnSuccessListener(queryDocumentSnapshots -> {
                     ArrayList<String> ingredientNames = new ArrayList<>();
-                    queryDocumentSnapshots.forEach(doc -> ingredientNames.add(doc.getId()));
+                    queryDocumentSnapshots.forEach(doc -> ingredientNames.add(doc.getString("name")));
                     listener.onStringArrayRetrieved(ingredientNames);
                 })
                 .addOnFailureListener(e -> {
