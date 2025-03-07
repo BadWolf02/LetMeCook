@@ -28,6 +28,26 @@ public class Household {
         searchDB.getUserHouseholdID(uid, householdID -> inviteUser(householdID, username));
     }
 
+    /**
+     * Invites a user to a household.
+     *
+     * This method handles the process of inviting a user to a specified household.
+     * It performs several checks to ensure the validity of the invitation, including:
+     * 1. Verifying that both the household ID and username are provided.
+     * 2. Checking if the target user exists in the database.
+     * 3. Preventing a user from inviting themselves.
+     * 4. Ensuring the target user hasn't already been invited to the household.
+     * 5. Confirming that the inviter is a member of the household.
+     *
+     * If all checks pass, it updates both the household document (adding the user to the "invited" list)
+     * and the target user's document (adding the household ID to their "invites" list).
+     *
+     * If any of the checks fail, an appropriate Toast message is displayed to the user.
+     *
+     * @param householdID The ID of the household to which the user is being invited.
+     * @param username    The username of the user being invited.
+     * @throws IllegalArgumentException if either householdID or username is null.
+     */
     public void inviteUser(String householdID, String username) {
         if (householdID.isEmpty() || username.isEmpty()) {
           Toast.makeText(context, "Please fill both fields", Toast.LENGTH_SHORT).show();
@@ -74,6 +94,22 @@ public class Household {
         }
     }
 
+    /**
+     * Accepts a household invitation for a user.
+     * This method performs the following actions:
+     * <ol>
+     *     <li>Retrieves the user's current household ID.</li>
+     *     <li>Removes the invite from the user's document.</li>
+     *     <li>Updates the user's household ID to the new household ID.</li>
+     *     <li>Removes the user's username from the 'invited' list in the new household's document.</li>
+     *     <li>Adds the user's UID to the 'members' list in the new household's document.</li>
+     *     <li>Removes the user's UID from the 'members' list in the user's previous household's document (if any).</li>
+     *     <li>If the previous household now has no members after removing the user, it will delete the old household.</li>
+     * </ol>
+     *
+     * @param householdID The ID of the household the user is accepting an invitation to.
+     * @param uid         The unique ID of the user accepting the invitation.
+     */
     public void acceptInvite(String householdID, String uid) {
         final String[] currentHouseholdID = new String[1];
         searchDB.getUserHouseholdID(uid, hid -> {
@@ -123,6 +159,9 @@ public class Household {
         });
     }
 
+    /**
+     * This class manages household invites, including denying invites.
+     */
     public void denyInvite(String householdID, String uid) {
         searchDB.getUserDocumentByID(uid, userDocument -> {
             String username = userDocument.getString("username");
@@ -139,6 +178,20 @@ public class Household {
         });
     }
 
+    /**
+     * Renames a household in the database.
+     *
+     * This method updates the `householdName` field of a household document
+     * identified by the provided `householdID` in the database. It uses an
+     * asynchronous operation to fetch the household document and then update it.
+     *
+     * @param householdID The unique identifier of the household to rename.
+     * @param newName     The new name to assign to the household.
+     *
+     * @throws IllegalArgumentException if householdID or newName are null or empty
+     * @throws NullPointerException if searchDB is null
+     * @throws RuntimeException if the household Document was not found for the given ID.
+     */
     public void renameHousehold(String householdID, String newName) {
         searchDB.getHouseholdDocumentByID(householdID, householdDocument -> {
             if (householdDocument != null) {
@@ -149,6 +202,23 @@ public class Household {
         });
     }
 
+    /**
+     * Deletes a household from the database based on the provided household ID.
+     * <p>
+     * This method first attempts to retrieve the household document from the database
+     * using the given household ID. If the household is found, it checks if the household
+     * has any members. If the household has members, a log message is generated
+     * indicating that the household cannot be deleted because it still has members.
+     * If the household has no members, it proceeds to delete the household document
+     * from the database. A success log is generated if the deletion is successful.
+     * If the household is not found, an error log is generated.
+     * </p>
+     *
+     * @param householdID The unique identifier of the household to be deleted.
+     *                    This ID is used to search for the corresponding household
+     *                    document in the database.
+     * @throws IllegalArgumentException if householdID is null or empty
+     */
     public void deleteHousehold(String householdID) {
         searchDB.getHouseholdDocumentByID(householdID, householdDocument -> {
             if (householdDocument != null) {

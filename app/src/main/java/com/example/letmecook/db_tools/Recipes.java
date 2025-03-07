@@ -24,12 +24,40 @@ public class Recipes {
         this.context = context;
     }
 
+    /**
+     * Adds a recipe to the user's list of favorite recipes in the database.
+     */
     public void addRecipeToFavourites(String recipeID) {
         db.collection("users")
                 .document(mAuth.getCurrentUser().getUid())
                 .update("favourite_recipes", FieldValue.arrayUnion(recipeID));
     }
 
+    /**
+     * Adds a new review to a recipe in the database.
+     *
+     * This method takes a user ID, recipe ID, rating, and comment, and adds a new review to the specified recipe's
+     * "reviews" array in the database. It also updates the recipe's average rating.
+     *
+     * The method performs the following actions:
+     * 1. Retrieves the user's document based on the provided user ID to get the username.
+     * 2. Retrieves the recipe's document based on the provided recipe ID.
+     * 3. Checks if the user has already reviewed the recipe. If so, it displays a Toast message and returns early.
+     * 4. If the user has not already reviewed the recipe, it creates a new review map containing the comment, rating, and username.
+     * 5. Adds the new review to the "reviews" array of the recipe document using `FieldValue.arrayUnion`.
+     * 6. Calculates the new average rating for the recipe, considering the newly added review.
+     * 7. Rounds the average rating to the nearest 0.5.
+     * 8. Updates the recipe document's "avgRating" field with the new average rating.
+     *
+     * @param uid       The unique ID of the user adding the review.
+     * @param recipeID  The unique ID of the recipe being reviewed.
+     * @param rating    The rating given by the user (e.g., 1 to 5).
+     * @param comment   The comment provided by the user for the review.
+     *
+     * @throws NullPointerException if either user document or recipe document could not be retrieved from the db.
+     * @throws ClassCastException if the review list or rating isn't the expected type.
+     * @throws Exception if any other database error occurred.
+     */
     public void addReview(String uid, String recipeID, int rating, String comment) {
         Map<Object, Object> newReview = new HashMap<>();
         // Get user doc to find user's username
@@ -66,6 +94,50 @@ public class Recipes {
         });
     }
 
+    /**
+     * This method adds ingredients from a specified recipe to a user's shopping list,
+     * while considering the user's current inventory and existing shopping list.
+     *
+     * @param recipeID The ID of the recipe from which to add ingredients.
+     * @param uid      The unique ID of the user whose shopping list should be updated.
+     *
+     * <p>
+     * The method performs the following steps:
+     * <ol>
+     *   <li>
+     *     <b>Retrieves Recipe Ingredients:</b> Fetches the recipe document from the database
+     *     using the provided `recipeID`. Extracts the list of ingredients from the recipe.
+     *   </li>
+     *   <li>
+     *     <b>Retrieves User's Household Data:</b> Fetches the user's household document
+     *     from the database using the provided `uid`. Extracts the current inventory
+     *     and shopping list from the household document.
+     *   </li>
+     *   <li>
+     *     <b>Compares Recipe Ingredients with Inventory:</b> Compares each ingredient
+     *     in the recipe against the user's inventory. If an ingredient from the recipe
+     *     is NOT found in the user's inventory, it's marked for addition to the shopping list.
+     *      If the user does not have any inventory, then all the recipe ingredients are marked to be added.
+     *   </li>
+     *   <li>
+     *     <b>Checks Against Existing Shopping List:</b>  Compares the ingredients marked for addition
+     *     against the user's existing shopping list. If an ingredient is already present
+     *     in the shopping list, it's removed from the list of ingredients to be added.
+     *   </li>
+     *   <li>
+     *     <b>Updates Shopping List:</b> Adds the remaining ingredients (those not in the inventory and not
+     *     already on the shopping list) to the user's shopping list in the database.
+     *   </li>
+     * </ol>
+     * </p>
+     * <p>
+     * <b>Error Handling:</b>
+     *   This method assumes that the `searchDB` object handles potential errors
+     *   during database interactions (e.g., recipe or household document not found).
+     *   If the user does not have any inventory, then the whole ingredients list will be added to the shopping list
+     * </p>
+     * <p>
+     * <b>Assumptions: */
     public void addToShoppingList(String recipeID, String uid) {
         searchDB.getRecipeDocumentByID(recipeID, recipeDoc -> {
             Map<String, Object> ingredientMap = (Map<String, Object>) recipeDoc.get("ingredients");

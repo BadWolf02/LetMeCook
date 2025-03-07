@@ -29,7 +29,23 @@ public class Authentication {
         this.context = context;
     }
 
-    // Create user using email and password
+    /**
+     * Adds a new user to the authentication system.
+     *
+     * This method takes a username, email, and password as input and performs the following steps:
+     * 1. **Input Validation:** Checks if any of the input fields (username, email, password) are empty.
+     *    If any field is empty, it displays a toast message "Please enter all fields" and returns, preventing further processing.
+     * 2. **Username Uniqueness Check:** Calls the `usernameExists` method (assumed to be defined elsewhere) to check if the provided username already exists in the system.
+     * 3. **Conditional User Creation:**
+     *    - If `usernameExists` returns `true` (username exists), it displays a toast message "Username already exists".
+     *    - If `usernameExists` returns `false` (username is unique), it calls the `createUser` method (assumed to be defined elsewhere) to create the user with the provided credentials.
+     *
+     * @param username The desired username for the new user.
+     * @param email    The email address of the new user.
+     * @param password The password for the new user.
+     *
+     * @throws IllegalArgumentException if context is null
+     */ // Create user using email and password
     public void addUserAuth(String username, String email, String password) {
         // Run checks
         if (email.isEmpty() || password.isEmpty() || username.isEmpty()) {
@@ -46,6 +62,20 @@ public class Authentication {
         });
     }
 
+    /**
+     * Creates a new user account with the provided username, email, and password.
+     *
+     * This method utilizes Firebase Authentication to create a new user account.
+     * Upon successful creation, it sends an email verification link to the user's
+     * email address, stores the user's information in Firestore, and navigates
+     * to the LoginActivity.
+     * If the account creation fails, it displays an error message via Toast.
+     *
+     * @param username The desired username for the new user.
+     * @param email    The email address of the new user.
+     * @param password The password for the new user's account.
+     * @throws IllegalArgumentException if any of the input parameters (username, email, password) are null or empty
+     */
     public void createUser(String username, String email, String password) {
         mAuth.createUserWithEmailAndPassword(email, password)
                 .addOnCompleteListener((Activity) context, task -> {
@@ -67,6 +97,28 @@ public class Authentication {
                 });
     }
 
+    /**
+     * Authenticates a user with the provided email and password using Firebase Authentication.
+     *
+     * This method attempts to sign in a user with the given credentials. It performs the following:
+     * 1. **Input Validation:** Checks if the email and password fields are empty. If either is empty,
+     *    it displays a Toast message prompting the user to enter both.
+     * 2. **Firebase Authentication:** If the inputs are valid, it utilizes `mAuth.signInWithEmailAndPassword()`
+     *    to authenticate with Firebase.
+     * 3. **Authentication Result Handling:**
+     *    - **Success with Email Verification:** If the authentication is successful and the user's email
+     *      is verified, it logs the success, shows a success Toast, navigates to the `MainActivity`,
+     *      and finishes the current activity.
+     *    - **Success without Email Verification:** If the authentication is successful but the user's
+     *      email is not verified, it logs a warning, and displays a Toast indicating that the email
+     *      needs to be verified.
+     *    - **Failure:** If the authentication fails (incorrect credentials, network issue, etc.),
+     *      it logs the failure with the exception details and displays a Toast indicating that
+     *      the login details are incorrect.
+     *
+     * @param email    The user's email address.
+     * @param password The user's password.
+     */
     public void loginUserAuth(String email, String password) {
         // Run checks
         if (email.isEmpty() || password.isEmpty()) {
