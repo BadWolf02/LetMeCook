@@ -44,6 +44,12 @@ public class Recipe {
     FirebaseAuth mAuth = FirebaseAuth.getInstance();
 
 
+    String recipe_img;
+
+    public void setImageUrl(String url){
+        this.recipe_img = url;
+    }
+
     // protected Firebase db = new Firebase(Context Recipe.this); //probably wrong, want it to take the context from the add recipe or display recipe
 
     public Recipe() {
@@ -236,7 +242,9 @@ public class Recipe {
                     }
                 }
 
-
+                if (this.recipe_img != null){
+                    recipe.put("img", this.recipe_img);
+                }
 
                 recipesRef.add(recipe);
                 //Toast.makeText(context , "recipe sucessfully saved", Toast.LENGTH_LONG) ;}).addOnFailureListener(e->{System.err.println("adding recipe failed");});

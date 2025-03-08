@@ -49,6 +49,8 @@ import com.example.letmecook.Recipe;
 import com.example.letmecook.WebScrapingActivity;
 import com.example.letmecook.databinding.FragmentRecipesBinding;
 import com.example.letmecook.db_tools.SearchDB;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
 
 import java.lang.reflect.Array;
 import java.util.ArrayList;
@@ -75,6 +77,9 @@ public class RecipesFragment extends Fragment {
 
     private ImageView recipeImageView;
 
+    Uri imageUri;
+
+
 
 
     private ActivityResultLauncher<Intent> imagePickerLauncher =
@@ -92,6 +97,7 @@ public class RecipesFragment extends Fragment {
                     }
                 }
             });
+
 
 
     public View onCreateView(@NonNull LayoutInflater inflater,
@@ -115,6 +121,7 @@ public class RecipesFragment extends Fragment {
                         Uri imageUri = result.getData().getData();
                         if (imageUri != null) {
                             recipeImageView.setImageURI(imageUri);
+                            uploadImageToFirebase(imageUri);
                         } else {
                             Toast.makeText(getContext(), "Failed to select image", Toast.LENGTH_SHORT).show();
                         }
@@ -123,6 +130,7 @@ public class RecipesFragment extends Fragment {
                 });
 
         View root = binding.getRoot();
+
 
     binding.scrapeRecipesButton.setOnClickListener(v -> scrapeRecipes());
     binding.selectImageButton.setOnClickListener(v -> openGallery());
@@ -612,6 +620,27 @@ public class RecipesFragment extends Fragment {
         recipe.setR_name(r_name);
     }
 
+
+
+
+
+
+    public void uploadImageToFirebase(Uri imageUri) {
+        // Generate a unique filename for the image
+        String fileName = "recipeimgs/IMG_" + System.currentTimeMillis() + ".jpg";
+        StorageReference imageRef = FirebaseStorage.getInstance().getReference().child(fileName);
+
+        imageRef.putFile(imageUri)
+                .addOnSuccessListener(taskSnapshot ->
+                        imageRef.getDownloadUrl().addOnSuccessListener(uri -> {
+                            String imageUrl = uri.toString(); // Get the URL
+                            recipe.setImageUrl(imageUrl);
+                        })
+                )
+                .addOnFailureListener(e ->
+                        Log.e("image",  "image upload failed")
+                );
+    }
 
 
 @Override
