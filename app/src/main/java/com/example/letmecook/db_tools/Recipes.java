@@ -1,6 +1,9 @@
 package com.example.letmecook.db_tools;
 
+import static android.content.ContentValues.TAG;
+
 import android.content.Context;
+import android.util.Log;
 import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseAuth;
@@ -144,7 +147,7 @@ public class Recipes {
             List<String> recipeIngredients = new ArrayList<>(ingredientMap.keySet()); // list of ingredients in the recipe
             List<String> ingredientsToAdd = new ArrayList<>(); // list of ingredients to be added to shopping list
             searchDB.getUserHouseholdDocument(uid, householdDoc -> {
-                Map<String, Integer> inventory = (Map<String, Integer>) householdDoc.get("ingredients");
+                Map<String, Integer> inventory = (Map<String, Integer>) householdDoc.get("inventory");
                 // If true, then user has an inventory
                 if (inventory != null && !inventory.isEmpty()) {
                     // Check if recipe ingredients are in household ingredients
@@ -156,16 +159,18 @@ public class Recipes {
                 } else {
                     ingredientsToAdd.addAll(recipeIngredients);
                 }
-                List<String> householdShoppingList = (List<String>) householdDoc.get("shopping-list");
-                // Removes any items that are already in the shopping list
-                if (householdShoppingList != null && !householdShoppingList.isEmpty()) {
-                    ingredientsToAdd.removeIf(householdShoppingList::contains);
-                }
                 // Adds new ingredients to shopping list
                 if (!ingredientsToAdd.isEmpty()) {
+                    List<String> householdShoppingList = (List<String>) householdDoc.get("shopping-list");
+                    // Removes any items that are already in the shopping list
+                    if (householdShoppingList != null && !householdShoppingList.isEmpty()) {
+                        ingredientsToAdd.removeIf(householdShoppingList::contains);
+                    }
                     for (String ingredient : ingredientsToAdd) {
                         householdDoc.getReference().update("shopping-list", FieldValue.arrayUnion(ingredient));
                     }
+                } else {
+                    Log.d(TAG, "Nothing added to shopping list");
                 }
             });
         });
