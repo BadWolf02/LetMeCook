@@ -213,9 +213,9 @@ public class SearchDB {
                         listener.onDocumentArrayRetrieved(new ArrayList<>());
                     } else {
                         // Pagination
-                        int startAfter = Math.min(pageOffset + pageSize, cookableRecipes.size());
-                        List<DocumentSnapshot> paginatedRecipes = cookableRecipes.subList(pageOffset, startAfter);
-                        listener.onDocumentArrayRetrieved(paginatedRecipes);
+                        //int startAfter = Math.min(pageOffset + pageSize, cookableRecipes.size());
+                        //List<DocumentSnapshot> paginatedRecipes = cookableRecipes.subList(pageOffset, startAfter);
+                        listener.onDocumentArrayRetrieved(cookableRecipes);
                     }
                 } else {
                     listener.onDocumentArrayRetrieved(new ArrayList<>());

@@ -44,6 +44,7 @@ public class RecipeSearchAdapter extends RecyclerView.Adapter<RecipeSearchAdapte
     public int page = 1;
     public boolean hasNextPage = true;
 
+
     // Filters
     private String filterName = null;
     private String filterAuthor = null;

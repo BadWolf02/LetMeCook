@@ -106,7 +106,7 @@ private FragmentHomeBinding binding;
                     filteredIngredients);
         });
 
-        inventorySearchButton.setOnClickListener(view -> recipeAdapter.whatCanICook(mAuth.getCurrentUser().getUid(), ()->{}));
+        inventorySearchButton.setOnClickListener(view -> whatCanICook(mAuth.getCurrentUser().getUid()));
 
         // Set up RecyclerView for recipes
         recyclerView.setLayoutManager(new LinearLayoutManager(requireContext()));
@@ -135,6 +135,12 @@ private FragmentHomeBinding binding;
     private void filterRecipes(String name, String author, String cuisine, ArrayList<String> ingredients) {
         recipeAdapter.applyFilters(name, author, cuisine, ingredients, () -> {});
         changePage(0);
+    }
+
+    private void whatCanICook(String uid) {
+        recipeAdapter.whatCanICook(uid, ()->{});
+        prevPageButton.setVisibility(View.GONE);
+        nextPageButton.setVisibility(View.GONE);
     }
 
     // Handle pagination logic to hide/display page buttons
