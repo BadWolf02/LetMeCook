@@ -1,6 +1,7 @@
 package com.example.letmecook.ui.user;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -21,12 +22,15 @@ import com.example.letmecook.databinding.FragmentUserBinding;
 import androidx.lifecycle.ViewModelProvider;
 import com.example.letmecook.EditProfileActivity;
 import com.example.letmecook.db_tools.Household;
+
+import android.widget.ImageView;
 import android.widget.Toast;
 
 public class UserFragment extends Fragment {
 
     private FragmentUserBinding binding;
     private UserViewModel userViewModel;
+    private ImageView profilePicture;
 
     public View onCreateView(@NonNull LayoutInflater inflater,
             ViewGroup container, Bundle savedInstanceState) {
@@ -38,6 +42,11 @@ public class UserFragment extends Fragment {
 
         binding = FragmentUserBinding.inflate(inflater, container, false);
         View root = binding.getRoot();
+
+        profilePicture = binding.profilePicture;
+        SharedPreferences prefs = requireActivity().getSharedPreferences("UserProfile", requireContext().MODE_PRIVATE);
+        int savedDrawable = prefs.getInt("profile_picture", R.drawable.ic_profile_picture_placeholder);
+        profilePicture.setImageResource(savedDrawable);
 
         //User profile & edit
         userViewModel.getUserData().observe(getViewLifecycleOwner(), userData -> {
@@ -83,6 +92,13 @@ public class UserFragment extends Fragment {
         signOutButton.setOnClickListener(view -> auth.signOut());
 
         return root;
+    }
+    @Override
+    public void onResume() {
+        super.onResume();
+        SharedPreferences prefs = requireActivity().getSharedPreferences("UserProfile", requireContext().MODE_PRIVATE);
+        int savedDrawable = prefs.getInt("profile_picture", R.drawable.ic_profile_picture_placeholder);
+        profilePicture.setImageResource(savedDrawable);
     }
 
 @Override
