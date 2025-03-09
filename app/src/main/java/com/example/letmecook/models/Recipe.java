@@ -1,6 +1,5 @@
-package com.example.letmecook;
+package com.example.letmecook.models;
 
-import android.content.Context;
 import android.util.Log;
 
 import java.util.ArrayList;

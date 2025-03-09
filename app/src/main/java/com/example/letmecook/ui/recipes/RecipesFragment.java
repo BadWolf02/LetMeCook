@@ -3,28 +3,22 @@ package com.example.letmecook.ui.recipes;
 import static android.content.ContentValues.TAG;
 
 import android.app.Activity;
-import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
-import android.nfc.Tag;
 import android.os.Bundle; //Passes data to the fragment and restores its state after config changes
 import android.text.Editable;
 import android.text.InputType;
-import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.util.Log;
 import android.view.LayoutInflater; // handles the XML layout file into a View object
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup; // View object that gets displayed by the fragment
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.ListView;
 import android.widget.MultiAutoCompleteTextView;
 import android.widget.NumberPicker;
 import android.widget.ScrollView;
@@ -38,21 +32,17 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
-import androidx.annotation.NonNull; //Arguments or return values that cannot be null
-import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
-import androidx.fragment.app.Fragment; //base class for the fragment
 import androidx.lifecycle.ViewModelProvider; //managing ViewModelProvide
 
 import com.example.letmecook.R;
-import com.example.letmecook.Recipe;
+import com.example.letmecook.models.Recipe;
 import com.example.letmecook.WebScrapingActivity;
 import com.example.letmecook.databinding.FragmentRecipesBinding;
 import com.example.letmecook.db_tools.SearchDB;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;

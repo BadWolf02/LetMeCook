@@ -39,7 +39,7 @@
             android:value="barcode" /> <!-- To use multiple models: android:value="barcode,model2,model3" -->
         <!-- To use multiple models: android:value="barcode,model2,model3" -->
         <activity
-            android:name=".AddRecipe"
+            android:name=".AddRecipeActivity"
             android:exported="false" /> <!-- may not ending up needing this if we don't use addRecipie.java anymore -->
         <activity
             android:name=".LoginActivity"

@@ -1,8 +1,6 @@
 package com.example.letmecook;
 
 import android.os.Bundle;
-import android.view.View;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
@@ -15,7 +13,7 @@ import android.text.Editable;
 import android.text.TextWatcher;
 // import androidx.appcompat.v
 
-public class AddRecipe extends AppCompatActivity {
+public class AddRecipeActivity extends AppCompatActivity {
 
 
 
