@@ -2,6 +2,7 @@ package com.example.letmecook.ui.recipes;
 
 import static android.content.ContentValues.TAG;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Intent;
 import android.net.Uri;
@@ -55,22 +56,15 @@ public class RecipesFragment extends Fragment {
 
  //   private SearchDB db = new SearchDB();
 
-    private ArrayList<Object> steps = new ArrayList();
+    private final ArrayList<Object> steps = new ArrayList<>();
 
-    private ArrayList<Integer> steps_list = new ArrayList();
+    private final ArrayList<Integer> steps_list = new ArrayList<>();
 
-    HashMap<String, HashMap<String, String>> ingredients_names_list = new HashMap();
-
-    private ViewGroup ingredient_view;
+    HashMap<String, HashMap<String, String>> ingredients_names_list = new HashMap<>();
 
     private int next_step_index = 5; // TODO change this to be fetched dynamically
 
     private ImageView recipeImageView;
-
-    Uri imageUri;
-
-
-
 
     private ActivityResultLauncher<Intent> imagePickerLauncher =
             registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), result -> {
@@ -90,8 +84,9 @@ public class RecipesFragment extends Fragment {
 
 
 
+    @SuppressLint({"ClickableViewAccessibility", "DefaultLocale"})
     public View onCreateView(@NonNull LayoutInflater inflater,
-            ViewGroup container, Bundle savedInstanceState) {
+                             ViewGroup container, Bundle savedInstanceState) {
         binding = FragmentRecipesBinding.inflate(inflater, container, false);
         RecipesViewModel recipesViewModel =
                 new ViewModelProvider(this).get(RecipesViewModel.class);
@@ -170,15 +165,15 @@ public class RecipesFragment extends Fragment {
                     EditText add_step_text_field = getView().findViewById(R.id.EditText_add_step1); // may have to bind this since it is called from inside oncreate
                     String add_step_text = add_step_text_field.getText().toString();
                     if ( add_step_text.trim() != "") {
-                        Log.d("empty string",  add_step_text.toString());
-                        steps.add(add_step_text.toString());
+                        Log.d("empty string", add_step_text);
+                        steps.add(add_step_text);
             }
                     Log.d("empty string", add_step_text); //TODO remove this
 
 
                     // add this to db either save straight to a map here or to the recipe cals
                     // dynamically create another edit text
-                    Integer step_id = View.generateViewId();
+                    int step_id = View.generateViewId();
                     // dynamically create new recipe step box
                     EditText add_step_box = new EditText(getContext());
                     add_step_box.setId(step_id); //TODO
@@ -258,7 +253,7 @@ public class RecipesFragment extends Fragment {
         ArrayList<String> selected_meal_types = new ArrayList<>();
         selected_meal_types.add("please select meal type");
         //add onClickListener and handle event
-        ArrayAdapter meal_type_adapter = new ArrayAdapter(requireContext(), android.R.layout.simple_spinner_item, selected_meal_types);
+        ArrayAdapter<String> meal_type_adapter = new ArrayAdapter<>(requireContext(), android.R.layout.simple_spinner_item, selected_meal_types);
         meal_type_dropdown_trigger.setAdapter(meal_type_adapter);
 //        ArrayAdapter meal_type_adapter = new ArrayAdapter(requireContext(), android.R.layout.simple_spinner_dropdown_item, selected_meal_types);
 //        meal_type_adapter.
@@ -449,9 +444,9 @@ public class RecipesFragment extends Fragment {
             ingredient_details_builder.setPositiveButton("Confirm", (dialog, which) -> {
                 HashMap<String, String> details = new HashMap<>();
                 details.put("amount", ingredient_amount.getText().toString());
-                details.put("amount_type", amount[0].toString());
+                details.put("amount_type", amount[0]);
                 Log.d("ingredient",  ingredient_amount.getText().toString());
-                Log.d("details", amount[0].toString());
+                Log.d("details", amount[0]);
                 ingredients_names_list.put(selected_item, details);
             });
             //  ingredient_details_builder.setNegativeButton("Cancel", )
@@ -478,7 +473,7 @@ public class RecipesFragment extends Fragment {
     // probs have to move this to above return root but if I do that I would have to move it all to after the create() mcall making it really messy
     public void add_steps_to_recipe(){
         Log.d("adding step", "add last step method reached");
-        if (steps_list.size()> 0) {
+        if (!steps_list.isEmpty()) {
             for (int step_id : steps_list) {
                 EditText stp = getView().findViewById(step_id);
                 Editable stp_text = stp.getText();
@@ -498,7 +493,7 @@ public class RecipesFragment extends Fragment {
             Log.d("ingredients individula", ingredient);
             HashMap<String, String> details = this.ingredients_names_list.get(ingredient); //TODO causeing crash
             Log.d("ingredients details", this.ingredients_names_list.get(ingredient).toString()); // details.toString());
-            Log.d("adding ingredient for ", ingredient.toString());
+            Log.d("adding ingredient for ", ingredient);
             recipe.addIngredient(ingredient, details);
         }
 
@@ -609,9 +604,6 @@ public class RecipesFragment extends Fragment {
         String r_name = r_name_field.getText().toString();
         recipe.setR_name(r_name);
     }
-
-
-
 
 
 

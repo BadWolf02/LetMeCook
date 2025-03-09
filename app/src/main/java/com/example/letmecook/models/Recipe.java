@@ -18,7 +18,6 @@ public class Recipe {
     //TODO use not null for required fields??
 
     public String r_name; //get this from a field
-    public String r_id; //autogenerate by firebase db, make sure to add this to a list of IDs that the user has, so they can view their own recepies
     public String author; // username or official/ the site we scraped it from
     public String r_type; // can be public, private or official
     public String cuisine; //TODO make this similar to ingredients where you can only add valid stuff
@@ -62,12 +61,8 @@ public class Recipe {
         this.mealType = mealTypes;
     }
 
-    public ArrayList getMealType(){
+    public ArrayList<String> getMealType(){
         return this.mealType;
-    }
-
-    public Integer getStepsAmount (){
-        return this.stepsAmount;
     }
 
     public void incrementStepsAmount(){
@@ -81,38 +76,11 @@ public class Recipe {
         // else redirect to same thing with error message but that would violate the keeping different layers seperate principle??
     }
 
-
-    public String getR_name(){
-        return this.r_name;
-    }
-
-    public void setAuthor(String author){
-        this.author = author;
-    }
-
-    public String getAuthor(){
-        return this.author;
-    }
-
-    public void setR_type(String r_type){
-        this.r_type = r_type;
-    }
-
-    public String getR_type(){
-        return this.r_type;
-    }
-
     public void setCooking_time_h(Integer cooking_time){
         this.cooking_time_h = cooking_time;
     }
     public void setCooking_time_min(Integer cooking_time){
         this.cooking_time_min = cooking_time;
-    }
-    public Integer getCooking_time_h(){
-        return this.cooking_time_h;
-    }
-    public Integer getCooking_time_min(){
-        return this.cooking_time_min;
     }
 
     public void setTotal_time_h(int cooking_time){
@@ -120,12 +88,6 @@ public class Recipe {
     }
     public void setTotal_time_min(int cooking_time){
         this.total_time_min = cooking_time;
-    }
-    public Integer getTotal_time_h(){
-        return this.total_time_h;
-    }
-    public Integer getTotal_time_min(){
-        return this.total_time_min;
     }
 
 
@@ -166,21 +128,6 @@ public class Recipe {
        this.stepsAmount += 1; //TODO take this and use it to hashmap instead of adding new thing to array
         this.steps.put(id.toString(), text.toString());
     }
-
-
-    public void favourite_recipe(String u_id){
-        // add r_id to the users favourites list
-    }
-
-    public void write_review(){ //TODO only allow after user has cooked recepie??
-
-    }
-
-    public void add_photo(){ //use this to add photo fo finished recipe but also to writing comments and allow for steps
-
-    }
-
-    public void cook_recipe(){} //TODO probably makes more sense to add this function somewhere else
 
     public void clear_total_time(){ //TODO do this next, have to add on click listener that calls these
         this.total_time_h = null;
@@ -257,12 +204,3 @@ public class Recipe {
         // check if cook_time has been filled in and add
         // check if photos have in any steps been filled in and add that
     }
-
-    //TODO add method to go through
-
-
-  //  public void getRecipeFromDb(String r_id){
-        // access db and fill in all the fileds here
-
-   // }
-

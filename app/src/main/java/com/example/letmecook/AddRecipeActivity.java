@@ -48,22 +48,11 @@ public class AddRecipeActivity extends AppCompatActivity {
         });
 
         // adding steps
-        TextView add_step = findViewById(R.id.add_step_text);
-
-
 
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
             Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
         });
-    }
-
-    protected void setAuthor(){
-
-    }
-
-    protected void nameRecipe(String name){
-
     }
 }
