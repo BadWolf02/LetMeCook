@@ -70,7 +70,7 @@ public class InventoryAdapter extends RecyclerView.Adapter<InventoryAdapter.View
         });
 
         holder.ingredientAmount.setOnFocusChangeListener((v, hasFocus) -> {
-            if (!hasFocus) { // 🟢 Save changes on focus loss
+            if (!hasFocus) {
                 handleQuantityUpdate(holder, ingredient);
             }
         });
