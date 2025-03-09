@@ -30,9 +30,6 @@
         <activity
             android:name=".CameraActivity"
             android:exported="true" />
-        <activity
-            android:name=".ScanActivity"
-            android:exported="true" /> <!-- auto download barcode scanning to device -->
         <!-- auto download barcode scanning to device -->
         <meta-data
             android:name="com.google.mlkit.vision.DEPENDENCIES"
